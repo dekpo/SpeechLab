@@ -1,0 +1,13 @@
+:root { font-family: system-ui, sans-serif; color: #1c1c1c; background: #fafafa; }
+body { margin: 0; }
+main { max-width: 860px; margin: 0 auto; padding: 24px; }
+h1 { font-size: 1.4rem; margin: 0 0 4px; }
+.sub { color: #555; margin: 0 0 20px; }
+section { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 14px 16px; margin-bottom: 16px; }
+label { display: block; margin: 8px 0 2px; font-size: .85rem; color: #444; }
+input, select, button { font: inherit; padding: 6px 8px; }
+input, select { width: 100%; box-sizing: border-box; }
+button { margin-top: 10px; margin-right: 8px; cursor: pointer; }
+.mock { background: #fff3cd; border: 1px solid #e0c36a; padding: 8px 10px; border-radius: 4px; margin: 10px 0; }
+.error { background: #fde2e1; border: 1px solid #d98a87; padding: 8px 10px; border-radius: 4px; margin: 10px 0; }
+pre { white-space: pre-wrap; background: #f1f1f1; padding: 8px; border-radius: 4px; }

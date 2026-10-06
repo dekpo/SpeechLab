@@ -39,3 +39,21 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 ## D-007 — Audio capture strategy
 - Date: 2026-10-06 · Status: proposed (to verify in M4)
 - Decision: try WebView `getUserMedia` first (least native code); fall back to `cpal` if microphone permission or quality is a problem.
+
+## D-008 — Dev server port 1430 (not Tauri's default 1420)
+- Date: 2026-10-06 · Status: accepted
+- Context: port 1420 is used by the AssistantCabinetAI desktop dev server on the owner's machine. SpeechLab must stay independent and must not stop or reuse it.
+- Decision: Vite `server.port = 1430` with `strictPort`, and `devUrl` set to the same value in `src-tauri/tauri.conf.json`. Both must be changed together.
+
+## D-009 — Mock provider is allowed only as a clearly flagged M1 scaffold
+- Date: 2026-10-06 · Status: accepted
+- Context: M1 needs a round trip before any engine exists, but `Plan.md` forbids simulated benchmark data.
+- Decision: the mock sets `is_mock = true`, the UI shows a warning banner, and the benchmark service (M5) must refuse results from mock providers. The mock is removed from the default registry once a real provider exists, or kept only for tests.
+
+## D-010 — Hand-written scaffold instead of `create-tauri-app`
+- Date: 2026-10-06 · Status: accepted
+- Decision: keep the project minimal and understandable; no template-specific files. Bundling is disabled until M7. The Rust speech contract lives in `src-tauri/src/speech/` for now and can become a separate crate when integrated into AssistantCabinetAI.
+
+## D-011 — Placeholder icon
+- Date: 2026-10-06 · Status: accepted
+- Decision: a plain blue square (`app-icon-source.png`) generated locally, used only because Tauri requires icons. Replace before any distribution.

@@ -4,7 +4,9 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 
 ## Status
 
-Milestone M0 (feasibility) is complete. Application code starts at M1. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md) for the current state.
+- M0 feasibility: done.
+- M1 minimal Tauri app and provider contract: done (mock provider only, no real recognition yet).
+- Next: M2 sherpa-onnx STT. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
 
 ## Read first
 
@@ -18,10 +20,39 @@ Milestone M0 (feasibility) is complete. Application code starts at M1. See [docs
 | [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md) | Branches, commits, push commands |
 | [docs/M0_FEASIBILITY.md](docs/M0_FEASIBILITY.md) | Feasibility and dependency validation |
 
-## Check your environment (Windows)
+## Prerequisites (Windows)
+
+Node.js, pnpm, Rust (MSVC toolchain), MSVC Build Tools with the Windows SDK, WebView2. Check with:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\check-env.ps1
 ```
 
-Installation and run instructions will be added as milestones deliver them.
+CMake and LLVM are only needed later for whisper.cpp (milestone M3).
+
+## Run
+
+```bash
+pnpm install
+pnpm tauri dev      # starts Vite on port 1430 and opens the native window
+```
+
+Other commands:
+
+```bash
+pnpm typecheck                 # TypeScript check
+pnpm build                     # production frontend build
+cd src-tauri && cargo test     # Rust unit tests
+```
+
+The dev server uses port **1430** on purpose (1420 is used by the AssistantCabinetAI desktop app). The first Rust build takes several minutes.
+
+## Layout
+
+```
+src/                      React UI; src/speech/ = engine-agnostic TypeScript contract
+src-tauri/src/speech/     Rust traits, types, registry, mock provider
+src-tauri/src/commands.rs Tauri commands (UI -> Rust)
+docs/                     Log, decisions, issues, milestone reports
+scripts/                  Helper scripts
+```
