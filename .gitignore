@@ -1,0 +1,30 @@
+# Dependencies and build output
+node_modules/
+dist/
+target/
+src-tauri/target/
+*.log
+
+# Models and runtime libraries are downloaded, never committed
+models/
+vendor/
+*.onnx
+*.gguf
+*.bin
+*.tar.bz2
+
+# Audio: only small, licensed benchmark samples may be added explicitly (git add -f)
+recordings/
+tmp/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Agent tool folders and local settings (must never be committed)
+/.*/
+!/.github/
+.env
+.env.*

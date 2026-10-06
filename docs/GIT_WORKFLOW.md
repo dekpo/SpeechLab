@@ -1,0 +1,61 @@
+# Git workflow
+
+The owner runs all commit/push/merge commands. Agents only provide them (see `AGENTS.md`). Everything is written in English.
+
+## Conventions
+
+- Default branch: `main`.
+- One branch per milestone: `milestone/m0-feasibility`, `milestone/m1-tauri-skeleton`, `milestone/m2-sherpa-stt`, …
+- Fixes: `fix/<short-name>`; docs-only: `docs/<short-name>`.
+- Commit messages: one short imperative sentence in English, ≤ ~72 chars.
+  Good: `Add M0 feasibility report` · `Wire sherpa-onnx offline recognizer` · `Fix WAV resampling to 16 kHz`
+- Small, focused commits; the project log is updated in the same commit as the work it describes.
+- Never commit: models, build output, audio recordings, secrets, agent-tool folders (see `.gitignore`).
+
+## One-time setup (owner)
+
+```bash
+git init -b main
+git config user.name  "<your name>"
+git config user.email "<your email>"
+# Optional remote (replace the URL):
+git remote add origin <REMOTE_URL>
+```
+
+## M0 — commands to run now
+
+```bash
+# 1) Baseline on main
+git add Plan.md AGENTS.md README.md .gitignore docs/GIT_WORKFLOW.md
+git commit -m "Add project plan and contributor rules"
+
+# 2) M0 work on its own branch
+git switch -c milestone/m0-feasibility
+git add docs/M0_FEASIBILITY.md docs/PROJECT_LOG.md docs/DECISIONS.md docs/ISSUES.md scripts/check-env.ps1
+git commit -m "Add M0 feasibility report and environment check"
+
+# 3) Publish (after the remote exists)
+git push -u origin main
+git push -u origin milestone/m0-feasibility
+
+# 4) When M0 is accepted, merge into main (locally or via a pull request you open yourself)
+git switch main
+git merge --no-ff milestone/m0-feasibility -m "Merge milestone M0 feasibility"
+git push origin main
+```
+
+## Pattern for every later milestone
+
+```bash
+git switch main
+git pull                                   # if a remote is used
+git switch -c milestone/mN-short-name
+# ... work ...
+git status && git diff                     # review
+git add <files>
+git commit -m "<one short sentence>"
+git push -u origin milestone/mN-short-name
+# merge into main when accepted
+```
+
+Agents will propose the exact `git add` / `git commit -m` lines at the end of each step; run them only if you agree.
