@@ -1,15 +1,39 @@
-import { useEffect, useState } from "react";
-import { cancelTranscription, listSttProviders, transcribe } from "./speech/api";
-import type { ProviderInfo, TranscribeResult } from "./speech/types";
+import { useCallback, useEffect, useState } from "react";
+import {
+  cancelModelDownload,
+  cancelTranscription,
+  installModel,
+  listModels,
+  listSttProviders,
+  onDownloadProgress,
+  transcribe,
+} from "./speech/api";
+import type {
+  DownloadProgress,
+  ModelInfo,
+  ProviderInfo,
+  TranscribeResult,
+} from "./speech/types";
+
+const mb = (bytes: number) => `${Math.round(bytes / 1_000_000)} MB`;
 
 export default function App() {
   const [providers, setProviders] = useState<ProviderInfo[]>([]);
+  const [models, setModels] = useState<ModelInfo[]>([]);
   const [providerId, setProviderId] = useState("");
+  const [modelId, setModelId] = useState("");
   const [language, setLanguage] = useState("fr");
   const [audioPath, setAudioPath] = useState("");
   const [result, setResult] = useState<TranscribeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [installing, setInstalling] = useState<string | null>(null);
+  const [progress, setProgress] = useState<DownloadProgress | null>(null);
+
+  const refreshModels = useCallback(
+    () => listModels().then(setModels).catch((e) => setError(String(e))),
+    [],
+  );
 
   useEffect(() => {
     listSttProviders()
@@ -18,18 +42,47 @@ export default function App() {
         if (list.length > 0) setProviderId(list[0].id);
       })
       .catch((e) => setError(`Cannot reach the Rust backend: ${String(e)}`));
-  }, []);
+    void refreshModels();
+    const unlisten = onDownloadProgress(setProgress);
+    return () => {
+      void unlisten.then((fn) => fn());
+    };
+  }, [refreshModels]);
 
   const selected = providers.find((p) => p.id === providerId);
+  const providerModels = models.filter(
+    (m) => m.provider === providerId && m.languages.includes(language),
+  );
+  const selectedModel = providerModels.find((m) => m.id === modelId);
+
+  // Keep the chosen model valid when the engine or language changes.
+  useEffect(() => {
+    if (!providerModels.some((m) => m.id === modelId)) {
+      setModelId(providerModels.find((m) => m.installStatus === "installed")?.id ?? providerModels[0]?.id ?? "");
+    }
+  }, [providerModels, modelId]);
+
+  async function install(id: string) {
+    setInstalling(id);
+    setError(null);
+    setProgress(null);
+    try {
+      await installModel(id);
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setInstalling(null);
+      setProgress(null);
+      void refreshModels();
+    }
+  }
 
   async function run() {
     setBusy(true);
     setError(null);
     setResult(null);
     try {
-      setResult(
-        await transcribe({ providerId, modelId: "none", language, audioPath }),
-      );
+      setResult(await transcribe({ providerId, modelId, language, audioPath }));
     } catch (e) {
       setError(String(e));
     } finally {
@@ -40,7 +93,40 @@ export default function App() {
   return (
     <main>
       <h1>SpeechLab</h1>
-      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M1 skeleton)</p>
+      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M2: sherpa-onnx STT)</p>
+
+      <section>
+        <strong>Models</strong>
+        <p className="hint">Models are downloaded once from their official source, then used fully offline.</p>
+        <table>
+          <thead>
+            <tr><th>Model</th><th>Size</th><th>License</th><th>Status</th><th /></tr>
+          </thead>
+          <tbody>
+            {models.map((m) => (
+              <tr key={m.id}>
+                <td title={`${m.architecture} · ${m.quantization} · ${m.runtime}`}>{m.displayName}</td>
+                <td>{mb(m.sizeBytes)}</td>
+                <td>{m.license}</td>
+                <td>{m.installStatus === "installed" ? "installed" : "not installed"}</td>
+                <td>
+                  {m.installStatus === "notInstalled" && (
+                    <button disabled={installing !== null} onClick={() => void install(m.id)}>
+                      {installing === m.id ? "Installing…" : "Install"}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {installing && progress && (
+          <p>
+            {progress.phase}: {mb(progress.doneBytes)} / {mb(progress.totalBytes)}{" "}
+            <button onClick={() => void cancelModelDownload()}>Cancel download</button>
+          </p>
+        )}
+      </section>
 
       <section>
         <strong>Speech-to-Text</strong>
@@ -56,9 +142,8 @@ export default function App() {
 
         {selected && (
           <p>
-            Languages: {selected.languages.join(", ")} · Cancellation:{" "}
-            {selected.capabilities.supportsCancellation ? "yes" : "no"} · Auto language detection:{" "}
-            {selected.capabilities.supportsLanguageAutoDetect ? "yes" : "no"}
+            Cancellation: {selected.capabilities.supportsCancellation ? "yes" : "no (only before a run starts)"} ·
+            Auto language detection: {selected.capabilities.supportsLanguageAutoDetect ? "yes" : "no"}
           </p>
         )}
 
@@ -68,10 +153,20 @@ export default function App() {
           <option value="en">English (en)</option>
         </select>
 
-        <label htmlFor="audio">WAV file path</label>
-        <input id="audio" value={audioPath} onChange={(e) => setAudioPath(e.target.value)} placeholder="C:\path\to\sample.wav" />
+        <label htmlFor="model">Model</label>
+        <select id="model" value={modelId} onChange={(e) => setModelId(e.target.value)}>
+          {providerModels.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.displayName}
+              {m.installStatus === "installed" ? "" : " — not installed"}
+            </option>
+          ))}
+        </select>
 
-        <button onClick={run} disabled={busy || !providerId}>
+        <label htmlFor="audio">WAV file path</label>
+        <input id="audio" value={audioPath} onChange={(e) => setAudioPath(e.target.value)} placeholder="C:\\path\\to\\sample.wav" />
+
+        <button onClick={run} disabled={busy || !modelId || selectedModel?.installStatus !== "installed"}>
           {busy ? "Running…" : "Transcribe"}
         </button>
         <button onClick={() => void cancelTranscription()} disabled={!busy}>
@@ -84,9 +179,14 @@ export default function App() {
         )}
         {result && (
           <>
-            <pre>{result.text}</pre>
+            <label htmlFor="out">Transcription (editable)</label>
+            <textarea id="out" value={result.text} onChange={(e) => setResult({ ...result, text: e.target.value })} rows={5} />
             <small>
-              {result.providerId} · model {result.modelId} · {result.language} · {result.processingMs} ms
+              {result.providerId} · {result.modelId} · {result.language} · inference {result.processingMs} ms
+              {result.audioMs !== null && ` for ${result.audioMs} ms of audio`}
+              {result.rtf !== null && ` (RTF ${result.rtf.toFixed(3)})`} ·{" "}
+              {result.coldStart ? `cold start, model load ${result.loadMs} ms` : "warm (model already loaded)"} ·{" "}
+              {result.threads} threads
             </small>
           </>
         )}

@@ -46,8 +46,15 @@ pub struct TranscribeResult {
     pub model_id: String,
     pub language: String,
     pub text: String,
+    /// Inference time only (stream creation + decode), excluding model loading.
     pub processing_ms: u64,
+    /// Time spent loading the model; 0 when the model was already loaded (warm).
+    pub load_ms: u64,
+    pub cold_start: bool,
     pub audio_ms: Option<u64>,
+    /// Real-time factor = processing_ms / audio_ms (below 1.0 is faster than real time).
+    pub rtf: Option<f64>,
+    pub threads: u32,
     pub is_mock: bool,
 }
 
@@ -84,4 +91,52 @@ pub struct VoiceInfo {
     /// "female", "male" or "unknown" - never guessed.
     pub gender: String,
     pub license: String,
+}
+
+// --- Model inventory ---
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum InstallStatus {
+    NotInstalled,
+    Installed,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ModelInfo {
+    pub id: String,
+    pub display_name: String,
+    pub provider: String,
+    pub languages: Vec<String>,
+    pub architecture: String,
+    pub quantization: String,
+    /// Size of the download archive in bytes.
+    pub size_bytes: u64,
+    pub license: String,
+    pub source_url: String,
+    pub runtime: String,
+    pub platforms: Vec<String>,
+    /// None = not measured yet (never guessed).
+    pub expected_memory_mb: Option<u32>,
+    pub install_status: InstallStatus,
+    pub installed_path: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum DownloadPhase {
+    Download,
+    Verify,
+    Extract,
+    Done,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DownloadProgress {
+    pub model_id: String,
+    pub phase: DownloadPhase,
+    pub done_bytes: u64,
+    pub total_bytes: u64,
 }

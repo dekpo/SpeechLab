@@ -46,7 +46,11 @@ impl SpeechToTextProvider for MockSttProvider {
             language: request.language.clone(),
             text: "[MOCK] no real transcription was performed".into(),
             processing_ms: start.elapsed().as_millis() as u64,
+            load_ms: 0,
+            cold_start: false,
             audio_ms: None,
+            rtf: None,
+            threads: 1,
             is_mock: true,
         })
     }

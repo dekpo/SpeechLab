@@ -57,3 +57,25 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 ## D-011 — Placeholder icon
 - Date: 2026-10-06 · Status: accepted
 - Decision: a plain blue square (`app-icon-source.png`) generated locally, used only because Tauri requires icons. Replace before any distribution.
+
+## D-012 — sherpa-onnx linking and the espeak-ng (GPL-3.0) exposure
+- Date: 2026-10-06 · Status: open (extends D-004)
+- Evidence: the crate's default static link includes espeak-ng; the STT-only executable contains it (65 "espeak" matches). A build against the official `no-tts` libs has none and gives identical STT output.
+- Decision for now: keep the default libs during M2 development (simplest), keep the no-tts build as the candidate for any distributable STT-only binary, and decide the TTS strategy in M6 (TTS needs the full libs; options: separate TTS process/binary, non-espeak voices, or legal clearance). Not legal advice: whether static linking triggers GPL obligations here is a question for counsel.
+
+## D-013 — Models stored outside the repo, in the app data directory
+- Date: 2026-10-06 · Status: accepted
+- Decision: `<app data dir>/models` (Windows: `%APPDATA%\ai.assistantcabinet.speechlab\models`), overridable with `SPEECHLAB_MODELS_DIR`. Never committed, never bundled. Each model dir has a marker file written only after the checksum and file layout were verified.
+
+## D-014 — Download stack uses the OS certificate store
+- Date: 2026-10-06 · Status: accepted
+- Context: TLS-intercepting antivirus or proxies break rustls with bundled roots.
+- Decision: `ureq` with the `native-certs` feature for model downloads. We do not disable the antivirus or TLS verification. The crate build-script download cannot be changed, hence `scripts/fetch-sherpa-libs.ps1`.
+
+## D-015 — Model checksums are pinned in the manifest
+- Date: 2026-10-06 · Status: accepted
+- Decision: use the digest published by the official release when available; otherwise trust-on-first-use (hash computed locally on first download, then pinned) and say so (Whisper tiny is in that case). A mismatch deletes the file and fails the install.
+
+## D-016 — Cancellation contract
+- Date: 2026-10-06 · Status: accepted
+- Decision: providers declare `supportsCancellation`. sherpa-onnx = false (blocking decode, checked only before start). Downloads are cancellable. To be revisited for whisper.cpp (abort callback or sidecar kill) in M3.
