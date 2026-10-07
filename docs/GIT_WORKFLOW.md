@@ -44,6 +44,22 @@ git merge --no-ff milestone/m0-feasibility -m "Merge milestone M0 feasibility"
 git push origin main
 ```
 
+## M1 — commands to run
+
+M0 must be merged into `main` first (see above). Then:
+
+```bash
+git switch main
+git switch -c milestone/m1-tauri-skeleton
+git add .gitignore README.md package.json pnpm-lock.yaml pnpm-workspace.yaml index.html tsconfig.json vite.config.ts app-icon-source.png
+git add src src-tauri docs
+git status                      # check: no node_modules, dist, target
+git commit -m "Add minimal Tauri 2 app with speech provider contract"
+git push -u origin milestone/m1-tauri-skeleton
+```
+
+If the files are already modified on top of the M0 branch, `git switch -c milestone/m1-tauri-skeleton` works from there too (uncommitted changes follow you).
+
 ## Pattern for every later milestone
 
 ```bash
