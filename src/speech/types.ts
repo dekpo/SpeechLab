@@ -34,7 +34,43 @@ export interface TranscribeResult {
   modelId: string;
   language: string;
   text: string;
+  /** Inference time only, excluding model loading. */
   processingMs: number;
+  /** Model loading time; 0 when the model was already loaded. */
+  loadMs: number;
+  coldStart: boolean;
   audioMs: number | null;
+  /** processingMs / audioMs; below 1 is faster than real time. */
+  rtf: number | null;
+  threads: number;
   isMock: boolean;
+}
+
+export type InstallStatus = "notInstalled" | "installed";
+
+export interface ModelInfo {
+  id: string;
+  displayName: string;
+  provider: string;
+  languages: string[];
+  architecture: string;
+  quantization: string;
+  sizeBytes: number;
+  license: string;
+  sourceUrl: string;
+  runtime: string;
+  platforms: string[];
+  /** null = not measured yet. */
+  expectedMemoryMb: number | null;
+  installStatus: InstallStatus;
+  installedPath: string | null;
+}
+
+export type DownloadPhase = "download" | "verify" | "extract" | "done";
+
+export interface DownloadProgress {
+  modelId: string;
+  phase: DownloadPhase;
+  doneBytes: number;
+  totalBytes: number;
 }

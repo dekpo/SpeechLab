@@ -1,6 +1,9 @@
+use std::sync::Arc;
+
 use super::error::SpeechError;
-use super::mock::MockSttProvider;
+use super::models::ModelManager;
 use super::provider::SpeechToTextProvider;
+use super::sherpa::SherpaOnnxProvider;
 use super::types::ProviderInfo;
 
 /// Holds every registered provider. Adding an engine = implementing the trait and registering it here.
@@ -13,9 +16,10 @@ impl ProviderRegistry {
         Self { stt }
     }
 
-    pub fn with_default_providers() -> Self {
-        // Real engines (sherpa-onnx in M2, whisper.cpp in M3) are registered here.
-        Self::new(vec![Box::new(MockSttProvider)])
+    pub fn with_default_providers(models: Arc<ModelManager>) -> Self {
+        // Real engines are registered here (whisper.cpp arrives in M3).
+        // The mock provider is intentionally NOT registered: it exists for tests only.
+        Self::new(vec![Box::new(SherpaOnnxProvider::new(models))])
     }
 
     pub fn list_stt(&self) -> Vec<ProviderInfo> {
@@ -34,9 +38,13 @@ impl ProviderRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::speech::mock::MOCK_ID;
+    use crate::speech::mock::{MockSttProvider, MOCK_ID};
     use crate::speech::provider::CancelToken;
     use crate::speech::types::TranscribeRequest;
+
+    fn mock_registry() -> ProviderRegistry {
+        ProviderRegistry::new(vec![Box::new(MockSttProvider)])
+    }
 
     fn request(path: &str) -> TranscribeRequest {
         TranscribeRequest {
@@ -49,20 +57,30 @@ mod tests {
 
     #[test]
     fn lists_the_mock_provider_flagged_as_mock() {
-        let list = ProviderRegistry::with_default_providers().list_stt();
+        let list = mock_registry().list_stt();
         assert_eq!(list.len(), 1);
         assert!(list[0].is_mock);
     }
 
     #[test]
+    fn default_registry_exposes_sherpa_and_no_mock() {
+        let models =
+            Arc::new(ModelManager::new(std::env::temp_dir().join("speechlab_reg")).unwrap());
+        let list = ProviderRegistry::with_default_providers(models).list_stt();
+        assert_eq!(list.len(), 1);
+        assert_eq!(list[0].id, "sherpa-onnx");
+        assert!(!list[0].is_mock);
+    }
+
+    #[test]
     fn unknown_provider_is_an_error() {
-        let reg = ProviderRegistry::with_default_providers();
+        let reg = mock_registry();
         assert!(matches!(reg.stt("nope"), Err(SpeechError::UnknownProvider(_))));
     }
 
     #[test]
     fn mock_rejects_empty_path_and_honours_cancellation() {
-        let reg = ProviderRegistry::with_default_providers();
+        let reg = mock_registry();
         let p = reg.stt(MOCK_ID).unwrap();
         let cancel = CancelToken::new();
         assert!(matches!(
@@ -80,9 +98,7 @@ mod tests {
 
     #[test]
     fn json_contract_uses_camel_case() {
-        let json =
-            serde_json::to_string(&ProviderRegistry::with_default_providers().list_stt()[0])
-                .unwrap();
+        let json = serde_json::to_string(&mock_registry().list_stt()[0]).unwrap();
         assert!(json.contains("\"displayName\"") && json.contains("\"isMock\":true"));
     }
 }

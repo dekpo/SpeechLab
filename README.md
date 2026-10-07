@@ -5,8 +5,9 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 ## Status
 
 - M0 feasibility: done.
-- M1 minimal Tauri app and provider contract: done (mock provider only, no real recognition yet).
-- Next: M2 sherpa-onnx STT. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
+- M1 minimal Tauri app and provider contract: done.
+- M2 sherpa-onnx speech-to-text (model manager, WAV transcription fr/en): done.
+- Next: M3 whisper.cpp adapter. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
 
 ## Read first
 
@@ -34,7 +35,23 @@ CMake and LLVM are only needed later for whisper.cpp (milestone M3).
 
 ```bash
 pnpm install
+powershell -ExecutionPolicy Bypass -File scripts\fetch-sherpa-libs.ps1   # once; see below
 pnpm tauri dev      # starts Vite on port 1430 and opens the native window
+```
+
+`scripts/fetch-sherpa-libs.ps1` downloads the prebuilt sherpa-onnx libraries (checksum-verified) and writes a git-ignored `src-tauri/.cargo/config.toml`. It is required only when the automatic download in the crate build fails, typically because an antivirus or proxy intercepts HTTPS (see docs/ISSUES.md I-009). It is harmless otherwise.
+
+## Models and test audio
+
+Models are not in the repository. In the app, use the **Models** table to install one (official download, checksum verified); after that, transcription runs fully offline. They are stored in `%APPDATA%\ai.assistantcabinet.speechlab\models` (override with `SPEECHLAB_MODELS_DIR`). The inventory is `src-tauri/models-manifest.json`.
+
+Put your own WAV files in `wav/` (git-ignored) and type their path in the app. Headless check without the UI:
+
+```bash
+cd src-tauri
+cargo run --example transcribe -- list
+cargo run --example transcribe -- install sherpa-canary-180m-flash-int8
+cargo run --example transcribe -- run sherpa-canary-180m-flash-int8 fr ../wav/sample.wav 3
 ```
 
 Other commands:

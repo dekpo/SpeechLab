@@ -29,3 +29,7 @@ Thumbs.db
 !/.github/
 .env
 .env.*
+
+# Local WAV samples used from the app UI (user recordings, never committed)
+/wav/
+src-tauri/.cargo/

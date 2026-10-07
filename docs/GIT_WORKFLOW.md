@@ -60,6 +60,21 @@ git push -u origin milestone/m1-tauri-skeleton
 
 If the files are already modified on top of the M0 branch, `git switch -c milestone/m1-tauri-skeleton` works from there too (uncommitted changes follow you).
 
+## M2 — commands to run
+
+M1 must be merged into `main` first (same merge commands as for M0). Then:
+
+```bash
+git switch main
+git switch -c milestone/m2-sherpa-stt
+git add .gitignore README.md docs scripts src src-tauri
+git status                      # check: no wav/, vendor/, models, target, .cargo
+git commit -m "Add sherpa-onnx speech-to-text adapter and model manager"
+git push -u origin milestone/m2-sherpa-stt
+```
+
+If you are still on the M1 branch with these changes uncommitted, `git switch -c milestone/m2-sherpa-stt` carries them over.
+
 ## Pattern for every later milestone
 
 ```bash
