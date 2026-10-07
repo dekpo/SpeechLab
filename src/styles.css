@@ -28,3 +28,6 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; padding: 6px 8px;
 audio { height: 32px; max-width: 220px; }
 input[type="radio"] { width: auto; }
 .warn { background: #fff3cd; border: 1px solid #e0c36a; padding: 8px 10px; border-radius: 4px; margin: 10px 0; }
+.sentence { border-left: 4px solid #2056a0; padding: 4px 12px; margin: 12px 0; background: #f4f8fd; }
+.sentence .big { font-size: 1.35rem; line-height: 1.5; margin: 6px 0; }
+code { background: #f1f1f1; padding: 0 4px; border-radius: 3px; font-size: .85em; }

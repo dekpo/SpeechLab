@@ -105,3 +105,60 @@ export interface TextComparison {
   normalizedReference: string;
   normalizedHypothesis: string;
 }
+
+// ---------- Benchmark dataset (M5b) ----------
+
+export interface KeyTerm {
+  text: string;
+  kind: string;
+}
+
+export interface ScriptItem {
+  id: string;
+  language: string;
+  domain: string;
+  utteranceType: string;
+  category: string;
+  text: string;
+  keyTerms?: KeyTerm[];
+}
+
+export interface Speaker {
+  id: string;
+  /** Honest description of this ONE speaker. */
+  profile: string;
+  gender?: string | null;
+  accent?: string | null;
+}
+
+export interface SourceInfo {
+  kind: string;
+  url?: string | null;
+  license: string;
+}
+
+export interface Sample {
+  id: string;
+  language: string;
+  domain: string;
+  utteranceType: string;
+  category: string;
+  speaker: Speaker;
+  audioFile: string;
+  durationMs?: number | null;
+  reference: string;
+  source: SourceInfo;
+  committable: boolean;
+  private: boolean;
+}
+
+export interface ValidationIssue {
+  sampleId: string;
+  message: string;
+}
+
+export interface DatasetStatus {
+  root: string;
+  samples: Sample[];
+  issues: ValidationIssue[];
+}

@@ -137,11 +137,32 @@ fn read_json_files<T: for<'de> Deserialize<'de>>(dir: &Path) -> Result<Vec<(Path
     Ok(out)
 }
 
+/// Reading order = the owner's priorities: short general sentences, then professional
+/// vocabulary, then IT vocabulary, then English, then long dictations (D-025). Unknown
+/// categories come last, in file order.
+const CATEGORY_ORDER: &[&str] = &[
+    "fr-general",
+    "fr-medical",
+    "fr-administrative",
+    "fr-legal",
+    "fr-with-english-terms",
+    "en-general",
+    "en-technical",
+    "fr-dictation",
+    "en-dictation",
+];
+
+fn category_rank(category: &str) -> usize {
+    CATEGORY_ORDER.iter().position(|c| *c == category).unwrap_or(CATEGORY_ORDER.len())
+}
+
 pub fn load_scripts(root: &Path) -> Result<Vec<ScriptItem>, SpeechError> {
     let mut all = Vec::new();
     for (_, items) in read_json_files::<Vec<ScriptItem>>(&root.join("scripts"))? {
         all.extend(items);
     }
+    // Stable sort: ids inside a category keep their file order.
+    all.sort_by_key(|i| category_rank(&i.category));
     Ok(all)
 }
 
@@ -151,6 +172,97 @@ fn check_choice(issues: &mut Vec<ValidationIssue>, id: &str, what: &str, value: 
             sample_id: id.to_string(),
             message: format!("{what} '{value}' is not one of {allowed:?}"),
         });
+    }
+}
+
+/// Lower-case ASCII id fragment: letters, digits, `-` and `_` only (safe in file names).
+pub fn sanitize_id(raw: &str) -> String {
+    let cleaned: String = raw
+        .trim()
+        .to_lowercase()
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() || c == '_' { c } else { '-' })
+        .collect();
+    let collapsed = cleaned.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-");
+    collapsed.chars().take(60).collect()
+}
+
+/// Writes the audio and the metadata of one recorded sample and returns it. Recording the same
+/// sentence again by the same speaker replaces the previous sample. Third-party private material
+/// is always stored in `samples-private/` and is never committable.
+pub fn create_sample(
+    root: &Path,
+    script: &ScriptItem,
+    speaker: Speaker,
+    source: SourceInfo,
+    private: bool,
+    wav_bytes: &[u8],
+) -> Result<Sample, SpeechError> {
+    let speaker_id = sanitize_id(&speaker.id);
+    if speaker_id.is_empty() {
+        return Err(SpeechError::InvalidRequest("speaker id is empty".into()));
+    }
+    if source.license.trim().is_empty() {
+        return Err(SpeechError::InvalidRequest("a licence or consent statement is required".into()));
+    }
+    if !SOURCE_KINDS.contains(&source.kind.as_str()) {
+        return Err(SpeechError::InvalidRequest(format!("unknown source kind '{}'", source.kind)));
+    }
+    let private = private || source.kind == "third-party-private";
+    let id = format!("{}-{}", script.id, speaker_id);
+    let audio_file = format!("{id}.wav");
+    let audio_dir = root.join("audio");
+    fs::create_dir_all(&audio_dir).map_err(|e| SpeechError::Audio(e.to_string()))?;
+    let audio_path = audio_dir.join(&audio_file);
+    fs::write(&audio_path, wav_bytes).map_err(|e| SpeechError::Audio(e.to_string()))?;
+    let measured = match wav::read_wav_mono(&audio_path) {
+        Ok(a) => a,
+        Err(e) => {
+            let _ = fs::remove_file(&audio_path);
+            return Err(e);
+        }
+    };
+
+    let sample = Sample {
+        id: id.clone(),
+        language: script.language.clone(),
+        domain: script.domain.clone(),
+        utterance_type: script.utterance_type.clone(),
+        category: script.category.clone(),
+        speaker: Speaker { id: speaker_id, ..speaker },
+        audio_file,
+        duration_ms: Some(measured.duration_ms()),
+        reference: script.text.clone(),
+        key_terms: script.key_terms.clone(),
+        source,
+        committable: false,
+        notes: String::new(),
+        private,
+    };
+    let (dir, other) = if private { ("samples-private", "samples") } else { ("samples", "samples-private") };
+    fs::create_dir_all(root.join(dir)).map_err(|e| SpeechError::Audio(e.to_string()))?;
+    let json = serde_json::to_string_pretty(&sample).map_err(|e| SpeechError::Engine(e.to_string()))?;
+    fs::write(root.join(dir).join(format!("{id}.json")), json + "\n")
+        .map_err(|e| SpeechError::Audio(e.to_string()))?;
+    let _ = fs::remove_file(root.join(other).join(format!("{id}.json")));
+    Ok(sample)
+}
+
+/// Removes a sample's metadata (both folders) and its audio.
+pub fn delete_sample(root: &Path, sample_id: &str) -> Result<(), SpeechError> {
+    let id = sanitize_id(sample_id);
+    if id.is_empty() || id != sample_id {
+        return Err(SpeechError::InvalidRequest("invalid sample id".into()));
+    }
+    let mut removed = false;
+    for dir in ["samples", "samples-private"] {
+        removed |= fs::remove_file(root.join(dir).join(format!("{id}.json"))).is_ok();
+    }
+    removed |= fs::remove_file(root.join("audio").join(format!("{id}.wav"))).is_ok();
+    if removed {
+        Ok(())
+    } else {
+        Err(SpeechError::InvalidRequest(format!("sample not found: {id}")))
     }
 }
 
@@ -340,6 +452,111 @@ mod tests {
         for lang in LANGUAGES {
             assert!(items.iter().any(|i| i.language == *lang));
         }
+        // Reading order follows the owner's priorities: general sentences first, dictations last.
+        assert_eq!(items[0].category, "fr-general");
+        assert_eq!(items[0].id, "fr-gen-q-01");
+        assert!(items.last().unwrap().category.ends_with("dictation"));
+        let first_pro = items.iter().position(|i| i.category == "fr-medical").unwrap();
+        let first_it = items.iter().position(|i| i.category == "fr-with-english-terms").unwrap();
+        assert!(first_pro < first_it);
+    }
+
+    fn script(id: &str) -> ScriptItem {
+        ScriptItem {
+            id: id.into(),
+            language: "fr".into(),
+            domain: "medical".into(),
+            utterance_type: "statement".into(),
+            text: "Le patient prend 500 mg d'amoxicilline.".into(),
+            key_terms: vec![KeyTerm { text: "amoxicilline".into(), kind: "drug".into() }],
+            category: "fr-medical".into(),
+        }
+    }
+
+    fn wav_bytes_1s() -> Vec<u8> {
+        let mut cur = std::io::Cursor::new(Vec::new());
+        let spec = hound::WavSpec {
+            channels: 1,
+            sample_rate: 16000,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let mut w = hound::WavWriter::new(&mut cur, spec).unwrap();
+        for _ in 0..16000 {
+            w.write_sample(100i16).unwrap();
+        }
+        w.finalize().unwrap();
+        cur.into_inner()
+    }
+
+    fn speaker(id: &str) -> Speaker {
+        Speaker { id: id.into(), profile: "native French, no marked accent".into(), gender: None, accent: None }
+    }
+
+    fn own_source() -> SourceInfo {
+        SourceInfo { kind: "own-recording".into(), url: None, license: "own recording, owner consent".into() }
+    }
+
+    #[test]
+    fn sanitize_id_is_filesystem_safe() {
+        assert_eq!(sanitize_id("Owner 2"), "owner-2");
+        assert_eq!(sanitize_id("../../etc/passwd"), "etc-passwd");
+        assert_eq!(sanitize_id("  Owner_1 "), "owner_1");
+        assert_eq!(sanitize_id("///"), "");
+    }
+
+    #[test]
+    fn create_sample_writes_audio_and_metadata_and_roundtrips_through_load() {
+        let d = tmp("create");
+        let s = create_sample(&d, &script("fr-med-01"), speaker("Owner"), own_source(), false, &wav_bytes_1s()).unwrap();
+        assert_eq!(s.id, "fr-med-01-owner");
+        assert_eq!(s.duration_ms, Some(1000));
+        let ds = Dataset::load(&d).unwrap();
+        assert!(ds.issues.is_empty(), "{:?}", ds.issues);
+        assert_eq!(ds.samples.len(), 1);
+        assert_eq!(ds.samples[0].reference, "Le patient prend 500 mg d'amoxicilline.");
+        assert_eq!(ds.samples[0].key_terms[0].text, "amoxicilline");
+        assert!(!ds.samples[0].committable && !ds.samples[0].private);
+        // Recording again replaces the sample instead of duplicating it.
+        create_sample(&d, &script("fr-med-01"), speaker("owner"), own_source(), false, &wav_bytes_1s()).unwrap();
+        assert_eq!(Dataset::load(&d).unwrap().samples.len(), 1);
+        let _ = fs::remove_dir_all(d);
+    }
+
+    #[test]
+    fn third_party_material_is_forced_into_the_private_folder() {
+        let d = tmp("forced");
+        let src = SourceInfo { kind: "third-party-private".into(), url: None, license: "private voice note, no redistribution".into() };
+        let s = create_sample(&d, &script("fr-med-01"), speaker("guest"), src, false, &wav_bytes_1s()).unwrap();
+        assert!(s.private);
+        assert!(d.join("samples-private/fr-med-01-guest.json").is_file());
+        assert!(!d.join("samples/fr-med-01-guest.json").exists());
+        let ds = Dataset::load(&d).unwrap();
+        assert!(ds.issues.is_empty(), "{:?}", ds.issues);
+        let _ = fs::remove_dir_all(d);
+    }
+
+    #[test]
+    fn create_sample_rejects_bad_input_and_leaves_no_audio_behind() {
+        let d = tmp("reject");
+        assert!(create_sample(&d, &script("a"), speaker("///"), own_source(), false, &wav_bytes_1s()).is_err());
+        let no_licence = SourceInfo { kind: "own-recording".into(), url: None, license: " ".into() };
+        assert!(create_sample(&d, &script("a"), speaker("x"), no_licence, false, &wav_bytes_1s()).is_err());
+        assert!(create_sample(&d, &script("a"), speaker("x"), own_source(), false, b"not a wav").is_err());
+        assert!(!d.join("audio/a-x.wav").exists(), "invalid audio must be removed");
+        let _ = fs::remove_dir_all(d);
+    }
+
+    #[test]
+    fn delete_sample_removes_everything_and_rejects_path_tricks() {
+        let d = tmp("delete");
+        create_sample(&d, &script("fr-med-01"), speaker("owner"), own_source(), false, &wav_bytes_1s()).unwrap();
+        assert!(delete_sample(&d, "../samples/fr-med-01-owner").is_err());
+        delete_sample(&d, "fr-med-01-owner").unwrap();
+        assert!(!d.join("audio/fr-med-01-owner.wav").exists());
+        assert!(!d.join("samples/fr-med-01-owner.json").exists());
+        assert!(delete_sample(&d, "fr-med-01-owner").is_err(), "second delete reports not found");
+        let _ = fs::remove_dir_all(d);
     }
 
     #[test]

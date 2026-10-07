@@ -278,3 +278,32 @@ M5 is split in three parts. This is part a (data and scoring foundations). Part 
 - Swiss-French wording differences (septante, huitante, nonante) are NOT folded: a Swiss speaker saying "septante" gets "70" only if the ASR writes digits; the folder does not know these words. Add them if Swiss clips show it matters (I-030).
 
 **Next**: M5b, the in-app dataset recorder (shows the next sentence, records, saves the sample JSON and WAV, re-record button, progress per category), then M5c, the runner.
+
+---
+
+## 2026-10-07 — M5b — In-app dataset recorder
+
+**Git incident first (see ISSUES I-031)**: pushing the new M5 branch failed with GitHub HTTP 500 several times. Bisect by the owner showed that creating any new ref pointing at the M4 commit failed while creating the branch from `main` in the web UI worked; the later push was then a normal fast-forward (`f3917f6..99fb7b6`). M5a is therefore on GitHub (commits d7f2755 and 99fb7b6).
+
+**Done**
+- `dataset::create_sample` / `delete_sample` / `sanitize_id` (Rust): turn a recorded clip into a sample (WAV in `benchmark/audio/`, JSON in `samples/` or `samples-private/`), with the reference taken from the script text, never typed by hand. Same speaker + same sentence replaces the previous sample. Third-party voices are forced into `samples-private/` and never committable. Ids are sanitised (no path tricks), bad WAV payloads are rejected and leave no file behind.
+- Commands: `list_scripts`, `list_samples` (with validation issues), `create_sample`, `delete_sample`, `read_sample_audio`.
+- Scripts are now ordered by the owner's priority (general sentences, medical, administrative, legal, French with English terms, English, long dictations last).
+- UI `DatasetRecorder`: speaker form (id, honest profile, optional accent, own voice or someone else's), category selector with "recorded x/y" progress, one large sentence at a time with its key terms, Record/Stop, level check (clipping or too quiet warning), preview player, Save and continue / Redo, Previous/Next, "already recorded" badge, listen to or delete a saved recording, list of dataset validation issues. The speaker form is remembered in the WebView storage (a convenience only).
+
+**Verified (real Tauri window driven through the WebView2 DevTools protocol; microphone permission pre-granted by the test harness; ambient audio only)**
+- 61 Rust tests (5 new: id sanitising, create + reload roundtrip incl. replacement, forced private placement, rejection of bad input, delete with path-trick rejection, plus script ordering) and typecheck pass.
+- With a test speaker `e2etest`: category list shows the counts, the first sentence is `fr-gen-q-01`; recording, preview ("Level OK, peak 19 %, 2.1 s"), Save created exactly one WAV in `audio/` and one JSON in `samples/` with the right reference, `own-recording`, `committable: false`, measured duration; the UI advanced to the next sentence; "already recorded" badge, listening and deletion worked and removed both files. The same flow with "someone else's voice" wrote into `samples-private/` with `third-party-private`. All test files were removed afterwards (checked: `benchmark/` contains only the README and scripts, and the clip store is empty).
+
+**Failed / surprises**
+- "All categories" initially started on the long dictation because script files load alphabetically; fixed by an explicit priority order and defaulting the UI to the first category.
+- My UI driver printed mangled letters ("que tion") because of a quoting problem in the test script; the screenshot showed the app itself is correct.
+- The displayed benchmark path shows `src-tauri\..\benchmark` (cosmetic, I-032).
+- Several large inline shell scripts were rejected again; used script files.
+
+**Not verified**
+- Real speech: only ambient audio was recorded in my tests. The owner should record a few sentences and say whether the sentences feel natural to read.
+- Reading Swiss-French or other speakers through the same form (needs the speakers; the form supports it).
+- Dictation items (long) in the recorder; the Opus/WebView import path is not involved here.
+
+**Next**: the owner records the dataset (suggested: `fr-general` first, 24 sentences, about 5 minutes). Then M5c: the reproducible runner.

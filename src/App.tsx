@@ -11,6 +11,7 @@ import {
 } from "./speech/api";
 import ClipPanel, { type Clip } from "./components/ClipPanel";
 import ComparePanel from "./components/ComparePanel";
+import DatasetRecorder from "./components/DatasetRecorder";
 import type {
   DownloadProgress,
   ModelInfo,
@@ -130,7 +131,7 @@ export default function App() {
   return (
     <main>
       <h1>SpeechLab</h1>
-      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M4: microphone and engine comparison)</p>
+      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M5: benchmark dataset)</p>
 
       <section>
         <strong>Models</strong>
@@ -252,6 +253,8 @@ export default function App() {
       </section>
 
       <ComparePanel models={models} language={language} audioPath={audioPath} />
+
+      <DatasetRecorder onError={setError} />
     </main>
   );
 }

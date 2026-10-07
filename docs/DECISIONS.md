@@ -116,6 +116,10 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 - Date: 2026-10-07 · Status: accepted
 - Decision: `benchmark/samples-private/` (metadata and references) and `benchmark/audio/` are git-ignored. The loader refuses `third-party-private` samples outside `samples-private/` and refuses to mark them committable. Results computed from private samples go to `benchmark/results/private/` (ignored) or are reported only as aggregate numbers.
 
+## D-028 — The reference transcript always comes from the script
+- Date: 2026-10-07 · Status: accepted
+- Decision: the recorder stores the script sentence as the reference; the speaker cannot edit it. If a sentence was misread, it is recorded again. This avoids hand-typed references that would silently differ from what was said, and keeps references identical for every speaker. Reading order follows the owner's priorities (D-025).
+
 ## D-023 — Clips stay local, are listed at startup and deletable
 - Date: 2026-10-07 · Status: accepted
 - Decision: recordings and converted imports live in `<app data>/recordings` as WAV, never sent anywhere, always visible and deletable in the UI. File access commands refuse any path outside that directory.

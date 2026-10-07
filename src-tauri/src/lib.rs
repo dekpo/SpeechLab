@@ -43,6 +43,11 @@ pub fn run() {
             commands::list_clips,
             commands::read_clip,
             commands::compare_texts,
+            commands::list_scripts,
+            commands::list_samples,
+            commands::create_sample,
+            commands::delete_sample,
+            commands::read_sample_audio,
         ])
         .run(tauri::generate_context!())
         .expect("error while running the SpeechLab application");

@@ -117,6 +117,18 @@ git commit -m "Add benchmark dataset format, scripts and critical-error detector
 git push -u origin milestone/m5-benchmark
 ```
 
+## M5b — commands to run
+
+M5a is on GitHub (branch `milestone/m5-benchmark`). The M5b files are uncommitted on top of it, together with the I-031 note. Stay on the same branch:
+
+```bash
+git branch --show-current       # milestone/m5-benchmark
+git add docs src src-tauri
+git status                      # check: no benchmark/audio, no samples-private, no wav/, vendor/, target
+git commit -m "Add in-app benchmark dataset recorder"
+git push
+```
+
 ## Important: commit before you switch branches
 
 `git switch <branch>` is refused if it would overwrite uncommitted changes. If you then run `git merge`, it runs on the branch you are still on and reports "Already up to date". Always commit (or `git stash`) first, check `git branch --show-current`, and only then merge.

@@ -28,6 +28,8 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-022 | Mitigated | environment | `vswhere.exe` missing: Visual Studio CMake generator unusable; NMake used instead |
 | I-028 | Mitigated | audio input | Owner's microphone input seems to saturate (recording quality mediocre); a level/clipping indicator was added, cause not confirmed |
 | I-029 | Open | engines | Long audio (45 s private clip, 1969 speech MP3): Canary truncates, Whisper tiny (both runtimes) repeats near the end; chunking/VAD needed (see I-018, I-019) |
+| I-031 | Mitigated | git hosting | GitHub returned HTTP 500 when creating any new branch pointing at the M4 commit; creating the branch from main in the web UI worked |
+| I-032 | Open | ui | The dataset recorder shows the benchmark path with a ".." segment (cosmetic) |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
 | I-025 | Open | audio input | Recordings are about 1.5 % (~0.1 s on 6 s) shorter than the time held; cause not isolated |
@@ -142,3 +144,13 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-030 — Swiss number words
 - A Swiss French speaker says "septante", "huitante", "nonante". Whisper/Canary usually output digits, but when they output words the scoring does not know them. Cheap to add to `numbers.rs` (70, 80 in some cantons, 90) once a Swiss clip shows it matters. Not verified on any real output yet.
+
+### I-031 — GitHub 500 on creating branches (2026-10-07)
+- Symptom: `git push -u origin milestone/m5-benchmark` failed 3 times with `remote: Internal Server Error` (different Request IDs) after the pack was uploaded. GitHub status showed no incident; `git ls-remote` worked, so network and authentication were fine; the local repository passed `git fsck`.
+- Bisect by the owner: pushing the already-known commit 70323f5 (zero objects to send) to a new branch name also failed with 500; a different branch name (`m5-benchmark`) and HTTP/1.1 changed nothing. Creating a branch from `milestone/m4-audio-compare` in the web UI was refused too, but creating it from `main` worked.
+- Conclusion (partly inferred): the failure is tied to creating NEW refs that point at the M4 commit or its descendants, not to the content size, the name or the protocol; the existing `milestone/m4-audio-compare` ref (created earlier) is fine. Root cause on GitHub's side is unknown.
+- Workaround: create the branch from `main` in the web UI (it then points at the merge of M3), then `git push -u` the local branch as a fast-forward update. Request IDs kept for a support ticket if it recurs: FE18:1A139B:2560149:240A6CB:6AC6617C, F73B:246D9C:25B96BE:245E261:6AC6619D, FFBA:2C0CBC:25B0D98:2458FDE:6AC661B7.
+- Safety net used: `git bundle create ../SpeechLab-m5.bundle milestone/m5-benchmark` (local backup of the whole branch).
+
+### I-032 — Unnormalised benchmark path in the UI
+- `dataset::default_root()` joins `CARGO_MANIFEST_DIR` with `..`, so the path is displayed with `..`. Harmless; canonicalise when the runner is written.

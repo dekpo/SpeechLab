@@ -2,6 +2,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import type {
   ClipInfo,
+  DatasetStatus,
+  Sample,
+  ScriptItem,
+  SourceInfo,
+  Speaker,
   DownloadProgress,
   ModelInfo,
   ProviderInfo,
@@ -46,3 +51,23 @@ export const listClips = (): Promise<ClipInfo[]> => invoke<ClipInfo[]>("list_cli
 
 /** WAV bytes of a stored clip, for playback. */
 export const readClip = (path: string): Promise<ArrayBuffer> => invoke<ArrayBuffer>("read_clip", { path });
+
+// ---------- Benchmark dataset recorder ----------
+
+export const listScripts = (): Promise<ScriptItem[]> => invoke<ScriptItem[]>("list_scripts");
+
+export const listSamples = (): Promise<DatasetStatus> => invoke<DatasetStatus>("list_samples");
+
+/** Turns a stored clip into a benchmark sample for a script sentence (reference = script text). */
+export const createSample = (args: {
+  scriptId: string;
+  speaker: Speaker;
+  source: SourceInfo;
+  private: boolean;
+  clipPath: string;
+}): Promise<Sample> => invoke<Sample>("create_sample", args);
+
+export const deleteSample = (sampleId: string): Promise<void> => invoke<void>("delete_sample", { sampleId });
+
+export const readSampleAudio = (sampleId: string): Promise<ArrayBuffer> =>
+  invoke<ArrayBuffer>("read_sample_audio", { sampleId });
