@@ -76,6 +76,22 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 - Date: 2026-10-06 · Status: accepted
 - Decision: use the digest published by the official release when available; otherwise trust-on-first-use (hash computed locally on first download, then pinned) and say so (Whisper tiny is in that case). A mismatch deletes the file and fails the install.
 
+## D-017 — whisper.cpp runs as an external process (`whisper-cli`), not via `whisper-rs`
+- Date: 2026-10-06 · Status: accepted (revisit after M5 measurements)
+- Context: `whisper-rs` needs CMake plus libclang (bindgen), and its bundled whisper.cpp version was unverified.
+- Decision: build whisper.cpp from the official tag with CMake only and call `whisper-cli` as a child process. Benefits: no LLVM, crash isolation, real cancellation by killing the process, MIT binary kept separate from the app. Costs: model reloaded every run (cold start each time), process-spawn overhead, a second binary to ship (Tauri sidecar in M7).
+- Consequences: LLVM is not installed. A persistent server or in-process binding can be reconsidered if cold-start cost matters for the product.
+
+## D-018 — Decoding strategy is reported, never hidden
+- Date: 2026-10-06 · Status: accepted
+- Context: `whisper-cli` defaults to 5-beam search; sherpa-onnx Whisper uses greedy search. Comparing them naively would confound engine and decoding.
+- Decision: every result carries `decoding`; whisper.cpp beam size is configurable (`SPEECHLAB_WHISPER_BEAM_SIZE`, default 5 = upstream default). M5 benchmarks must run both beam 5 and greedy (beam 1).
+
+## D-019 — whisper.cpp built with `NMake Makefiles`
+- Date: 2026-10-06 · Status: accepted
+- Context: the Visual Studio CMake generator relies on `vswhere.exe`, which is missing here (I-022).
+- Decision: build inside the MSVC environment (`vcvars64.bat`) with NMake. Works, single-threaded build (91 s). Ninja would be faster but is one more tool to install.
+
 ## D-016 — Cancellation contract
 - Date: 2026-10-06 · Status: accepted
-- Decision: providers declare `supportsCancellation`. sherpa-onnx = false (blocking decode, checked only before start). Downloads are cancellable. To be revisited for whisper.cpp (abort callback or sidecar kill) in M3.
+- Decision: providers declare `supportsCancellation`. sherpa-onnx = false (blocking decode, checked only before start). Downloads are cancellable. Update from M3: whisper.cpp = true (child process killed on cancel, verified by a unit test and from the UI).

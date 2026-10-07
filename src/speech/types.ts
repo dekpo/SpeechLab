@@ -43,6 +43,8 @@ export interface TranscribeResult {
   /** processingMs / audioMs; below 1 is faster than real time. */
   rtf: number | null;
   threads: number;
+  /** Decoding strategy actually used, e.g. "greedy search" or "beam search (5 beams)". */
+  decoding: string;
   isMock: boolean;
 }
 

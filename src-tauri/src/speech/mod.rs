@@ -12,3 +12,4 @@ pub mod registry;
 pub mod sherpa;
 pub mod types;
 pub mod wav;
+pub mod whisper_cpp;

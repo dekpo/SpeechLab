@@ -23,15 +23,46 @@ pub enum ModelFamily {
     Whisper,
     Canary,
     NemoTransducer,
+    GgmlWhisper,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+/// How the model is distributed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
+pub enum Packaging {
+    /// A `.tar.bz2` archive that extracts to `dirName/`.
+    #[default]
+    Archive,
+    /// A single file saved as `dirName/<files.model>`.
+    File,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ModelFiles {
-    pub encoder: String,
-    pub decoder: String,
+    pub encoder: Option<String>,
+    pub decoder: Option<String>,
     pub joiner: Option<String>,
-    pub tokens: String,
+    pub tokens: Option<String>,
+    /// Single-file models (ggml).
+    pub model: Option<String>,
+}
+
+impl ModelFiles {
+    pub fn required(&self) -> Vec<&str> {
+        [&self.encoder, &self.decoder, &self.joiner, &self.tokens, &self.model]
+            .into_iter()
+            .flatten()
+            .map(String::as_str)
+            .collect()
+    }
+
+    /// Returns a required file name or a manifest error (never panics on bad manifests).
+    pub fn get<'a>(&'a self, field: &'a Option<String>, what: &str) -> Result<&'a str, SpeechError> {
+        field
+            .as_deref()
+            .ok_or_else(|| SpeechError::Engine(format!("manifest is missing files.{what}")))
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -41,6 +72,8 @@ pub struct ModelDef {
     pub display_name: String,
     pub provider: String,
     pub family: ModelFamily,
+    #[serde(default)]
+    pub packaging: Packaging,
     pub languages: Vec<String>,
     pub architecture: String,
     pub quantization: String,
@@ -90,12 +123,10 @@ impl ModelManager {
 
     pub fn is_installed(&self, def: &ModelDef) -> bool {
         let dir = self.model_dir(def);
-        let f = &def.files;
-        let mut required = vec![MARKER, &f.encoder, &f.decoder, &f.tokens];
-        if let Some(j) = &f.joiner {
-            required.push(j);
-        }
-        required.iter().all(|name| dir.join(name).is_file())
+        let required = def.files.required();
+        !required.is_empty()
+            && dir.join(MARKER).is_file()
+            && required.iter().all(|name| dir.join(name).is_file())
     }
 
     pub fn list(&self) -> Vec<ModelInfo> {
@@ -127,7 +158,7 @@ impl ModelManager {
             .collect()
     }
 
-    /// Downloads, verifies and extracts a model. Returns the SHA-256 of the archive.
+    /// Downloads, verifies and installs a model. Returns the SHA-256 of the downloaded file.
     /// This is the only code path that touches the network.
     pub fn install(
         &self,
@@ -136,6 +167,9 @@ impl ModelManager {
         on_progress: &mut dyn FnMut(DownloadProgress),
     ) -> Result<String, SpeechError> {
         let def = self.def(id)?.clone();
+        if def.files.required().is_empty() {
+            return Err(SpeechError::Engine(format!("manifest for {id} lists no files")));
+        }
         let model_id = def.id.clone();
         let mut emit = |phase: DownloadPhase, done: u64, total: u64| {
             on_progress(DownloadProgress {
@@ -147,36 +181,53 @@ impl ModelManager {
         };
 
         fs::create_dir_all(&self.models_dir).map_err(|e| SpeechError::Download(e.to_string()))?;
-        let partial = self.models_dir.join(".partial");
-        let archive = partial.join(format!("{}.tar.bz2", def.dir_name));
-
-        let sha = download::download(
-            &def.archive_url,
-            &archive,
-            def.archive_bytes,
-            def.sha256.as_deref(),
-            cancel,
-            &mut emit,
-        )?;
-
-        emit(DownloadPhase::Extract, def.archive_bytes, def.archive_bytes);
         let target = self.model_dir(&def);
         if target.exists() {
             fs::remove_dir_all(&target).map_err(|e| SpeechError::Download(e.to_string()))?;
         }
-        download::extract_tar_bz2(&archive, &self.models_dir)?;
-        let _ = fs::remove_file(&archive);
+
+        let sha = match def.packaging {
+            Packaging::Archive => {
+                let archive = self
+                    .models_dir
+                    .join(".partial")
+                    .join(format!("{}.tar.bz2", def.dir_name));
+                let sha = download::download(
+                    &def.archive_url,
+                    &archive,
+                    def.archive_bytes,
+                    def.sha256.as_deref(),
+                    cancel,
+                    &mut emit,
+                )?;
+                emit(DownloadPhase::Extract, def.archive_bytes, def.archive_bytes);
+                download::extract_tar_bz2(&archive, &self.models_dir)?;
+                let _ = fs::remove_file(&archive);
+                sha
+            }
+            Packaging::File => {
+                let name = def.files.get(&def.files.model, "model")?;
+                fs::create_dir_all(&target).map_err(|e| SpeechError::Download(e.to_string()))?;
+                let partial = target.join(format!("{name}.partial"));
+                let sha = download::download(
+                    &def.archive_url,
+                    &partial,
+                    def.archive_bytes,
+                    def.sha256.as_deref(),
+                    cancel,
+                    &mut emit,
+                )?;
+                fs::rename(&partial, target.join(name))
+                    .map_err(|e| SpeechError::Download(e.to_string()))?;
+                sha
+            }
+        };
 
         // Prove the layout matches the manifest before declaring the model installed.
-        let f = &def.files;
-        let mut required = vec![&f.encoder, &f.decoder, &f.tokens];
-        if let Some(j) = &f.joiner {
-            required.push(j);
-        }
-        for name in required {
+        for name in def.files.required() {
             if !target.join(name).is_file() {
                 return Err(SpeechError::Download(format!(
-                    "archive extracted but expected file is missing: {}",
+                    "download finished but expected file is missing: {}",
                     target.join(name).display()
                 )));
             }
@@ -203,6 +254,18 @@ mod tests {
         assert_eq!(ids.len(), list.len());
         assert!(list.iter().all(|i| i.install_status == InstallStatus::NotInstalled));
         assert!(list.iter().all(|i| i.expected_memory_mb.is_none()));
+    }
+
+    #[test]
+    fn every_manifest_entry_lists_files_and_a_provider() {
+        let m = ModelManager::new(std::env::temp_dir().join("speechlab_models_test")).unwrap();
+        for d in &m.defs {
+            assert!(!d.files.required().is_empty(), "{} has no files", d.id);
+            assert!(d.provider == "sherpa-onnx" || d.provider == "whisper-cpp", "{}", d.id);
+            if d.packaging == Packaging::File {
+                assert!(d.files.model.is_some(), "{} needs files.model", d.id);
+            }
+        }
     }
 
     #[test]
