@@ -92,6 +92,27 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 - Context: the Visual Studio CMake generator relies on `vswhere.exe`, which is missing here (I-022).
 - Decision: build inside the MSVC environment (`vcvars64.bat`) with NMake. Works, single-threaded build (91 s). Ninja would be faster but is one more tool to install.
 
+## D-020 — Microphone capture in the WebView (confirms D-007)
+- Date: 2026-10-07 · Status: accepted
+- Decision: getUserMedia + AudioWorklet, processing flags off, 16 kHz mono 16-bit WAV, saved through Rust. Works on Windows/WebView2 here. Costs: a native permission prompt, and macOS behaviour unverified. `cpal` stays the fallback if the prompt or quality becomes a problem.
+
+## D-021 — Non-WAV import decoded by the WebView, not by a Rust decoder
+- Date: 2026-10-07 · Status: accepted (revisit for macOS)
+- Context: voice notes are usually Ogg/Opus or M4A. A Rust decoder (symphonia, MPL-2.0) handles MP3/AAC/Vorbis/FLAC but not Opus.
+- Decision: use `decodeAudioData` in the WebView and resample to 16 kHz mono, so no extra dependency. The Rust-side magic-byte check still names unsupported formats when a path is typed by hand. Support depends on the platform WebView; macOS WKWebView does not reliably decode Ogg/Opus (NOT VERIFIED), so an alternative must be chosen before shipping on macOS.
+
+## D-022 — Basic text normalisation and what it must not hide
+- Date: 2026-10-07 · Status: accepted (extended in M5)
+- Decision: scoring normalisation = lower-case, punctuation to spaces, hyphen/dash to space, apostrophes unified. Kept: digits, decimal separators between digits, `%`. Not done: number-word equivalence ("trois" vs "3"), Unicode NFC. Originals are always preserved. Critical semantic errors (numbers, units, dosages, negations, drug names) get their own detector in M5; WER alone is never a safety statement.
+
+## D-023 — Clips stay local, are listed at startup and deletable
+- Date: 2026-10-07 · Status: accepted
+- Decision: recordings and converted imports live in `<app data>/recordings` as WAV, never sent anywhere, always visible and deletable in the UI. File access commands refuse any path outside that directory.
+
+## D-024 — Comparison runs are sequential and never ranked
+- Date: 2026-10-07 · Status: accepted
+- Decision: models run one after another to avoid CPU contention. The UI shows facts (times, ×fastest, WER/CER or disagreement with a baseline) and a standing warning, but no "winner" label, per `Plan.md`.
+
 ## D-016 — Cancellation contract
 - Date: 2026-10-06 · Status: accepted
 - Decision: providers declare `supportsCancellation`. sherpa-onnx = false (blocking decode, checked only before start). Downloads are cancellable. Update from M3: whisper.cpp = true (child process killed on cancel, verified by a unit test and from the UI).

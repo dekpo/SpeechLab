@@ -26,6 +26,12 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-020 | Open | design | whisper.cpp as external process = cold start on every run |
 | I-021 | Open | packaging | `whisper-cli` is located in `vendor/` in dev only; must become a bundled sidecar (M7) |
 | I-022 | Mitigated | environment | `vswhere.exe` missing: Visual Studio CMake generator unusable; NMake used instead |
+| I-028 | Mitigated | audio input | Owner's microphone input seems to saturate (recording quality mediocre); a level/clipping indicator was added, cause not confirmed |
+| I-029 | Open | engines | Long audio (45 s private clip, 1969 speech MP3): Canary truncates, Whisper tiny (both runtimes) repeats near the end; chunking/VAD needed (see I-018, I-019) |
+| I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
+| I-025 | Open | audio input | Recordings are about 1.5 % (~0.1 s on 6 s) shorter than the time held; cause not isolated |
+| I-026 | Open | audio input | Non-WAV import relies on the platform WebView decoders (Ogg/Opus on macOS unverified) |
+| I-027 | Resolved | privacy | Saved clips became invisible and undeletable after a UI reload (fixed: clips are listed from disk) |
 | I-023 | Open | evaluation | sherpa-onnx Whisper tiny says "Demandez vos puto" while whisper.cpp tiny (same weights, even greedy) is correct on `fr.wav`; cause unknown |
 
 ---
@@ -114,3 +120,21 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-023 — Same weights, different output across runtimes
 - On `fr.wav`: whisper.cpp tiny (fp16 ggml) correct; sherpa-onnx Whisper tiny (ONNX) wrong in 3/3 runs, even though both decode greedily when whisper.cpp is set to beam 1. To investigate in M5 with more samples and, if useful, the int8 vs fp32 ONNX files and whisper.cpp quantised models.
+
+### I-028 — Microphone saturation
+- Owner report: quality "mediocre", probably the microphone saturating. The app now shows peak level and clipped-sample share after each recording. If clipping is confirmed: lower the Windows input volume (Settings, System, Sound, Input), keep a hand's width from the microphone, or try the USB audio device. AGC is intentionally off in the app, so the Windows level is what matters.
+
+### I-029 — Long audio behaviour
+- Observed informally on two clips longer than 30 s. Plan for M5: split audio into segments of under ~25 s on silences (sherpa-onnx ships Silero VAD) before every engine, and compare "whole clip" versus "chunked" runs. The 1969 MP3 has unknown license: use only locally, never commit it; look for a clearly public-domain version (NASA) if it is wanted in the dataset.
+
+### I-024 — Microphone permission
+- Observed: the first `getUserMedia` shows a native WebView2 prompt (Block / Allow). In my tests the permission was pre-granted through the debugging protocol. To check manually: restart the app and see whether it asks again; test the `pnpm tauri build` output (origin `http://tauri.localhost`); if capture is silent or blocked, check Windows Settings, Privacy, Microphone ("let desktop apps access your microphone").
+
+### I-025 — Recording shorter than wall time
+- 6.0 s held produced 5.92 s (after the flush fix; 5.72 s before). Likely start/stop edge effects. Acceptable for dictation; re-check in M5 if timing alignment matters.
+
+### I-026 — Import depends on WebView codecs
+- Verified only with Ogg/Opus on Windows. Options for macOS and others: bundle ffmpeg as a sidecar (LGPL/GPL build choices to review) or a Rust decoder (symphonia has no Opus).
+
+### I-027 — Orphan clips after reload (resolved)
+- Cause: the clip list was React state only. Fix: `list_clips` at startup, lazy playback via `read_clip`, deletion via `delete_clip`, all confined to the store directory (unit-tested).

@@ -3,11 +3,14 @@ import {
   cancelModelDownload,
   cancelTranscription,
   installModel,
+  listClips,
   listModels,
   listSttProviders,
   onDownloadProgress,
   transcribe,
 } from "./speech/api";
+import ClipPanel, { type Clip } from "./components/ClipPanel";
+import ComparePanel from "./components/ComparePanel";
 import type {
   DownloadProgress,
   ModelInfo,
@@ -24,6 +27,8 @@ export default function App() {
   const [modelId, setModelId] = useState("");
   const [language, setLanguage] = useState("fr");
   const [audioPath, setAudioPath] = useState("");
+  const [clips, setClips] = useState<Clip[]>([]);
+  const [clipId, setClipId] = useState<string | null>(null);
   const [result, setResult] = useState<TranscribeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -43,6 +48,23 @@ export default function App() {
       })
       .catch((e) => setError(`Cannot reach the Rust backend: ${String(e)}`));
     void refreshModels();
+    // Recordings stay on disk between sessions: list them so they can be reused or deleted.
+    listClips()
+      .then((saved) =>
+        setClips(
+          saved.map((info) => {
+            const stamp = Number(/clip-(\d+)\.wav$/.exec(info.path)?.[1]);
+            return {
+              id: info.path,
+              label: Number.isFinite(stamp) ? `Saved clip ${new Date(stamp).toLocaleString()}` : "Saved clip",
+              source: "import" as const,
+              info,
+              url: null,
+            };
+          }),
+        ),
+      )
+      .catch((e) => setError(String(e)));
     const unlisten = onDownloadProgress(setProgress);
     return () => {
       void unlisten.then((fn) => fn());
@@ -61,6 +83,21 @@ export default function App() {
       setModelId(providerModels.find((m) => m.installStatus === "installed")?.id ?? providerModels[0]?.id ?? "");
     }
   }, [providerModels, modelId]);
+
+  function selectClip(id: string) {
+    const clip = clips.find((c) => c.id === id);
+    if (!clip) return;
+    setClipId(id);
+    setAudioPath(clip.info.path);
+  }
+
+  function removeClip(id: string) {
+    setClips((cs) => cs.filter((c) => c.id !== id));
+    if (clipId === id) {
+      setClipId(null);
+      setAudioPath("");
+    }
+  }
 
   async function install(id: string) {
     setInstalling(id);
@@ -93,7 +130,7 @@ export default function App() {
   return (
     <main>
       <h1>SpeechLab</h1>
-      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M3: sherpa-onnx + whisper.cpp STT)</p>
+      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M4: microphone and engine comparison)</p>
 
       <section>
         <strong>Models</strong>
@@ -127,6 +164,20 @@ export default function App() {
           </p>
         )}
       </section>
+
+      <ClipPanel
+        clips={clips}
+        selectedId={clipId}
+        onSelect={selectClip}
+        onAdd={(clip) => {
+          setClips((cs) => [...cs, clip]);
+          setClipId(clip.id);
+          setAudioPath(clip.info.path);
+        }}
+        onRemove={removeClip}
+        onLoaded={(id, url) => setClips((cs) => cs.map((c) => (c.id === id ? { ...c, url } : c)))}
+        onError={setError}
+      />
 
       <section>
         <strong>Speech-to-Text</strong>
@@ -163,8 +214,16 @@ export default function App() {
           ))}
         </select>
 
-        <label htmlFor="audio">WAV file path</label>
-        <input id="audio" value={audioPath} onChange={(e) => setAudioPath(e.target.value)} placeholder="C:\\path\\to\\sample.wav" />
+        <label htmlFor="audio">Audio file path (the selected clip, or type the path of a WAV file)</label>
+        <input
+          id="audio"
+          value={audioPath}
+          onChange={(e) => {
+            setAudioPath(e.target.value);
+            setClipId(null);
+          }}
+          placeholder="C:\\path\\to\\sample.wav"
+        />
 
         <button onClick={run} disabled={busy || !modelId || selectedModel?.installStatus !== "installed"}>
           {busy ? "Running…" : "Transcribe"}
@@ -191,6 +250,8 @@ export default function App() {
           </>
         )}
       </section>
+
+      <ComparePanel models={models} language={language} audioPath={audioPath} />
     </main>
   );
 }

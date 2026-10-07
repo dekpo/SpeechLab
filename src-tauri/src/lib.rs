@@ -7,6 +7,7 @@ use std::sync::Arc;
 use tauri::Manager;
 
 use commands::AppState;
+use speech::clips::ClipStore;
 use speech::models::ModelManager;
 use speech::registry::ProviderRegistry;
 
@@ -22,11 +23,12 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             let app_data = app.path().app_data_dir()?;
+            let clips = ClipStore::new(app_data.join("recordings"));
             let models = Arc::new(
                 ModelManager::new(resolve_models_dir(app_data)).map_err(|e| e.to_string())?,
             );
             let registry = ProviderRegistry::with_default_providers(Arc::clone(&models));
-            app.manage(AppState::new(registry, models));
+            app.manage(AppState::new(registry, models, clips));
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -36,6 +38,11 @@ pub fn run() {
             commands::cancel_transcription,
             commands::install_model,
             commands::cancel_model_download,
+            commands::save_clip,
+            commands::delete_clip,
+            commands::list_clips,
+            commands::read_clip,
+            commands::compare_texts,
         ])
         .run(tauri::generate_context!())
         .expect("error while running the SpeechLab application");

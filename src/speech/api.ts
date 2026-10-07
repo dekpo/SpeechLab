@@ -1,9 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import type {
+  ClipInfo,
   DownloadProgress,
   ModelInfo,
   ProviderInfo,
+  TextComparison,
   TranscribeRequest,
   TranscribeResult,
 } from "./types";
@@ -30,3 +32,17 @@ export const onDownloadProgress = (
   handler: (progress: DownloadProgress) => void,
 ): Promise<UnlistenFn> =>
   listen<DownloadProgress>("model-download-progress", (e) => handler(e.payload));
+
+/** Saves a WAV clip locally (raw binary body, no JSON overhead). */
+export const saveClip = (wav: Uint8Array): Promise<ClipInfo> => invoke<ClipInfo>("save_clip", wav);
+
+export const deleteClip = (path: string): Promise<void> => invoke<void>("delete_clip", { path });
+
+export const compareTexts = (reference: string, hypothesis: string): Promise<TextComparison> =>
+  invoke<TextComparison>("compare_texts", { reference, hypothesis });
+
+/** Clips already on disk (survive a UI reload). */
+export const listClips = (): Promise<ClipInfo[]> => invoke<ClipInfo[]>("list_clips");
+
+/** WAV bytes of a stored clip, for playback. */
+export const readClip = (path: string): Promise<ArrayBuffer> => invoke<ArrayBuffer>("read_clip", { path });

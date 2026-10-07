@@ -202,3 +202,46 @@ Tester: the owner, in the real app, on their own recordings. These are anecdotal
 **Git incident (owner, 2026-10-07)**: `git switch main` was refused (uncommitted M3 changes would be overwritten by the checkout), and the following `git merge` then ran on the M2 branch itself ("Already up to date"). Nothing was lost or pushed wrongly; `main` still only had the first commit because M0, M1 and M2 had never been merged. Fix: commit M3 on its own branch first, then merge the milestone branches into `main` in order. `docs/GIT_WORKFLOW.md` now says so.
 
 **Next**: M4 — audio capture from the microphone, WAV import polish, engine comparison view (same recording through both engines side by side).
+
+---
+
+## 2026-10-07 — M4 — Microphone, audio import and engine comparison
+
+**Done**
+- Microphone capture inside the WebView (`src/audio/recorder.ts`: getUserMedia + AudioWorklet, echo cancellation / noise suppression / auto gain OFF), resampled to 16 kHz mono 16-bit WAV (`src/audio/wav.ts`) and stored by Rust (`speech/clips.rs`, `save_clip` with a raw binary IPC body) in `<app data>/recordings`.
+- Audio import with any file the WebView can decode (WAV, MP3, M4A/AAC, Ogg/Opus, WebM), converted to the same 16 kHz WAV. The owner's WhatsApp `.ogg` (Opus) imported fine: 46.1 s.
+- Clip list with playback (lazy "Load player"), selection and deletion. Clips persist on disk and are listed again after a reload (`list_clips`, `read_clip`, `delete_clip`, all restricted to the store directory).
+- `speech/metrics.rs`: word-level alignment, WER, CER, substitution/deletion/insertion counts and a diff, exposed as `compare_texts`. Basic normalisation only (case, punctuation, hyphens, apostrophes); digits and decimals are kept, so changed dosages still count as errors. Critical-error flags (numbers, units, negations, drugs) are M5.
+- Engine comparison panel (`ComparePanel`): runs the selected clip through the chosen installed models one after the other (sequential on purpose, parallel runs would distort timing) and shows decoding, load time, inference time, RTF, relative inference time, WER/CER against an optional reference (or the word-level disagreement with a chosen baseline row when there is no reference), plus a diff view. The panel states that one recording proves nothing and never ranks engines.
+- UI split into components (`ClipPanel`, `ComparePanel`, `DiffView`); vitest added (3 tests).
+
+**Verified (this machine, in the real Tauri window driven through the WebView2 DevTools protocol)**
+- 33 Rust tests and 3 TypeScript tests pass; typecheck and production build pass.
+- Microphone: WebView2 shows a native permission prompt ("http://localhost:1430 wants to use your microphones", Block / Allow). For my tests I pre-granted it through the debugging protocol (a test harness action, not something the app does). The default device (Realtek microphone array) was recorded; the saved WAV files are real signals (16 kHz, mono, 16-bit, RMS 0.012 to 0.038).
+- Recording duration accuracy: the first version lost about 0.3 s at the end (6.0 s held, 5.72 s saved). Fixed by flushing the worklet buffer and waiting for pending messages before closing; now 5.92 s for 6.0 s held (about 1.5 % short, ~0.1 s; residual cause not investigated).
+- Import of the owner's Ogg/Opus voice note decoded by the WebView on Windows (46.1 s). On macOS (WKWebView) Ogg/Opus support is NOT VERIFIED.
+- Comparison of three models on the public sample `fr.wav` with its known reference sentence (22 words): Whisper tiny via sherpa-onnx WER 9.1 % (2 substitutions: vous to vos, plutôt to puto), CER 3.5 %; Canary 180M int8 0 %; whisper.cpp tiny (5 beams) 0 %. Single clip, not a ranking. Inference in that run: 479 ms (sherpa Whisper tiny), 767 ms (Canary), 751 ms (whisper.cpp tiny).
+- Deleting clips from the UI removes the files (the store went from 4 files to 0), including the converted copy of the owner's voice note. Files in `wav/` untouched.
+
+**Failed / surprises**
+- My first UI test attempt hung because the native permission prompt is a separate WebView2 window and my script attached to it instead of the app page. Scripts now select the page by URL. This also showed what the owner will actually see on first recording.
+- The clip list lived only in memory: after a reload the saved WAV files became invisible and undeletable (a privacy defect, I-027). Fixed by listing the store at startup.
+- `vitest` first picked up a test file from the vendored whisper.cpp sources; its include is now limited to `src/**/*.test.ts`.
+- A large multi-edit shell command was rejected by the shell tool again; finished with single edits.
+
+**Not verified**
+- Whether the microphone permission is remembered across app restarts, and how the prompt behaves in a release build where the origin is `http://tauri.localhost` (I-024).
+- Speaking into the microphone and checking transcription quality (only ambient audio was recorded in my tests; the owner should try with speech).
+- Listening to a freshly recorded clip by ear; everything on macOS; other microphones (USB devices exist but were not tried).
+- Streaming/real-time latency (the engines here run offline on whole clips; no streaming mode is wired).
+
+**Next**: M5 — benchmark dataset format, reproducible runner, WER/CER with critical-error flags, RTF, memory, repetitions.
+
+### M4 — owner manual tests (2026-10-07, informal, owner-reported; not benchmark data)
+
+- Microphone: Windows asks for permission and recording works (I-024 partly answered: prompt appears and capture works; persistence after restart and release build still untested).
+- Recording quality "mediocre", probably because the microphone saturates (owner's hypothesis, plausible but unmeasured). Added a level/clipping indicator after each recording (peak %, share of clipped samples, warnings for clipping or very quiet input) and a unit-tested `signalStats` helper (I-028).
+- French speech, own voice, short clips: sherpa-onnx + Whisper tiny replaces some words ("not very precise"); whisper.cpp + Whisper tiny also replaces some words; sherpa-onnx + Canary "much more precise" and even recognises badly pronounced words.
+- Import of WAV, Ogg and MP3 works.
+- Long English clip (the 1969 "one small step" speech, MP3, poor audio quality, source and license of this file unknown, not part of the repository): whisper.cpp + Whisper tiny gets almost to the end but with repetitions at the end; sherpa-onnx + Canary is the best of the tested ones but its transcript is truncated. Consistent with the earlier private-recording findings (I-018 repetition loops in Whisper tiny, I-019 Canary dropping the ending). Not measured: no reference transcript was used.
+- Only the models installed so far were tested (Whisper tiny in both runtimes, Canary int8). No English recording by the owner yet.

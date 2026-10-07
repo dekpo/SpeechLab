@@ -15,3 +15,16 @@ table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid #eee; }
 textarea { width: 100%; box-sizing: border-box; font: inherit; padding: 6px 8px; margin-top: 8px; }
 .hint { color: #666; font-size: .85rem; margin: 4px 0 8px; }
+
+.meter { display: inline-block; width: 120px; height: 10px; background: #e5e5e5; border-radius: 5px; vertical-align: middle; overflow: hidden; margin-left: 8px; }
+.meter > span { display: block; height: 100%; background: #2e7d32; }
+.check { display: block; margin: 4px 0; font-size: .95rem; color: #1c1c1c; }
+.check input { width: auto; margin-right: 6px; }
+.diff { line-height: 1.6; margin: 4px 0; }
+.diff del { background: #fde2e1; color: #8a1c17; text-decoration: line-through; }
+.diff ins { background: #dff3e0; color: #1b5e20; text-decoration: none; }
+.resultblock { border-top: 1px solid #eee; margin-top: 8px; padding-top: 4px; }
+.errtext { color: #8a1c17; }
+audio { height: 32px; max-width: 220px; }
+input[type="radio"] { width: auto; }
+.warn { background: #fff3cd; border: 1px solid #e0c36a; padding: 8px 10px; border-radius: 4px; margin: 10px 0; }

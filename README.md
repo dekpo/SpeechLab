@@ -8,7 +8,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M1 minimal Tauri app and provider contract: done.
 - M2 sherpa-onnx speech-to-text (model manager, WAV transcription fr/en): done.
 - M3 whisper.cpp speech-to-text (external process, ggml models, real cancellation): done.
-- Next: M4 microphone capture and engine comparison view. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
+- M4 microphone capture, audio import (WAV/MP3/M4A/Ogg), local clip store, engine comparison with WER/CER and diff: done.
+- Next: M5 benchmark dataset, reproducible runner and critical-error checks. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
 
 ## Read first
 
@@ -52,7 +53,7 @@ powershell -ExecutionPolicy Bypass -File scripts\build-whisper-cpp.ps1
 
 Models are not in the repository. In the app, use the **Models** table to install one (official download, checksum verified); after that, transcription runs fully offline. They are stored in `%APPDATA%\ai.assistantcabinet.speechlab\models` (override with `SPEECHLAB_MODELS_DIR`). The inventory is `src-tauri/models-manifest.json`.
 
-Put your own WAV files in `wav/` (git-ignored) and type their path in the app. Headless check without the UI:
+In the app you can record from the microphone (Windows asks for permission the first time) or import an audio file (WAV, MP3, M4A, Ogg/Opus). It is converted to 16 kHz mono WAV and stored locally in `%APPDATA%i.assistantcabinet.speechlabecordings`, with a Delete button. You can also keep your own WAV files in `wav/` (git-ignored) and type their path. Headless check without the UI:
 
 ```bash
 cd src-tauri

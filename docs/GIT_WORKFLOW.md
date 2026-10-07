@@ -91,6 +91,19 @@ git push -u origin milestone/m3-whisper-cpp
 
 Then merge everything into `main` with the section "Merging the milestones into `main`" below.
 
+## M4 — commands to run
+
+After M3 is committed, from the branch you are on with the uncommitted M4 files:
+
+```bash
+git branch --show-current
+git switch -c milestone/m4-audio-compare
+git add package.json pnpm-lock.yaml vite.config.ts README.md docs src src-tauri
+git status                      # check: no wav/, vendor/, models, target, recordings, .cargo
+git commit -m "Add microphone capture, audio import and engine comparison"
+git push -u origin milestone/m4-audio-compare
+```
+
 ## Important: commit before you switch branches
 
 `git switch <branch>` is refused if it would overwrite uncommitted changes. If you then run `git merge`, it runs on the branch you are still on and reports "Already up to date". Always commit (or `git stash`) first, check `git branch --show-current`, and only then merge.

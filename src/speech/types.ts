@@ -76,3 +76,32 @@ export interface DownloadProgress {
   doneBytes: number;
   totalBytes: number;
 }
+
+export interface ClipInfo {
+  path: string;
+  durationMs: number;
+  sampleRate: number;
+  bytes: number;
+}
+
+export type DiffKind = "equal" | "substitute" | "delete" | "insert";
+
+export interface DiffOp {
+  kind: DiffKind;
+  reference: string | null;
+  hypothesis: string | null;
+}
+
+export interface TextComparison {
+  /** null when the reference has no words. */
+  wer: number | null;
+  cer: number | null;
+  referenceWords: number;
+  hypothesisWords: number;
+  substitutions: number;
+  deletions: number;
+  insertions: number;
+  diff: DiffOp[];
+  normalizedReference: string;
+  normalizedHypothesis: string;
+}
