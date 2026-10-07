@@ -43,6 +43,10 @@ export interface TranscribeResult {
   /** processingMs / audioMs; below 1 is faster than real time. */
   rtf: number | null;
   threads: number;
+  /** Peak resident memory while the engine ran (sampled, a lower bound), MB. */
+  peakMemoryMb: number | null;
+  /** CPU time used by the engine, all threads, ms. */
+  cpuMs: number | null;
   /** Decoding strategy actually used, e.g. "greedy search" or "beam search (5 beams)". */
   decoding: string;
   isMock: boolean;

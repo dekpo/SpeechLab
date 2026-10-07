@@ -1,0 +1,24 @@
+{
+  "id": "fr-adm-05-owner",
+  "language": "fr",
+  "domain": "administrative",
+  "utteranceType": "statement",
+  "category": "fr-administrative",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-adm-05-owner.wav",
+  "durationMs": 5106,
+  "reference": "Veuillez confirmer votre présence avant le vendredi 20 novembre.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

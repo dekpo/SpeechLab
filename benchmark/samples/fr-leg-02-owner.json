@@ -1,0 +1,29 @@
+{
+  "id": "fr-leg-02-owner",
+  "language": "fr",
+  "domain": "legal",
+  "utteranceType": "statement",
+  "category": "fr-legal",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-leg-02-owner.wav",
+  "durationMs": 5496,
+  "reference": "La responsabilité civile du cabinet est couverte par une assurance.",
+  "keyTerms": [
+    {
+      "text": "responsabilité civile",
+      "kind": "legal"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

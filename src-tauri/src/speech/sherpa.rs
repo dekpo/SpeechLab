@@ -16,6 +16,7 @@ use sherpa_onnx::{
 
 use super::error::SpeechError;
 use super::models::{ModelDef, ModelFamily, ModelManager};
+use super::probe::SelfSampler;
 use super::provider::{CancelToken, SpeechToTextProvider};
 use super::types::{Capabilities, ProviderInfo, ProviderKind, TranscribeRequest, TranscribeResult};
 use super::wav;
@@ -62,7 +63,7 @@ impl SherpaOnnxProvider {
                     decoder: path(&f.decoder, "decoder")?,
                     language: Some(language.to_string()),
                     task: Some("transcribe".into()),
-                    tail_paddings: -1,
+                    tail_paddings: whisper_tail_paddings(),
                     ..Default::default()
                 };
             }
@@ -122,6 +123,15 @@ impl SherpaOnnxProvider {
     }
 }
 
+/// Whisper "tail paddings" (frames of padding added after the audio). -1 = the library default.
+/// `SPEECHLAB_SHERPA_WHISPER_TAIL_PADDINGS` overrides it for experiments (I-018, I-033).
+fn whisper_tail_paddings() -> i32 {
+    std::env::var("SPEECHLAB_SHERPA_WHISPER_TAIL_PADDINGS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(-1)
+}
+
 fn file_str(p: &Path) -> String {
     p.to_string_lossy().into_owned()
 }
@@ -173,8 +183,10 @@ impl SpeechToTextProvider for SherpaOnnxProvider {
             return Err(SpeechError::Cancelled);
         }
 
+        let sampler = SelfSampler::start();
         let (recognizer, load_ms, cold_start) = self.recognizer(def, &request.language)?;
         if cancel.is_cancelled() {
+            let _ = sampler.finish();
             return Err(SpeechError::Cancelled);
         }
 
@@ -186,6 +198,7 @@ impl SpeechToTextProvider for SherpaOnnxProvider {
             .get_result()
             .ok_or_else(|| SpeechError::Engine("sherpa-onnx returned no result".into()))?;
         let processing_ms = start.elapsed().as_millis() as u64;
+        let (peak_memory_mb, cpu_ms) = sampler.finish();
 
         let audio_ms = audio.duration_ms();
         Ok(TranscribeResult {
@@ -199,6 +212,8 @@ impl SpeechToTextProvider for SherpaOnnxProvider {
             audio_ms: Some(audio_ms),
             rtf: (audio_ms > 0).then(|| processing_ms as f64 / audio_ms as f64),
             threads: self.threads,
+            peak_memory_mb,
+            cpu_ms,
             decoding: "greedy search".into(),
             is_mock: false,
         })

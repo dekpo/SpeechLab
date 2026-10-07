@@ -1,0 +1,29 @@
+{
+  "id": "en-it-02-owner",
+  "language": "en",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "en-technical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-it-02-owner.wav",
+  "durationMs": 4805,
+  "reference": "Please restart the Kubernetes cluster before noon.",
+  "keyTerms": [
+    {
+      "text": "Kubernetes",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

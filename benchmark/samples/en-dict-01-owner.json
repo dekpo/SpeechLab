@@ -1,0 +1,33 @@
+{
+  "id": "en-dict-01-owner",
+  "language": "en",
+  "domain": "it",
+  "utteranceType": "dictation",
+  "category": "en-dictation",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-dict-01-owner.wav",
+  "durationMs": 29376,
+  "reference": "Meeting notes for Thursday. The team reviewed the PostgreSQL migration. The API is stable, but the restore procedure has not been tested. Authentication will be enabled for all accounts before Friday. The server must not be restarted during business hours. The next review is on Tuesday at 10 30, and the budget is 12000 francs.",
+  "keyTerms": [
+    {
+      "text": "PostgreSQL",
+      "kind": "tech"
+    },
+    {
+      "text": "authentication",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

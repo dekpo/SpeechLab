@@ -1,0 +1,29 @@
+{
+  "id": "fr-leg-05-owner",
+  "language": "fr",
+  "domain": "legal",
+  "utteranceType": "statement",
+  "category": "fr-legal",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-leg-05-owner.wav",
+  "durationMs": 6285,
+  "reference": "Le délai de recours est de 30 jours à compter de la notification.",
+  "keyTerms": [
+    {
+      "text": "recours",
+      "kind": "legal"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

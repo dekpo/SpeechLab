@@ -1,0 +1,29 @@
+{
+  "id": "en-it-01-owner",
+  "language": "en",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "en-technical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-it-01-owner.wav",
+  "durationMs": 5706,
+  "reference": "The PostgreSQL database has not responded since this morning.",
+  "keyTerms": [
+    {
+      "text": "PostgreSQL",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

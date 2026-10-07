@@ -1,0 +1,29 @@
+{
+  "id": "en-it-08-owner",
+  "language": "en",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "en-technical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-it-08-owner.wav",
+  "durationMs": 5976,
+  "reference": "The pull request is ready, we only need to rerun the unit tests.",
+  "keyTerms": [
+    {
+      "text": "pull request",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

@@ -1,0 +1,24 @@
+{
+  "id": "fr-gen-q-01-owner",
+  "language": "fr",
+  "domain": "general",
+  "utteranceType": "question",
+  "category": "fr-general",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-gen-q-01-owner.wav",
+  "durationMs": 3346,
+  "reference": "Quels sont mes rendez-vous de demain matin ?",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

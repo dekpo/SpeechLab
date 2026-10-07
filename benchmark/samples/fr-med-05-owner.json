@@ -1,0 +1,33 @@
+{
+  "id": "fr-med-05-owner",
+  "language": "fr",
+  "domain": "medical",
+  "utteranceType": "statement",
+  "category": "fr-medical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-med-05-owner.wav",
+  "durationMs": 6125,
+  "reference": "L'anticoagulant est contre-indiqué en cas de saignement actif.",
+  "keyTerms": [
+    {
+      "text": "anticoagulant",
+      "kind": "drug"
+    },
+    {
+      "text": "contre-indiqué",
+      "kind": "term"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

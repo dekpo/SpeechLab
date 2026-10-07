@@ -1,0 +1,24 @@
+{
+  "id": "fr-gen-s-05-owner",
+  "language": "fr",
+  "domain": "general",
+  "utteranceType": "statement",
+  "category": "fr-general",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-gen-s-05-owner.wav",
+  "durationMs": 5157,
+  "reference": "Ajoute une note : renouveler le contrat de maintenance.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

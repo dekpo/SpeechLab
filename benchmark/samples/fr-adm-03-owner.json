@@ -1,0 +1,29 @@
+{
+  "id": "fr-adm-03-owner",
+  "language": "fr",
+  "domain": "administrative",
+  "utteranceType": "statement",
+  "category": "fr-administrative",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-adm-03-owner.wav",
+  "durationMs": 5125,
+  "reference": "Le dossier est incomplet, il manque le justificatif de revenus.",
+  "keyTerms": [
+    {
+      "text": "justificatif",
+      "kind": "term"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

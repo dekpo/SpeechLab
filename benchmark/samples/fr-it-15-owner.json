@@ -1,0 +1,29 @@
+{
+  "id": "fr-it-15-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-15-owner.wav",
+  "durationMs": 6186,
+  "reference": "L'infrastructure est déployée sur un cloud européen avec une sauvegarde chiffrée.",
+  "keyTerms": [
+    {
+      "text": "infrastructure",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

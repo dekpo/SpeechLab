@@ -1,0 +1,24 @@
+{
+  "id": "en-gen-q-03-owner",
+  "language": "en",
+  "domain": "general",
+  "utteranceType": "question",
+  "category": "en-general",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-gen-q-03-owner.wav",
+  "durationMs": 4866,
+  "reference": "How many messages did I receive this morning?",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

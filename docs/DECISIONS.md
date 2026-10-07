@@ -120,6 +120,20 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 - Date: 2026-10-07 · Status: accepted
 - Decision: the recorder stores the script sentence as the reference; the speaker cannot edit it. If a sentence was misread, it is recorded again. This avoids hand-typed references that would silently differ from what was said, and keeps references identical for every speaker. Reading order follows the owner's priorities (D-025).
 
+## D-029 — Benchmark runner design (M5c)
+- Date: 2026-10-07 · Status: accepted
+- One CLI (`cargo run --release --example bench -- check | run`), library code in `speech/benchmark.rs` so a UI can reuse it later.
+- **One child process per model configuration** (default): cold-start time and memory belong to that model alone, and a crash cannot corrupt the other results. `--no-isolate` exists but mixes memory figures.
+- **Accuracy from repetition 1; timing from all repetitions.** Output is checked for stability across repetitions (`unstableSamples`).
+- **Both decodings for whisper.cpp** (5 beams = upstream default, and 1 = greedy), sherpa-onnx always greedy (D-018).
+- **Memory and CPU are sampled** (every ~25 ms resident set; accumulated CPU time), so peaks are lower bounds. For whisper.cpp the child process is probed; for sherpa-onnx the whole benchmark child process (model, runtime and buffers). "Busy cores" = CPU time / (load + inference time); it can exceed the configured thread count when a runtime spins extra threads.
+- **Failures are data**: a failed run keeps its error and no metrics; the failure rate is in the summary. Nothing is simulated or imputed.
+- **Outputs** (`benchmark/results/<UTC>-<label>/`): `runs.jsonl` (every run), `summary.csv`, `summary.md`, `system.json` (CPU, cores, RAM, OS, build profile, accelerator), `config.json`. Private samples never go to the committed folder (`results/private/`, git-ignored).
+- **Release build for speed figures.** Rust code is thin around native engines, but debug builds still add overhead in WAV decoding and bookkeeping; speed figures must come from `--release`.
+
+## D-022 update 2 (2026-10-07) — Number grammar and digit canonicalisation, found on real output
+- The first real transcripts showed two problems in my own scoring code: "ten thirty" was added up to 40 (a time is two numbers), and ASR formats "1030" and "12,000" were counted as errors against "10 30" and "12000". Fixes: spoken numbers follow a grammar (a number only extends when the next word is a valid continuation), digit groups are canonical ("12,000" = "12.000" = "12000", "2,5" = "2.5"), and adjacent digit tokens are joined ("10 30" = "1030"). A lost decimal point ("2,5" vs "25") and "2,5" vs "2,500" remain errors. 73 unit tests cover this. Lesson: normalisation rules must be validated on real ASR output before any number is published.
+
 ## D-023 — Clips stay local, are listed at startup and deletable
 - Date: 2026-10-07 · Status: accepted
 - Decision: recordings and converted imports live in `<app data>/recordings` as WAV, never sent anywhere, always visible and deletable in the UI. File access commands refuse any path outside that directory.
@@ -138,3 +152,22 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 ## D-016 — Cancellation contract
 - Date: 2026-10-06 · Status: accepted
 - Decision: providers declare `supportsCancellation`. sherpa-onnx = false (blocking decode, checked only before start). Downloads are cancellable. Update from M3: whisper.cpp = true (child process killed on cancel, verified by a unit test and from the UI).
+
+
+## D-030 — Scoring is versioned and results can be re-scored
+- Date: 2026-10-07 · Status: accepted
+- Context: the first real transcripts exposed five defects in my scoring rules (see PROJECT_LOG M5c). Fixing rules after results exist is legitimate only if it is transparent.
+- Decision: every run record carries `scoringVersion`; `bench rescore --dir <folder>` recomputes WER/CER/flags from the stored transcripts with the current rules, keeps the previous file as `runs.scoring-v<N>.jsonl`, and rebuilds the summaries. Rules change only to remove formatting artefacts (never to favour an engine), each change gets a unit test, and the old numbers stay on disk.
+
+## D-031 — Statistical reporting
+- Date: 2026-10-07 · Status: accepted
+- Decision: WER is always shown with its sampling interval (`scripts/bootstrap_ci.py`, paired bootstrap over sentences) and engines are only called different when the paired interval excludes 0. Suspect samples (most engines disagree with the reference) are listed and can be excluded in a second table. Everything is stated for the recorded speaker only.
+
+## D-032 — Provisional engine shortlist for AssistantCabinetAI (NOT final; M8 decides)
+- Date: 2026-10-07 · Status: provisional
+- Evidence so far (one speaker, CPU only): sherpa-onnx Parakeet TDT v3 int8 is the most accurate and fast (RTF 0.13), at the cost of 1.9 GB peak memory and 2.5 s cold load; Canary int8 is comparable on clean inputs but showed a runaway failure; whisper.cpp small is accurate but slower than real time here; tiny/base Whisper are too inaccurate for French medical or administrative vocabulary.
+- Not decided: licensing review of NeMo models (CC-BY-4.0, attribution) and of the espeak-ng exposure (D-012) for the sherpa-onnx route; drug-name handling; long-audio chunking; other speakers and accents.
+
+## D-033 — Benchmarks refuse to run on a busy machine
+- Date: 2026-10-07 · Status: accepted
+- Decision: `bench run` checks CPU use (limit 15 % average over 8 s) and the power source before starting and aborts with the list of busiest processes, unless `--force`. The check result is stored in `config.json` and the power plan/AC state in `system.json`, so every published speed figure carries the conditions it was measured under. Speed numbers from a forced or disturbed run must be labelled as such and never mixed with clean ones.

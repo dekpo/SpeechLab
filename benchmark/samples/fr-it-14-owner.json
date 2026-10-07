@@ -1,0 +1,29 @@
+{
+  "id": "fr-it-14-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-14-owner.wav",
+  "durationMs": 4997,
+  "reference": "Merci de ne pas pousser directement sur la branche main.",
+  "keyTerms": [
+    {
+      "text": "main",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

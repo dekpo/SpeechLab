@@ -1,0 +1,29 @@
+{
+  "id": "fr-med-02-owner",
+  "language": "fr",
+  "domain": "medical",
+  "utteranceType": "statement",
+  "category": "fr-medical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-med-02-owner.wav",
+  "durationMs": 5117,
+  "reference": "Elle ne présente aucune allergie connue à la pénicilline.",
+  "keyTerms": [
+    {
+      "text": "pénicilline",
+      "kind": "drug"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

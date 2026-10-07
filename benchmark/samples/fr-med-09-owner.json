@@ -1,0 +1,29 @@
+{
+  "id": "fr-med-09-owner",
+  "language": "fr",
+  "domain": "medical",
+  "utteranceType": "statement",
+  "category": "fr-medical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-med-09-owner.wav",
+  "durationMs": 6285,
+  "reference": "L'ordonnance mentionne de l'ibuprofène 400 mg en cas de douleur.",
+  "keyTerms": [
+    {
+      "text": "ibuprofène",
+      "kind": "drug"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

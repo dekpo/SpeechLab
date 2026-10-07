@@ -1,0 +1,29 @@
+{
+  "id": "fr-adm-01-owner",
+  "language": "fr",
+  "domain": "administrative",
+  "utteranceType": "statement",
+  "category": "fr-administrative",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-adm-01-owner.wav",
+  "durationMs": 5426,
+  "reference": "Merci de joindre une attestation de domicile datant de moins de 3 mois.",
+  "keyTerms": [
+    {
+      "text": "attestation",
+      "kind": "term"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

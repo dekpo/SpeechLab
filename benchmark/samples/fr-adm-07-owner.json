@@ -1,0 +1,24 @@
+{
+  "id": "fr-adm-07-owner",
+  "language": "fr",
+  "domain": "administrative",
+  "utteranceType": "statement",
+  "category": "fr-administrative",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-adm-07-owner.wav",
+  "durationMs": 6157,
+  "reference": "La facture numéro 2045 est payable sous 30 jours.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

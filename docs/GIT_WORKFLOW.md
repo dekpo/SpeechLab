@@ -129,6 +129,20 @@ git commit -m "Add in-app benchmark dataset recorder"
 git push
 ```
 
+## M5c — commands to run
+
+The M5b commit is done. README.md, the new benchmark code, `benchmark/samples/` (JSON metadata of the 95 recordings, no audio) and `benchmark/results/` (summary and run files, scripted sentences only) are uncommitted. Stay on `milestone/m5-benchmark`:
+
+```bash
+git branch --show-current       # milestone/m5-benchmark
+git add AGENTS.md README.md docs scripts src src-tauri benchmark
+git status                      # check: no benchmark/audio, no samples-private, no results/private, no wav/, vendor/, target, tmp
+git commit -m "Add benchmark runner, first results and hand-over documentation"
+git push
+```
+
+Optionally split it in two commits: first `git add src src-tauri scripts README.md docs` ("Add benchmark runner and scoring fixes"), then `git add benchmark` ("Add recorded dataset metadata and first results").
+
 ## Important: commit before you switch branches
 
 `git switch <branch>` is refused if it would overwrite uncommitted changes. If you then run `git merge`, it runs on the branch you are still on and reports "Already up to date". Always commit (or `git stash`) first, check `git branch --show-current`, and only then merge.

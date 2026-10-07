@@ -51,6 +51,8 @@ impl SpeechToTextProvider for MockSttProvider {
             audio_ms: None,
             rtf: None,
             threads: 1,
+            peak_memory_mb: None,
+            cpu_ms: None,
             decoding: "none (mock)".into(),
             is_mock: true,
         })

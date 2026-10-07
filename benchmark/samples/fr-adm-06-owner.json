@@ -1,0 +1,24 @@
+{
+  "id": "fr-adm-06-owner",
+  "language": "fr",
+  "domain": "administrative",
+  "utteranceType": "statement",
+  "category": "fr-administrative",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-adm-06-owner.wav",
+  "durationMs": 4885,
+  "reference": "Les frais de dossier s'élèvent à 120 francs suisses.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

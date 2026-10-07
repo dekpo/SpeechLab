@@ -1,0 +1,29 @@
+{
+  "id": "fr-med-04-owner",
+  "language": "fr",
+  "domain": "medical",
+  "utteranceType": "statement",
+  "category": "fr-medical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-med-04-owner.wav",
+  "durationMs": 4266,
+  "reference": "Ne pas dépasser 3 g de paracétamol par jour.",
+  "keyTerms": [
+    {
+      "text": "paracétamol",
+      "kind": "drug"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

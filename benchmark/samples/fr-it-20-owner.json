@@ -1,0 +1,24 @@
+{
+  "id": "fr-it-20-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-20-owner.wav",
+  "durationMs": 4336,
+  "reference": "Le temps de réponse moyen est de 250 millisecondes.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

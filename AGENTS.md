@@ -41,5 +41,12 @@ Documentation is what lets work continue across many sessions and agents. All do
 
 ## 5. Session start / end checklist
 
-Start: read `AGENTS.md` → `docs/PROJECT_LOG.md` (last entries) → `docs/ISSUES.md` (open items) → current milestone doc.
-End: update log/decisions/issues → give the owner the git commands for the step → state the next step.
+Start: read `AGENTS.md` → `docs/HANDOFF.md` (state, traps, commands, backlog) → `docs/PROJECT_LOG.md` (last entries) → `docs/ISSUES.md` (open items) → `git status`/`git log` (read-only) and `tasklist` (is a benchmark running?). Ready-made prompts for new sessions are in `docs/prompts/`.
+End: update log/decisions/issues and `docs/HANDOFF.md` sections 3 and 7 → give the owner the git commands for the step (check `git status` so no path is forgotten) → state the next step.
+
+## 6. Parallel sessions and long jobs
+
+- Several sessions may exist over time, but two sessions must not edit the same files at once, and **never run two benchmarks at once**.
+- A benchmark needs a quiet machine: run `bench preflight` first; do not compile, test or record while it runs; never publish figures from a forced or disturbed run.
+- A long job (benchmark) keeps running if the session is interrupted. In a new session, check `tasklist` and the job's log before starting anything.
+- Never touch the owner's other processes (their other app on port 1420, Docker, WSL): ask the owner to close them.

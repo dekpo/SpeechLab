@@ -52,12 +52,37 @@ pub struct TextComparison {
 
 /// Normalised word list used for scoring (the inputs are left untouched).
 pub fn normalize_words(text: &str) -> Vec<String> {
+    #[derive(Clone, Copy, PartialEq, Eq)]
+    enum Class {
+        Digit,
+        Letter,
+        Percent,
+        Other,
+    }
+    let class_of = |c: char| {
+        if c.is_ascii_digit() {
+            Class::Digit
+        } else if c == '%' {
+            Class::Percent
+        } else if c.is_alphabetic() {
+            Class::Letter
+        } else {
+            Class::Other
+        }
+    };
     let chars: Vec<char> = text.chars().collect();
     let mut cleaned = String::with_capacity(text.len());
+    let mut prev = Class::Other;
     for (i, &c) in chars.iter().enumerate() {
         let prev_digit = i > 0 && chars[i - 1].is_ascii_digit();
         let next_digit = chars.get(i + 1).is_some_and(|n| n.is_ascii_digit());
         if c.is_alphanumeric() || c == '%' {
+            // "14h", "9h30", "50%" are written glued; scoring sees "14 h", "9 h 30", "50 %".
+            let class = class_of(c);
+            if prev != Class::Other && prev != class {
+                cleaned.push(' ');
+            }
+            prev = class;
             cleaned.extend(c.to_lowercase());
         } else if matches!(c, '\'' | '’' | '‘' | '`') {
             cleaned.push('\'');
@@ -65,6 +90,9 @@ pub fn normalize_words(text: &str) -> Vec<String> {
             cleaned.push(c);
         } else {
             cleaned.push(' ');
+        }
+        if !(c.is_alphanumeric() || c == '%') && !(matches!(c, '.' | ',') && prev_digit && next_digit) {
+            prev = Class::Other;
         }
     }
     let words: Vec<String> = cleaned
@@ -198,8 +226,11 @@ mod tests {
         let c = compare_texts("prendre 500 mg par jour", "prendre 50 mg par jour");
         assert_eq!(c.substitutions, 1);
         assert!(c.wer.unwrap() > 0.0);
-        let c = compare_texts("dose de 2,5 mg", "dose de 2.5 mg");
-        assert_eq!(c.substitutions, 1, "decimal separators are kept as written");
+        // Same value written with another decimal separator is NOT an error...
+        assert_eq!(compare_texts("dose de 2,5 mg", "dose de 2.5 mg").substitutions, 0);
+        // ...but a different value is, including a lost decimal point.
+        assert_eq!(compare_texts("dose de 2,5 mg", "dose de 25 mg").substitutions, 1);
+        assert_eq!(compare_texts("dose de 2,5 mg", "dose de 2,500 mg").substitutions, 1);
     }
 
     #[test]
@@ -213,6 +244,16 @@ mod tests {
         assert!(compare_texts("500 mg", "500 g").wer.unwrap() > 0.0);
         assert!(compare_texts("15 heures", "cinquante heures").wer.unwrap() > 0.0);
         assert!(compare_texts("trois fois par jour", "2 fois par jour").wer.unwrap() > 0.0);
+    }
+
+    #[test]
+    fn glued_numbers_and_units_are_split_before_scoring() {
+        assert_eq!(compare_texts("à 14 heures", "à 14h").wer, Some(0.0));
+        assert_eq!(compare_texts("à 9 heures 30", "à 9h30").wer, Some(0.0));
+        assert_eq!(compare_texts("à 15 heures 30 ?", "à 15h30?").wer, Some(0.0));
+        assert_eq!(compare_texts("réduite de 50 %", "réduite de 50%").wer, Some(0.0));
+        assert_eq!(compare_texts("500 mg", "500mg").wer, Some(0.0));
+        assert!(compare_texts("à 14 heures", "à 15h").wer.unwrap() > 0.0);
     }
 
     #[test]

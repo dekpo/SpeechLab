@@ -1,0 +1,33 @@
+{
+  "id": "fr-it-16-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-16-owner.wav",
+  "durationMs": 5096,
+  "reference": "Active le mode debug et envoie-moi les logs du serveur.",
+  "keyTerms": [
+    {
+      "text": "debug",
+      "kind": "tech"
+    },
+    {
+      "text": "logs",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

@@ -1,0 +1,33 @@
+{
+  "id": "fr-dict-01-owner",
+  "language": "fr",
+  "domain": "medical",
+  "utteranceType": "dictation",
+  "category": "fr-dictation",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-dict-01-owner.wav",
+  "durationMs": 35936,
+  "reference": "Compte rendu de la consultation du jeudi 12 mars. Le patient se présente pour un contrôle de sa tension artérielle. Il ne signale aucune douleur thoracique et n'a pas de fièvre. La tension est de 14 sur 9. Le traitement actuel, 500 mg d'amoxicilline trois fois par jour, est indiqué pour 7 jours. Un nouveau rendez-vous est fixé le mardi 24 mars à 10 heures. Le dossier a été transmis à l'assurance, et la facture numéro 2045 est payable sous 30 jours.",
+  "keyTerms": [
+    {
+      "text": "amoxicilline",
+      "kind": "drug"
+    },
+    {
+      "text": "tension artérielle",
+      "kind": "term"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

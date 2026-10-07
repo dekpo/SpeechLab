@@ -77,27 +77,9 @@ fn flag(kind: FlagKind, severity: Severity, expected: &str, found: &str, message
 
 // ---------- numbers ----------
 
+/// Numeric tokens are already canonical (see `numbers::canonical_number_token`).
 fn numeric_value(token: &str) -> Option<String> {
-    let mut seen_digit = false;
-    let mut seen_sep = false;
-    for c in token.chars() {
-        match c {
-            '0'..='9' => seen_digit = true,
-            '.' | ',' if seen_digit && !seen_sep => seen_sep = true,
-            _ => return None,
-        }
-    }
-    if !seen_digit || token.ends_with(['.', ',']) {
-        return None;
-    }
-    // Unify the decimal separator and drop leading zeros ("05" == "5").
-    let t = token.replace(',', ".");
-    let trimmed = t.trim_start_matches('0');
-    Some(if trimmed.is_empty() || trimmed.starts_with('.') {
-        format!("0{trimmed}")
-    } else {
-        trimmed.to_string()
-    })
+    super::numbers::is_numeric_token(token).then(|| token.to_string())
 }
 
 fn numbers_of(tokens: &[String]) -> Vec<String> {

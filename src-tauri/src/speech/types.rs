@@ -55,6 +55,10 @@ pub struct TranscribeResult {
     /// Real-time factor = processing_ms / audio_ms (below 1.0 is faster than real time).
     pub rtf: Option<f64>,
     pub threads: u32,
+    /// Peak resident memory seen while the engine ran (sampled, a lower bound), in MB.
+    pub peak_memory_mb: Option<f64>,
+    /// CPU time used by the engine (all threads), in ms. Divide by wall time for busy cores.
+    pub cpu_ms: Option<u64>,
     /// Decoding strategy actually used, e.g. "greedy search" or "beam search (5 beams)".
     pub decoding: String,
     pub is_mock: bool,

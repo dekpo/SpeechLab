@@ -1,0 +1,29 @@
+{
+  "id": "fr-med-06-owner",
+  "language": "fr",
+  "domain": "medical",
+  "utteranceType": "statement",
+  "category": "fr-medical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-med-06-owner.wav",
+  "durationMs": 5885,
+  "reference": "La posologie est d'un comprimé de 2,5 mg le matin.",
+  "keyTerms": [
+    {
+      "text": "posologie",
+      "kind": "term"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

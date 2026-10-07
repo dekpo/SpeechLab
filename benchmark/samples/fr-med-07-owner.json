@@ -1,0 +1,24 @@
+{
+  "id": "fr-med-07-owner",
+  "language": "fr",
+  "domain": "medical",
+  "utteranceType": "statement",
+  "category": "fr-medical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-med-07-owner.wav",
+  "durationMs": 5816,
+  "reference": "Le prochain contrôle aura lieu le jeudi 12 mars à 9 heures 30.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

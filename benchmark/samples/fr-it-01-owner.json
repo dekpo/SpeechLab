@@ -1,0 +1,29 @@
+{
+  "id": "fr-it-01-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-01-owner.wav",
+  "durationMs": 4757,
+  "reference": "La base de données PostgreSQL ne répond plus depuis ce matin.",
+  "keyTerms": [
+    {
+      "text": "PostgreSQL",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

@@ -16,6 +16,7 @@ use std::time::{Duration, Instant};
 
 use super::error::SpeechError;
 use super::models::{ModelFamily, ModelManager};
+use super::probe::ProcessProbe;
 use super::provider::{CancelToken, SpeechToTextProvider};
 use super::types::{Capabilities, ProviderInfo, ProviderKind, TranscribeRequest, TranscribeResult};
 use super::wav;
@@ -130,6 +131,10 @@ pub struct ProcessOutput {
     pub stdout: String,
     pub stderr: String,
     pub success: bool,
+    /// Peak resident memory of the child, sampled every ~25 ms (a lower bound), in MB.
+    pub peak_memory_mb: Option<f64>,
+    /// CPU time of the child (all threads), in ms.
+    pub cpu_ms: Option<u64>,
 }
 
 /// Runs a command, polling the cancel token; the child is killed on cancellation.
@@ -154,7 +159,9 @@ pub fn run_cancellable(mut cmd: Command, cancel: &CancelToken) -> Result<Process
     let out = drain(child.stdout.take().expect("piped stdout"));
     let err = drain(child.stderr.take().expect("piped stderr"));
 
+    let mut probe = ProcessProbe::new(child.id());
     let status = loop {
+        probe.sample();
         if cancel.is_cancelled() {
             let _ = child.kill();
             let _ = child.wait();
@@ -170,6 +177,8 @@ pub fn run_cancellable(mut cmd: Command, cancel: &CancelToken) -> Result<Process
         stdout: out.join().unwrap_or_default(),
         stderr: err.join().unwrap_or_default(),
         success: status.success(),
+        peak_memory_mb: probe.peak_mb(),
+        cpu_ms: probe.cpu_ms(),
     })
 }
 
@@ -276,6 +285,8 @@ impl SpeechToTextProvider for WhisperCppProvider {
             audio_ms: Some(audio_ms),
             rtf: (audio_ms > 0).then(|| processing_ms as f64 / audio_ms as f64),
             threads: self.threads,
+            peak_memory_mb: output.peak_memory_mb,
+            cpu_ms: output.cpu_ms,
             decoding: self.decoding_label(),
             is_mock: false,
         })

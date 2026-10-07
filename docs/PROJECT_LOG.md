@@ -307,3 +307,96 @@ M5 is split in three parts. This is part a (data and scoring foundations). Part 
 - Dictation items (long) in the recorder; the Opus/WebView import path is not involved here.
 
 **Next**: the owner records the dataset (suggested: `fr-general` first, 24 sentences, about 5 minutes). Then M5c: the reproducible runner.
+
+
+---
+
+## 2026-10-07 — M5c — Reproducible benchmark runner and first full benchmark
+
+**Owner action first**: the owner recorded all 95 sentences with the dataset recorder (own voice, speaker `owner`, standard French, 9.1 minutes). M5b is committed; `benchmark/samples/` (JSON metadata, no audio) and `README.md` were still uncommitted.
+
+**Done**
+- `speech/probe.rs` (sampled peak memory and CPU time of a process; a dropped sampler stops its thread), `speech/benchmark.rs` (system info, audio quality analysis, runner, per-run records, summaries, hard/suspect sample detection, rescoring, CSV/Markdown/JSONL outputs), CLI `examples/bench.rs` with `check`, `run`, `run-one` (internal), `summarize`, `rescore`. One child process per model configuration (D-029). `scripts/bootstrap_ci.py` for confidence intervals.
+- Result fields added to every transcription: peak memory and CPU time (UI contract and runner).
+- Scoring versioning: `SCORING_VERSION = 2`; old result files can be re-scored from the stored transcripts without running any engine (`bench rescore`); the previous scores are kept as `runs.scoring-v1.jsonl`.
+
+**Dataset check (`bench check`, VERIFIED)**: 95 samples, 0 validation issues, 16 kHz mono; no clipping (0 files with more than 0.1 % of samples at full scale, 0 "hot" files), peaks 0.75 to 0.994 (most files peak at 0.993, i.e. a few isolated peaks, not sustained saturation); one warning: `en-it-05-owner` (slow reading, 1.2 words/s).
+
+**First full benchmark** (`20261007-201137-full-owner-reps1`; Intel Core 7 150U, 12 logical cores, 23.6 GB, Windows 11, CPU only, release build, 4 threads per engine, 95 samples, 1 repetition, all 9 configurations, 0 failures; one speaker, 1 100 reference words, so this is NOT a general claim). Scoring v2. WER micro with a 95 % bootstrap interval over sentences:
+
+| Configuration | WER | 95 % CI | Critical samples | RTF median | Inference median | Cold load | Peak memory |
+|---|---|---|---|---|---|---|---|
+| sherpa-onnx Parakeet TDT 0.6B v3 int8 | 2.3 % | 1.4–3.4 | 4 | 0.13 | 0.63 s | 2.5 s | 1.9 GB |
+| whisper.cpp small q5_1, 5 beams | 3.9 % | 2.5–5.4 | 7 | 1.85 | 8.3 s | 0.27 s | 0.53 GB |
+| whisper.cpp small q5_1, greedy | 4.5 % | 3.0–6.1 | 7 | 1.56 | 7.4 s | 0.27 s | 0.41 GB |
+| sherpa-onnx Canary 180M flash int8 | 5.9 % (3.0 % without one garbage output) | 2.0–13.1 | 3 | 0.13 | 0.66 s | 1.2 s | 1.1 GB |
+| whisper.cpp base q5_1, 5 beams | 8.4 % | 6.3–10.9 | 12 | 0.37 | 1.8 s | 0.10 s | 0.27 GB |
+| whisper.cpp base q5_1, greedy | 11.4 % | 8.8–14.2 | 15 | 0.36 | 1.7 s | 0.10 s | 0.22 GB |
+| whisper.cpp tiny, 5 beams | 16.1 % | 12.8–19.9 | 13 | 0.18 | 0.86 s | 0.11 s | 0.24 GB |
+| whisper.cpp tiny, greedy | 19.8 % | 15.8–23.9 | 18 | 0.15 | 0.71 s | 0.11 s | 0.21 GB |
+| sherpa-onnx Whisper tiny (greedy) | 25.4 % | 19.8–31.9 | 19 | 0.11 | 0.57 s | 0.52 s | 0.89 GB |
+
+What the data supports (and no more):
+- Parakeet has the lowest WER and is clearly better than every Whisper configuration (paired bootstrap, interval of the difference excludes 0; against whisper.cpp small it is borderline: lower bound +0.1 point). It is NOT statistically distinguishable from Canary once the one garbage Canary output is set aside (diff +0.8 points, interval -0.6 to +2.3).
+- Both sherpa-onnx NeMo models are about 14 times faster than real time on this CPU. whisper.cpp small is SLOWER than real time here (RTF 1.6 to 1.9; median 7 to 8 s for a 5-second sentence, p95 about 14 s), i.e. unusable for interactive voice queries on this machine without acceleration. whisper.cpp base/tiny are fast but much less accurate.
+- Model size matters within Whisper: tiny 16 to 20 %, base 8 to 11 %, small 4 to 5 %. Beam search (5) beats greedy by 0.6 to 3.3 points in every size, at 5 to 30 % more time.
+- The same Whisper tiny weights score 16 % in whisper.cpp (5 beams) and 25 % in sherpa-onnx: runtime/decoding behaviour matters, not only the weights (I-023, I-018).
+- Dictations of about 30 s were transcribed without truncation by all models (output length 0.87 to 1.11 times the reference); the truncation seen earlier concerned a 45 s clip, so the limit lies somewhere between and still needs chunking tests (I-029).
+- Language and vocabulary (Parakeet): French 2.1 %, English 2.8 %, medical 1.5 %, administrative 1.5 %, legal 1.5 %, IT 2.7 %. Canary: French 3.0 %, English 15.1 % (one garbage output; otherwise small), IT 15.5 % (same garbage output plus tech terms).
+- Critical errors exist in EVERY configuration, including the best: all models misspell "amoxicilline" (Parakeet "amoxycilline", Canary "amoxiciline", Whisper small "amoxiciline"), "ibuprofène" is garbled by Canary and Whisper small, Parakeet turned "10 jours" into "1 jours". A low WER does not make the output safe for clinical vocabulary: a drug-name dictionary or hotword correction step is required (to be tested, e.g. sherpa-onnx hotwords on the transducer).
+
+**Scoring defects found and fixed during this work (honest list, all in my own code)**
+1. "ten thirty" was added up to 40 (a time is two numbers); number words now follow a grammar.
+2. ASR formats "1030", "12,000" were counted as errors against "10 30", "12000"; digit groups are canonical now.
+3. "14h", "9h30", "50%" glued forms were not split, so the number looked "lost"; they are split now.
+4. French "dix-huit" was read 10 + 8 = "108"; 17, 18, 19 are handled; spoken decimals ("deux virgule cinq") and the unit "h" ("heures") added.
+5. The "Flags" column mixed critical flags and warnings; it is labelled "incl. warnings" and "Critical samples" counts critical severity only.
+Re-scoring the same transcripts lowered every WER (for example Parakeet 3.6 % to 2.3 %, Whisper small 5.1 % to 3.9 %). Lesson recorded in D-022/D-030: validate scoring rules on real outputs before trusting any number.
+
+**Experiment: is sherpa-onnx Whisper's repetition caused by my `tail_paddings` setting? NO (VERIFIED).** On 40 French and English general sentences: -1 (my default), 0 and 1000 give identical results (WER 26.8 %, 3 runaway repetition outputs); 50 and 300 are much worse (WER 127 % and 74 %). The default is as good as any tested value, so the loops belong to the engine/model, not to my configuration. Set `SPEECHLAB_SHERPA_WHISPER_TAIL_PADDINGS` to reproduce.
+
+**Failed / surprises**
+- All nine configurations hear "port 543" where the script says "port 443" (`en-it-05`): the reading was probably not "443" (I-033). Until the owner listens, that sample is suspect and is reported separately.
+- Canary produced a string of single letters ("O P O N T H O R E N T...", WER 517 %) on that slow, unusual recording: a runaway failure mode that needs a guard in any product (I-035).
+- The first session was interrupted while the benchmark was running; the benchmark process survived and finished (the monitors were lost, the work was not).
+- A shell tool limitation again forced script files instead of inline scripts.
+
+**Not verified**
+- Anything about other speakers, accents (Swiss or Maghreb clips are not in the dataset yet), microphones or noise.
+- Timing variance (1 repetition only; I-012): a 3-repetition timing study is still to do.
+- Memory figures are sampled lower bounds; for sherpa-onnx they cover the whole benchmark child process.
+- Long-audio behaviour beyond 30 s (chunking/VAD) and hotword biasing for drug names.
+- whisper.cpp turbo and any GPU/accelerated build.
+
+**Next**: owner listens to `en-it-05` and decides; commit M5c; then (a) timing study with repetitions, (b) chunking/VAD tests for long audio, (c) hotword/drug-name correction test, (d) import the Swiss-French and Maghreb-accent clips as private long samples with references.
+
+
+---
+
+## 2026-10-07 — M5c — The first benchmark was run on a busy machine; clean re-run prepared
+
+**What happened**: the owner reported having started a heavy task on the computer while the first full benchmark was running. The run (`20261007-201137-full-owner-reps1`) is therefore valid for ACCURACY but its SPEED, MEMORY and BUSY-CORE figures are unreliable. The numbers quoted in the M5c entry above for RTF, inference time, cold load and peak memory must be read as "measured under load" until the clean re-run replaces them. A `NOTE.md` was added in that results folder; nothing else in it was changed.
+
+**Why accuracy is safe (expected, to be verified)**: the engines are deterministic for a given input and thread count, so the transcripts, WER and flags should be identical in a clean run. The re-run will compare them sample by sample and report any difference. Speed figures may change a lot (probably faster and less variable, but that is a guess to be measured).
+
+**New safeguards (VERIFIED by running the tool)**
+- `bench run` now performs a quiet-machine check before starting: it observes CPU use for 8 seconds and the power source, lists the busiest processes, and REFUSES to run when the machine averages more than 15 % CPU or runs on battery, unless `--force` is passed. The measurements and a `forcedDespitePreflight` flag are stored in `config.json`; `system.json` now also records the Windows power plan and AC/battery state.
+- Tried right now: preflight FAILED (CPU 35 % average; Windows counters show 16 to 52 % with high kernel time). The visible user processes explain only about 5 %; Docker Desktop and the WSL virtual machine (`vmmemWSL`, 3.4 GB resident, Docker Desktop with a large accumulated CPU time) are active and are the likely cause, as CPU used inside the WSL VM is not attributed to a process. Avast also runs services. Nothing was stopped by the assistant: Docker and WSL belong to the owner's other work.
+
+**Next**: the owner stops the heavy task (for example quit Docker Desktop and run `wsl --shutdown`), keeps the charger plugged in and leaves the computer alone for about 45 minutes; the assistant re-runs the preflight and launches the clean run with the same settings (all installed models, 95 samples, 1 repetition, label `full-owner-reps1-clean`), then compares accuracy with the first run (determinism check) and replaces the speed figures. An optional timing study with 3 repetitions on a subset follows.
+
+---
+
+## 2026-10-07 — Hand-over documentation for new sessions
+
+**Done**
+- `docs/HANDOFF.md`: one document with the project summary, the rules most often broken, the state of every milestone, the repository map, the environment traps (port 1430, antivirus TLS, quiet machine, interrupted sessions, GitHub 500, shell quoting, UI automation), all commands, the prioritised backlog and the session protocol.
+- `docs/prompts/`: `01-clean-benchmark-rerun.md` (complete prompt for the immediate next task), `next-tasks.md` (common preamble plus tasks T2 timing study, T3 long-audio VAD chunking, T4 drug-name handling, T5 private accent clips, T6 TTS, T7 packaging, T8 final report) and a README explaining how to use them.
+- `AGENTS.md` start/end checklist now points to HANDOFF and the prompts and has a section on parallel sessions and long jobs.
+- Tools needed by the procedure: `bench preflight` (quiet-machine check on its own, exit code 0/2) and `scripts/compare_runs.py` (transcript determinism and speed comparison of two runs; tested by comparing a run with itself: 855 of 855 identical, as it must).
+
+**Verified**: `bench preflight` ran and reported NOT QUIET (30 % CPU average) while Docker Desktop and the WSL virtual machine `docker-desktop` were still running after the owner had closed their other applications; no process of the owner was stopped.
+
+**Not verified**: that a fresh session following prompt 01 completes the clean re-run without help (it is written so; the first real use will show gaps: record them here).
+
+**Next**: the owner closes Docker Desktop and runs `wsl --shutdown`, then opens a new chat tab and pastes `docs/prompts/01-clean-benchmark-rerun.md`.

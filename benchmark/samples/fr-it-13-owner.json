@@ -1,0 +1,33 @@
+{
+  "id": "fr-it-13-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-13-owner.wav",
+  "durationMs": 5045,
+  "reference": "Le script Python plante quand le fichier CSV est vide.",
+  "keyTerms": [
+    {
+      "text": "Python",
+      "kind": "tech"
+    },
+    {
+      "text": "CSV",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

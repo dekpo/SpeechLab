@@ -1,0 +1,24 @@
+{
+  "id": "fr-gen-s-12-owner",
+  "language": "fr",
+  "domain": "general",
+  "utteranceType": "statement",
+  "category": "fr-general",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-gen-s-12-owner.wav",
+  "durationMs": 4776,
+  "reference": "Envoie ce document à toute l'équipe avant la fin de la journée.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

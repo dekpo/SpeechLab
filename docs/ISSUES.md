@@ -30,6 +30,13 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-029 | Open | engines | Long audio (45 s private clip, 1969 speech MP3): Canary truncates, Whisper tiny (both runtimes) repeats near the end; chunking/VAD needed (see I-018, I-019) |
 | I-031 | Mitigated | git hosting | GitHub returned HTTP 500 when creating any new branch pointing at the M4 commit; creating the branch from main in the web UI worked |
 | I-032 | Open | ui | The dataset recorder shows the benchmark path with a ".." segment (cosmetic) |
+| I-039 | Open | benchmark | First full run was disturbed by a heavy task: its speed, memory and core figures are unreliable (accuracy unaffected); clean re-run pending |
+| I-033 | Open | dataset | Suspect sample en-it-05: all engines hear 543, the script says 443 (listen, maybe re-record) |
+| I-034 | Open | scoring | Detector false alarms on times written "10.30", "3.30", "9h00" (about 15 % of reviewed flags) |
+| I-035 | Open | engines | Canary int8 emitted runaway garbage on one slow recording; product needs an output guard |
+| I-036 | Open | performance | sherpa-onnx uses 7 to 9 busy cores with 4 threads configured |
+| I-037 | Open | performance | whisper.cpp small is slower than real time on this CPU (RTF 1.6 to 1.9) |
+| I-038 | Info | benchmark | One speaker, 95 sentences, 1 repetition, CPU only; sampling interval via bootstrap |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
 | I-025 | Open | audio input | Recordings are about 1.5 % (~0.1 s on 6 s) shorter than the time held; cause not isolated |
@@ -154,3 +161,31 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-032 — Unnormalised benchmark path in the UI
 - `dataset::default_root()` joins `CARGO_MANIFEST_DIR` with `..`, so the path is displayed with `..`. Harmless; canonicalise when the runner is written.
+
+
+### I-033 — Suspect sample: `en-it-05-owner` ("Open port 443 on the firewall.")
+- All 9 configurations transcribe "port 543" (and one produced garbage). When every engine agrees against the reference, the speaker most likely said something else (for example "five forty-three"). Not an engine error until verified.
+- Action (owner): listen to the recording in the dataset recorder; if it does not say "four forty-three", record it again (the recorder replaces the sample) and re-run only that sample. Until then it is reported in the "hard or suspect samples" section and excluded from the second bootstrap table.
+
+### I-034 — Known false alarms of the critical-error detector
+- Time written with a dot or with ":00": "10.30" and "3.30" against "10 30"/"3 30", and "9h00" against "9 heures". Of the 23 critical-severity flags reviewed by hand (Parakeet, Canary, Whisper small beam 5), 3 were false alarms of this kind, 1 concerns the suspect sample, the rest were real errors (drug names, a lost digit). So precision is roughly 80 to 85 % on this small review and recall is unknown. Do not present flag counts as exact.
+- Possible fix: treat `H.MM` and `H:00` as times when the reference speaks a time.
+
+### I-035 — Canary can emit runaway garbage
+- On `en-it-05` (slow reading) Canary int8 produced "O P O N T H O R E N T E R E N T..." instead of text. Any product use needs an output sanity check (for example reject outputs made of isolated letters, or an out-of-range length versus the audio) and a fallback engine.
+
+### I-036 — sherpa-onnx uses more cores than configured
+- Median "busy cores" 7.4 (Whisper tiny, Canary) and 9.0 (Parakeet) with `num_threads = 4`; whisper.cpp stays at 3.5 to 3.8. Probably extra ONNX Runtime threads or spin-waiting (NOT verified). Matters because the desktop app and other programs share the CPU. To investigate: session options for intra/inter-op threads in sherpa-onnx.
+
+### I-037 — whisper.cpp small is slower than real time on this CPU
+- RTF 1.56 to 1.85, median 7 to 8 s for a sentence of about 5 s, p95 13 to 15 s. whisper.cpp large-v3-turbo (not installed) is heavier still. A GPU/Vulkan or Core ML build was not tested.
+
+### I-038 — Benchmark limits
+- One speaker, 95 sentences, 1 repetition, CPU only. No statistical claim beyond sampling noise over sentences. Confidence intervals come from `scripts/bootstrap_ci.py` (seed 7, 5000 resamples).
+
+### I-018 update (2026-10-07)
+- The repetition loops of sherpa-onnx Whisper tiny also occur on SHORT English questions (3 of 16 `en-general` outputs repeat the sentence 2 to 3 times), not only on long audio. They are not caused by `tail_paddings` (tested -1, 0, 50, 300, 1000). whisper.cpp tiny shows no such loop on the same files.
+
+### I-039 — First full benchmark ran on a busy machine
+- The owner started a heavy task during the run. Accuracy is expected to be unaffected (deterministic engines) but speed, memory and busy-core figures from `20261007-201137-full-owner-reps1` must not be quoted. A quiet-machine preflight now guards `bench run`. The preflight currently fails on this computer (CPU 16 to 52 % with Docker Desktop and the WSL VM active). Close: run the clean re-run, compare accuracy with the first run, replace the speed figures, update the PROJECT_LOG and D-032 (the provisional shortlist) if the speed picture changes.
+- Related: I-012 (timing variance) stays open until a 3-repetition study is done on a quiet machine.

@@ -1,0 +1,24 @@
+{
+  "id": "en-gen-s-07-owner",
+  "language": "en",
+  "domain": "general",
+  "utteranceType": "statement",
+  "category": "en-general",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-gen-s-07-owner.wav",
+  "durationMs": 5957,
+  "reference": "The prescription says 500 mg twice a day for 7 days.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

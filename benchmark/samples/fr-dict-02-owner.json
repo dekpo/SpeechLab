@@ -1,0 +1,37 @@
+{
+  "id": "fr-dict-02-owner",
+  "language": "fr",
+  "domain": "administrative",
+  "utteranceType": "dictation",
+  "category": "fr-dictation",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-dict-02-owner.wav",
+  "durationMs": 25696,
+  "reference": "Madame, Monsieur, nous accusons réception de votre demande du 5 janvier. Après vérification, la convention est signée mais l'attestation de domicile est manquante. Merci de nous la transmettre avant le vendredi 20 novembre. Les informations de votre dossier restent soumises à la confidentialité. Sans réponse de votre part, la demande ne pourra pas être traitée. Veuillez agréer, Madame, Monsieur, nos salutations distinguées.",
+  "keyTerms": [
+    {
+      "text": "convention",
+      "kind": "term"
+    },
+    {
+      "text": "attestation",
+      "kind": "term"
+    },
+    {
+      "text": "confidentialité",
+      "kind": "legal"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

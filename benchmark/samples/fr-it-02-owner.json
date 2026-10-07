@@ -1,0 +1,29 @@
+{
+  "id": "fr-it-02-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "question",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-02-owner.wav",
+  "durationMs": 4285,
+  "reference": "Peux-tu redémarrer le cluster Kubernetes avant midi ?",
+  "keyTerms": [
+    {
+      "text": "Kubernetes",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

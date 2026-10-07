@@ -1,0 +1,33 @@
+{
+  "id": "en-it-06-owner",
+  "language": "en",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "en-technical",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-it-06-owner.wav",
+  "durationMs": 5466,
+  "reference": "The backup runs every night but the restore was never tested.",
+  "keyTerms": [
+    {
+      "text": "backup",
+      "kind": "tech"
+    },
+    {
+      "text": "restore",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

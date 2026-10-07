@@ -1,0 +1,29 @@
+{
+  "id": "fr-adm-02-owner",
+  "language": "fr",
+  "domain": "administrative",
+  "utteranceType": "statement",
+  "category": "fr-administrative",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-adm-02-owner.wav",
+  "durationMs": 7586,
+  "reference": "La convention a été signée par les deux parties le 5 janvier 2026.",
+  "keyTerms": [
+    {
+      "text": "convention",
+      "kind": "term"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

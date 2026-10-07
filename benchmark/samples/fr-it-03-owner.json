@@ -1,0 +1,33 @@
+{
+  "id": "fr-it-03-owner",
+  "language": "fr",
+  "domain": "it",
+  "utteranceType": "statement",
+  "category": "fr-with-english-terms",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-it-03-owner.wav",
+  "durationMs": 5645,
+  "reference": "L'API REST renvoie une erreur 500 quand le token expire.",
+  "keyTerms": [
+    {
+      "text": "API REST",
+      "kind": "tech"
+    },
+    {
+      "text": "token",
+      "kind": "tech"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

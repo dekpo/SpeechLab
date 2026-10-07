@@ -1,0 +1,24 @@
+{
+  "id": "fr-gen-s-04-owner",
+  "language": "fr",
+  "domain": "general",
+  "utteranceType": "statement",
+  "category": "fr-general",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-gen-s-04-owner.wav",
+  "durationMs": 4216,
+  "reference": "Il fait beau aujourd'hui, mais le vent est assez fort.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

@@ -1,0 +1,24 @@
+{
+  "id": "en-gen-s-04-owner",
+  "language": "en",
+  "domain": "general",
+  "utteranceType": "statement",
+  "category": "en-general",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "en-gen-s-04-owner.wav",
+  "durationMs": 3765,
+  "reference": "I will not be available on Monday afternoon.",
+  "keyTerms": [],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}

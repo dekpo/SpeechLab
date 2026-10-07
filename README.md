@@ -10,7 +10,9 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M3 whisper.cpp speech-to-text (external process, ggml models, real cancellation): done.
 - M4 microphone capture, audio import (WAV/MP3/M4A/Ogg), local clip store, engine comparison with WER/CER and diff: done.
 - M5a benchmark dataset format, 95 reading scripts, spoken-number folding and critical-error detector: done (see `benchmark/README.md`).
-- Next: M5b in-app dataset recorder, M5c reproducible benchmark runner. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
+- M5b in-app dataset recorder (read a sentence, record, save with its reference): done.
+- M5c reproducible benchmark runner, first full benchmark of 9 configurations on 95 recorded sentences: done (results in `benchmark/results/`, analysis in [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md)).
+- Next: owner checks one suspect sample (I-033), then timing study, long-audio chunking, drug-name correction, accent clips.
 
 ## Read first
 
@@ -22,6 +24,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Technical decisions and rationale |
 | [docs/ISSUES.md](docs/ISSUES.md) | Open and resolved problems |
 | [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md) | Branches, commits, push commands |
+| [docs/HANDOFF.md](docs/HANDOFF.md) | State of the project, traps, commands and backlog for any new session |
+| [docs/prompts/](docs/prompts/README.md) | Ready-made prompts to continue in a new chat session |
 | [docs/M0_FEASIBILITY.md](docs/M0_FEASIBILITY.md) | Feasibility and dependency validation |
 
 ## Prerequisites (Windows)
@@ -73,6 +77,19 @@ cd src-tauri && cargo test     # Rust unit tests
 ```
 
 The dev server uses port **1430** on purpose (1420 is used by the AssistantCabinetAI desktop app). The first Rust build takes several minutes.
+
+## Benchmark
+
+```bash
+cd src-tauri
+cargo run --release --example bench -- check                       # dataset and audio checks
+cargo run --release --example bench -- run --reps 1 --label mine   # every installed model, both whisper.cpp decodings
+cargo run --release --example bench -- run --models sherpa-parakeet-tdt-0.6b-v3-int8 --category fr-general --reps 3
+cargo run --release --example bench -- rescore --dir ../benchmark/results/<folder>   # apply improved scoring rules
+python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
+```
+
+Results go to `benchmark/results/<UTC stamp>-<label>/` (`summary.md`, `summary.csv`, `runs.jsonl`, `system.json`, `config.json`). Always use `--release` for speed figures and avoid heavy work on the machine during a run. See `benchmark/README.md` for the dataset format.
 
 ## Layout
 

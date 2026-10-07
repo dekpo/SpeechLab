@@ -1,0 +1,29 @@
+{
+  "id": "fr-leg-03-owner",
+  "language": "fr",
+  "domain": "legal",
+  "utteranceType": "statement",
+  "category": "fr-legal",
+  "speaker": {
+    "id": "owner",
+    "profile": "native French, no marked accent",
+    "gender": null,
+    "accent": null
+  },
+  "audioFile": "fr-leg-03-owner.wav",
+  "durationMs": 5416,
+  "reference": "Les informations échangées sont soumises à la confidentialité.",
+  "keyTerms": [
+    {
+      "text": "confidentialité",
+      "kind": "legal"
+    }
+  ],
+  "source": {
+    "kind": "own-recording",
+    "url": null,
+    "license": "own recording, speaker is the project owner and consents"
+  },
+  "committable": false,
+  "notes": ""
+}
