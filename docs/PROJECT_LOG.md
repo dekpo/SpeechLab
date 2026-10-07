@@ -400,3 +400,21 @@ Re-scoring the same transcripts lowered every WER (for example Parakeet 3.6 % to
 **Not verified**: that a fresh session following prompt 01 completes the clean re-run without help (it is written so; the first real use will show gaps: record them here).
 
 **Next**: the owner closes Docker Desktop and runs `wsl --shutdown`, then opens a new chat tab and pastes `docs/prompts/01-clean-benchmark-rerun.md`.
+
+---
+
+## 2026-10-07 — M5c — Clean re-run attempted: blocked by the quiet-machine check
+
+**Done**
+- Read-only checks: `git status` clean on `milestone/m5-benchmark`, no `bench.exe` or `whisper-cli.exe` running. `cargo build --release --example bench` up to date (nothing to compile).
+- `bench preflight` run 10 times in a row over several minutes: exit code 2 every time. Average CPU 15.6 %, 16 %, 18 %, 24 %, 24 %, 25 %, 25 %, 27 %, 29 %, 31 % (limit 15 %). AC power: yes. Power plan: "Utilisation normale" (balanced).
+
+**Diagnosis (VERIFIED by observation)**
+- Docker Desktop and the WSL virtual machine are NOT the cause this time: `wsl -l -v` shows `docker-desktop` Stopped, there is no `vmmemWSL` and no Docker process.
+- Visible user processes (Cursor, shell) add up to about 2 % of the CPU.
+- The per-process performance counters show a Windows service host running the Windows Firewall and Base Filtering Engine (`BFE`, `mpssvc`) at 86 to 96 % of one core (about 8 % of the 12 logical cores) in every sample, plus the Avast Firewall service (`afwServ`, 0 to 24 %) and the Avast service (`AvastSvc`, up to 38 %). Windows reports 29 to 36 % privileged (kernel) time, which fits network-filter activity. Cause of the firewall load (rule churn, a firewall conflict, a scan) is NOT determined; admin rights would be needed to look further.
+- Nothing was stopped, killed or changed: these are system and security services of the owner.
+
+**Not done**: the clean benchmark was NOT started (no `--force`, by rule). The first run's speed figures are therefore still unreliable (I-039 stays open).
+
+**Next**: the owner decides how to bring the machine under 15 % CPU (see the message in the chat), then `bench preflight` is repeated until exit code 0 and prompt `docs/prompts/01-clean-benchmark-rerun.md` is continued from step 4.
