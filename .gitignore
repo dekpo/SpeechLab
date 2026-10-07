@@ -33,3 +33,8 @@ Thumbs.db
 # Local WAV samples used from the app UI (user recordings, never committed)
 /wav/
 src-tauri/.cargo/
+
+# Benchmark: voices and private material are never committed
+/benchmark/audio/
+/benchmark/samples-private/
+/benchmark/results/private/

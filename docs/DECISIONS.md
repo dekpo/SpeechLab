@@ -105,6 +105,17 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 - Date: 2026-10-07 · Status: accepted (extended in M5)
 - Decision: scoring normalisation = lower-case, punctuation to spaces, hyphen/dash to space, apostrophes unified. Kept: digits, decimal separators between digits, `%`. Not done: number-word equivalence ("trois" vs "3"), Unicode NFC. Originals are always preserved. Critical semantic errors (numbers, units, dosages, negations, drug names) get their own detector in M5; WER alone is never a safety statement.
 
+## D-022 update (2026-10-07) — Spoken numbers and unit spellings are now folded
+- Scoring folds spoken numbers to digits on both sides and unifies listed unit spellings, so "quinze" = "15" and "milligrammes" = "mg" no longer inflate WER. Different values ("15" vs "50") and different units ("mg" vs "g") remain errors. Swiss number words (septante, huitante, nonante) are not covered yet (I-030). Implementation: `numbers.rs`; the critical-error detector (`critical.rs`) runs on the same folded tokens.
+
+## D-026 — Critical errors are flags, separate from WER
+- Date: 2026-10-07 · Status: accepted
+- Decision: a transcript is reported with BOTH its WER/CER and a list of critical flags (numbers, units, negations, weekday/month, missing key terms). A run with critical flags is never presented as "good" because its WER is low. Heuristic detector: every flag keeps expected/found text for human review, and false alarms/misses will be counted on real outputs in M5c.
+
+## D-027 — Private samples live in a git-ignored folder
+- Date: 2026-10-07 · Status: accepted
+- Decision: `benchmark/samples-private/` (metadata and references) and `benchmark/audio/` are git-ignored. The loader refuses `third-party-private` samples outside `samples-private/` and refuses to mark them committable. Results computed from private samples go to `benchmark/results/private/` (ignored) or are reported only as aggregate numbers.
+
 ## D-023 — Clips stay local, are listed at startup and deletable
 - Date: 2026-10-07 · Status: accepted
 - Decision: recordings and converted imports live in `<app data>/recordings` as WAV, never sent anywhere, always visible and deletable in the UI. File access commands refuse any path outside that directory.
@@ -112,6 +123,13 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 ## D-024 — Comparison runs are sequential and never ranked
 - Date: 2026-10-07 · Status: accepted
 - Decision: models run one after another to avoid CPU contention. The UI shows facts (times, ×fastest, WER/CER or disagreement with a baseline) and a standing warning, but no "winner" label, per `Plan.md`.
+
+## D-025 — M5 dataset scope (owner answers, 2026-10-07)
+- Date: 2026-10-07 · Status: accepted (languages beyond fr/en are proposed, not decided)
+- Languages: French and English as in `Plan.md`. "Technical with English words" means FRENCH sentences containing English terms (PostgreSQL, API REST, Kubernetes...), separate from the English-language set. German and Italian (Swiss context) are outside the plan; candidate optional extension after M5, preferably from public-licence corpora rather than non-native reading.
+- Utterance types wanted by the owner: short questions and short statements (voice queries inside AssistantCabinetAI). Long dictation is secondary (reports) and depends on chunking (I-029): engines are measured with and without segmentation.
+- Speakers available: owner (standard metropolitan French, no marked accent, own voice, consent implicit); two Swiss Romande female clips (one already used in earlier tests); one long clip with a Maghreb-accented French speaker (not yet downloaded). One speaker per accent can never represent an accent: results are reported as "this speaker", never as "Swiss French" in general.
+- Consent and licence rule: recordings of third parties (voice notes) are treated as private local test material: never committed, never quoted, no content in docs, only aggregate numbers reported, and ideally the speaker's consent is obtained. Downloaded clips need a source URL and licence recorded in the dataset metadata, otherwise they stay local-only.
 
 ## D-016 — Cancellation contract
 - Date: 2026-10-06 · Status: accepted

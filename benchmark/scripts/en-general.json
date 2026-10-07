@@ -1,0 +1,130 @@
+[
+  {
+    "id": "en-gen-q-01",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "What time is my next appointment?"
+  },
+  {
+    "id": "en-gen-q-02",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "Can you open the file for Mrs Johnson?"
+  },
+  {
+    "id": "en-gen-q-03",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "How many messages did I receive this morning?"
+  },
+  {
+    "id": "en-gen-q-04",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "Where is the invoice from last month?"
+  },
+  {
+    "id": "en-gen-q-05",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "Is the meeting room free at 3 30?"
+  },
+  {
+    "id": "en-gen-q-06",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "Who called me before 10 o'clock?"
+  },
+  {
+    "id": "en-gen-q-07",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "Please summarise this document in 3 lines."
+  },
+  {
+    "id": "en-gen-q-08",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "en-general",
+    "text": "What is the weather forecast for tomorrow?"
+  },
+  {
+    "id": "en-gen-s-01",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "I just finished this morning's meeting."
+  },
+  {
+    "id": "en-gen-s-02",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "The letter is ready, you can send it."
+  },
+  {
+    "id": "en-gen-s-03",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "Remind me to call the bank tomorrow at 9."
+  },
+  {
+    "id": "en-gen-s-04",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "I will not be available on Monday afternoon."
+  },
+  {
+    "id": "en-gen-s-05",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "We received 18 messages since last night."
+  },
+  {
+    "id": "en-gen-s-06",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "The patient does not have any known allergy."
+  },
+  {
+    "id": "en-gen-s-07",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "The prescription says 500 mg twice a day for 7 days."
+  },
+  {
+    "id": "en-gen-s-08",
+    "language": "en",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "en-general",
+    "text": "Thank you very much, that is exactly what I needed."
+  }
+]

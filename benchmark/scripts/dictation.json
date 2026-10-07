@@ -1,0 +1,60 @@
+[
+  {
+    "id": "fr-dict-01",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "dictation",
+    "category": "fr-dictation",
+    "text": "Compte rendu de la consultation du jeudi 12 mars. Le patient se présente pour un contrôle de sa tension artérielle. Il ne signale aucune douleur thoracique et n'a pas de fièvre. La tension est de 14 sur 9. Le traitement actuel, 500 mg d'amoxicilline trois fois par jour, est indiqué pour 7 jours. Un nouveau rendez-vous est fixé le mardi 24 mars à 10 heures. Le dossier a été transmis à l'assurance, et la facture numéro 2045 est payable sous 30 jours.",
+    "keyTerms": [
+      {
+        "text": "amoxicilline",
+        "kind": "drug"
+      },
+      {
+        "text": "tension artérielle",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-dict-02",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "dictation",
+    "category": "fr-dictation",
+    "text": "Madame, Monsieur, nous accusons réception de votre demande du 5 janvier. Après vérification, la convention est signée mais l'attestation de domicile est manquante. Merci de nous la transmettre avant le vendredi 20 novembre. Les informations de votre dossier restent soumises à la confidentialité. Sans réponse de votre part, la demande ne pourra pas être traitée. Veuillez agréer, Madame, Monsieur, nos salutations distinguées.",
+    "keyTerms": [
+      {
+        "text": "convention",
+        "kind": "term"
+      },
+      {
+        "text": "attestation",
+        "kind": "term"
+      },
+      {
+        "text": "confidentialité",
+        "kind": "legal"
+      }
+    ]
+  },
+  {
+    "id": "en-dict-01",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "dictation",
+    "category": "en-dictation",
+    "text": "Meeting notes for Thursday. The team reviewed the PostgreSQL migration. The API is stable, but the restore procedure has not been tested. Authentication will be enabled for all accounts before Friday. The server must not be restarted during business hours. The next review is on Tuesday at 10 30, and the budget is 12000 francs.",
+    "keyTerms": [
+      {
+        "text": "PostgreSQL",
+        "kind": "tech"
+      },
+      {
+        "text": "authentication",
+        "kind": "tech"
+      }
+    ]
+  }
+]

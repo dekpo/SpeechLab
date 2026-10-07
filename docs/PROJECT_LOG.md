@@ -245,3 +245,36 @@ Tester: the owner, in the real app, on their own recordings. These are anecdotal
 - Import of WAV, Ogg and MP3 works.
 - Long English clip (the 1969 "one small step" speech, MP3, poor audio quality, source and license of this file unknown, not part of the repository): whisper.cpp + Whisper tiny gets almost to the end but with repetitions at the end; sherpa-onnx + Canary is the best of the tested ones but its transcript is truncated. Consistent with the earlier private-recording findings (I-018 repetition loops in Whisper tiny, I-019 Canary dropping the ending). Not measured: no reference transcript was used.
 - Only the models installed so far were tested (Whisper tiny in both runtimes, Canary int8). No English recording by the owner yet.
+
+---
+
+## 2026-10-07 — M5a — Dataset format, scripts, spoken-number folding, critical-error detector
+
+M5 is split in three parts. This is part a (data and scoring foundations). Part b: dataset recorder in the app (read a sentence, record, save the sample with its reference). Part c: reproducible runner (models x decodings x samples x repetitions, with memory and system info, JSON/CSV results) and chunking experiments (I-029).
+
+**Owner answers used**: priority order 1) short general sentences (questions and statements), 2) medical/administrative/legal vocabulary, 3) IT vocabulary (D-025).
+
+**Done**
+- `benchmark/` data folder and `benchmark/README.md` (format, privacy rules, recording guidelines). Layout: `scripts/` (sentences, committed), `samples/` (metadata + reference per sample, committed), `samples-private/` (git-ignored, for third-party voices), `audio/` (git-ignored), `results/`.
+- 95 reading items in `benchmark/scripts/`: French general 24 (12 questions, 12 statements), French medical 10 / administrative 7 / legal 7, French with English technical terms 20, English general 16, English technical 8, long dictations 3 (2 French, 1 English). Invented sentences, not medical or legal advice. Written from scratch, no external text.
+- `speech/dataset.rs`: loads and validates samples (language, domain, utterance type, source kind and licence, duplicate ids, empty reference, audio presence, duration measured from the WAV, third-party private material must live in `samples-private/` and cannot be committable). Adding samples needs no code change.
+- `speech/numbers.rs`: spoken numbers folded to digits in French and English up to 999 999 ("quinze heures trente" = "15 heures 30", "soixante dix" = 70, "quatre vingt dix" = 90, "cinq cents" = 500, "one hundred and five" = 105), "pour cent" to "%", unit spellings unified ("milligrammes" = "mg"). "un/une/one" stay words. Applied to both reference and hypothesis in scoring; different values stay different (D-022 updated).
+- `speech/critical.rs`: critical-error flags independent of WER: number changed/lost/added, unit changed, negation dropped/added, weekday/month changed, expected key term missing (with a "probable misspelling" hint from character similarity; drug and name misses are critical, others warnings). French elisions are split for term search ("l'amoxicilline").
+- A unit test proves the key point: a 500 mg to 50 mg change gives a WER under 10 % but a critical flag.
+
+**Verified**
+- 56 Rust unit tests pass, including: all 95 scripts load, have valid fields, unique ids, and a transcript equal to the reference raises zero flags (guards against a key term that is not literally in its sentence).
+- Git state read-only: M4 was committed by the owner on `milestone/m4-audio-compare` (merges of M0-M3 into main done); these M5a changes are uncommitted on top.
+
+**Failed / surprises**
+- First version of the key-term check missed "amoxicilline" inside "l'amoxicilline" (French elision glued the words): found by the unit test, fixed by splitting at apostrophes for term search.
+- While writing the detector tests I produced one nonsensical assertion line (a runaway generation); caught on reading the file before running, replaced with a real assertion. Noted because it shows why generated test code must be read.
+- Number-word handling is a heuristic: compound forms beyond the supported grammar are left untouched, which can only add a reported difference, not hide one. Documented in the module.
+- Shell tool rejected several large inline scripts again; used files and single edits.
+
+**Not verified**
+- Detector precision/recall on real ASR output (will be measured when the benchmark runs: every flag keeps expected/found text so false alarms can be counted by hand).
+- Whether the sentences are natural to read aloud (owner feedback after recording).
+- Swiss-French wording differences (septante, huitante, nonante) are NOT folded: a Swiss speaker saying "septante" gets "70" only if the ASR writes digits; the folder does not know these words. Add them if Swiss clips show it matters (I-030).
+
+**Next**: M5b, the in-app dataset recorder (shows the next sentence, records, saves the sample JSON and WAV, re-record button, progress per category), then M5c, the runner.

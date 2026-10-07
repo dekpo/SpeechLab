@@ -1,0 +1,294 @@
+[
+  {
+    "id": "fr-med-01",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "Le patient prend 500 mg d'amoxicilline trois fois par jour pendant 7 jours.",
+    "keyTerms": [
+      {
+        "text": "amoxicilline",
+        "kind": "drug"
+      }
+    ]
+  },
+  {
+    "id": "fr-med-02",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "Elle ne présente aucune allergie connue à la pénicilline.",
+    "keyTerms": [
+      {
+        "text": "pénicilline",
+        "kind": "drug"
+      }
+    ]
+  },
+  {
+    "id": "fr-med-03",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "La tension artérielle est de 14 sur 9, il s'agit d'une hypertension artérielle.",
+    "keyTerms": [
+      {
+        "text": "hypertension artérielle",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-med-04",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "Ne pas dépasser 3 g de paracétamol par jour.",
+    "keyTerms": [
+      {
+        "text": "paracétamol",
+        "kind": "drug"
+      }
+    ]
+  },
+  {
+    "id": "fr-med-05",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "L'anticoagulant est contre-indiqué en cas de saignement actif.",
+    "keyTerms": [
+      {
+        "text": "anticoagulant",
+        "kind": "drug"
+      },
+      {
+        "text": "contre-indiqué",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-med-06",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "La posologie est d'un comprimé de 2,5 mg le matin.",
+    "keyTerms": [
+      {
+        "text": "posologie",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-med-07",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "Le prochain contrôle aura lieu le jeudi 12 mars à 9 heures 30."
+  },
+  {
+    "id": "fr-med-08",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "Le traitement n'est pas à poursuivre au-delà de 10 jours."
+  },
+  {
+    "id": "fr-med-09",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "L'ordonnance mentionne de l'ibuprofène 400 mg en cas de douleur.",
+    "keyTerms": [
+      {
+        "text": "ibuprofène",
+        "kind": "drug"
+      }
+    ]
+  },
+  {
+    "id": "fr-med-10",
+    "language": "fr",
+    "domain": "medical",
+    "utteranceType": "statement",
+    "category": "fr-medical",
+    "text": "Le patient a une insuffisance rénale, la dose indiquée est réduite de 50 %.",
+    "keyTerms": [
+      {
+        "text": "insuffisance rénale",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-adm-01",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "statement",
+    "category": "fr-administrative",
+    "text": "Merci de joindre une attestation de domicile datant de moins de 3 mois.",
+    "keyTerms": [
+      {
+        "text": "attestation",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-adm-02",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "statement",
+    "category": "fr-administrative",
+    "text": "La convention a été signée par les deux parties le 5 janvier 2026.",
+    "keyTerms": [
+      {
+        "text": "convention",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-adm-03",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "statement",
+    "category": "fr-administrative",
+    "text": "Le dossier est incomplet, il manque le justificatif de revenus.",
+    "keyTerms": [
+      {
+        "text": "justificatif",
+        "kind": "term"
+      }
+    ]
+  },
+  {
+    "id": "fr-adm-04",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "statement",
+    "category": "fr-administrative",
+    "text": "Le rendez-vous est reporté au mardi 18 à 14 heures."
+  },
+  {
+    "id": "fr-adm-05",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "statement",
+    "category": "fr-administrative",
+    "text": "Veuillez confirmer votre présence avant le vendredi 20 novembre."
+  },
+  {
+    "id": "fr-adm-06",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "statement",
+    "category": "fr-administrative",
+    "text": "Les frais de dossier s'élèvent à 120 francs suisses."
+  },
+  {
+    "id": "fr-adm-07",
+    "language": "fr",
+    "domain": "administrative",
+    "utteranceType": "statement",
+    "category": "fr-administrative",
+    "text": "La facture numéro 2045 est payable sous 30 jours."
+  },
+  {
+    "id": "fr-leg-01",
+    "language": "fr",
+    "domain": "legal",
+    "utteranceType": "statement",
+    "category": "fr-legal",
+    "text": "Le consentement du patient doit être recueilli avant toute intervention.",
+    "keyTerms": [
+      {
+        "text": "consentement",
+        "kind": "legal"
+      }
+    ]
+  },
+  {
+    "id": "fr-leg-02",
+    "language": "fr",
+    "domain": "legal",
+    "utteranceType": "statement",
+    "category": "fr-legal",
+    "text": "La responsabilité civile du cabinet est couverte par une assurance.",
+    "keyTerms": [
+      {
+        "text": "responsabilité civile",
+        "kind": "legal"
+      }
+    ]
+  },
+  {
+    "id": "fr-leg-03",
+    "language": "fr",
+    "domain": "legal",
+    "utteranceType": "statement",
+    "category": "fr-legal",
+    "text": "Les informations échangées sont soumises à la confidentialité.",
+    "keyTerms": [
+      {
+        "text": "confidentialité",
+        "kind": "legal"
+      }
+    ]
+  },
+  {
+    "id": "fr-leg-04",
+    "language": "fr",
+    "domain": "legal",
+    "utteranceType": "statement",
+    "category": "fr-legal",
+    "text": "Le client n'a pas donné son accord écrit."
+  },
+  {
+    "id": "fr-leg-05",
+    "language": "fr",
+    "domain": "legal",
+    "utteranceType": "statement",
+    "category": "fr-legal",
+    "text": "Le délai de recours est de 30 jours à compter de la notification.",
+    "keyTerms": [
+      {
+        "text": "recours",
+        "kind": "legal"
+      }
+    ]
+  },
+  {
+    "id": "fr-leg-06",
+    "language": "fr",
+    "domain": "legal",
+    "utteranceType": "statement",
+    "category": "fr-legal",
+    "text": "Cette clause est nulle et ne produit aucun effet."
+  },
+  {
+    "id": "fr-leg-07",
+    "language": "fr",
+    "domain": "legal",
+    "utteranceType": "statement",
+    "category": "fr-legal",
+    "text": "Le contrat prend fin le 31 décembre sans reconduction tacite.",
+    "keyTerms": [
+      {
+        "text": "reconduction tacite",
+        "kind": "legal"
+      }
+    ]
+  }
+]

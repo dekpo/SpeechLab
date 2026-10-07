@@ -1,0 +1,194 @@
+[
+  {
+    "id": "fr-gen-q-01",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Quels sont mes rendez-vous de demain matin ?"
+  },
+  {
+    "id": "fr-gen-q-02",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Peux-tu ouvrir le dossier de madame Dupont ?"
+  },
+  {
+    "id": "fr-gen-q-03",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "À quelle heure commence la prochaine consultation ?"
+  },
+  {
+    "id": "fr-gen-q-04",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Est-ce que le courrier a bien été envoyé hier ?"
+  },
+  {
+    "id": "fr-gen-q-05",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Combien de patients sont inscrits cet après-midi ?"
+  },
+  {
+    "id": "fr-gen-q-06",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Où se trouve la facture du mois dernier ?"
+  },
+  {
+    "id": "fr-gen-q-07",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Quel jour sommes-nous aujourd'hui ?"
+  },
+  {
+    "id": "fr-gen-q-08",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Peux-tu résumer ce document en 3 lignes ?"
+  },
+  {
+    "id": "fr-gen-q-09",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Qui m'a appelé ce matin avant 10 heures ?"
+  },
+  {
+    "id": "fr-gen-q-10",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Faut-il confirmer le rendez-vous du jeudi ?"
+  },
+  {
+    "id": "fr-gen-q-11",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Y a-t-il un créneau libre vendredi à 15 heures 30 ?"
+  },
+  {
+    "id": "fr-gen-q-12",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "question",
+    "category": "fr-general",
+    "text": "Quelle est la météo prévue pour demain à Lausanne ?"
+  },
+  {
+    "id": "fr-gen-s-01",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Je viens de terminer la réunion de ce matin."
+  },
+  {
+    "id": "fr-gen-s-02",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Le courrier est prêt, tu peux l'envoyer."
+  },
+  {
+    "id": "fr-gen-s-03",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Rappelle-moi de téléphoner à la banque demain à 9 heures."
+  },
+  {
+    "id": "fr-gen-s-04",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Il fait beau aujourd'hui, mais le vent est assez fort."
+  },
+  {
+    "id": "fr-gen-s-05",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Ajoute une note : renouveler le contrat de maintenance."
+  },
+  {
+    "id": "fr-gen-s-06",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Le client arrive dans un quart d'heure."
+  },
+  {
+    "id": "fr-gen-s-07",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Je ne serai pas disponible lundi après-midi."
+  },
+  {
+    "id": "fr-gen-s-08",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Le dossier de monsieur Martin est sur le bureau."
+  },
+  {
+    "id": "fr-gen-s-09",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Merci beaucoup, c'est exactement ce que je cherchais."
+  },
+  {
+    "id": "fr-gen-s-10",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Nous avons reçu 18 messages depuis hier soir."
+  },
+  {
+    "id": "fr-gen-s-11",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "La salle de réunion est réservée jusqu'à 17 heures."
+  },
+  {
+    "id": "fr-gen-s-12",
+    "language": "fr",
+    "domain": "general",
+    "utteranceType": "statement",
+    "category": "fr-general",
+    "text": "Envoie ce document à toute l'équipe avant la fin de la journée."
+  }
+]

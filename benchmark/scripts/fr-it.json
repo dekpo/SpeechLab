@@ -1,0 +1,284 @@
+[
+  {
+    "id": "fr-it-01",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "La base de données PostgreSQL ne répond plus depuis ce matin.",
+    "keyTerms": [
+      {
+        "text": "PostgreSQL",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-02",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "question",
+    "category": "fr-with-english-terms",
+    "text": "Peux-tu redémarrer le cluster Kubernetes avant midi ?",
+    "keyTerms": [
+      {
+        "text": "Kubernetes",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-03",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "L'API REST renvoie une erreur 500 quand le token expire.",
+    "keyTerms": [
+      {
+        "text": "API REST",
+        "kind": "tech"
+      },
+      {
+        "text": "token",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-04",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Il faut migrer le projet Symfony vers la version 7.",
+    "keyTerms": [
+      {
+        "text": "Symfony",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-05",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "L'authentification à deux facteurs est activée pour tous les comptes.",
+    "keyTerms": [
+      {
+        "text": "authentification",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-06",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Le serveur de staging est hors ligne depuis le déploiement de vendredi.",
+    "keyTerms": [
+      {
+        "text": "staging",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-07",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Je dois configurer le firewall et ouvrir le port 443.",
+    "keyTerms": [
+      {
+        "text": "firewall",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-08",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Le backup est automatique, mais le restore n'a jamais été testé.",
+    "keyTerms": [
+      {
+        "text": "backup",
+        "kind": "tech"
+      },
+      {
+        "text": "restore",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-09",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Ajoute un index sur la colonne email de la table users.",
+    "keyTerms": [
+      {
+        "text": "index",
+        "kind": "tech"
+      },
+      {
+        "text": "users",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-10",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "La pull request est prête, il reste à relancer les tests unitaires.",
+    "keyTerms": [
+      {
+        "text": "pull request",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-11",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Le certificat SSL expire dans 15 jours.",
+    "keyTerms": [
+      {
+        "text": "SSL",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-12",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "question",
+    "category": "fr-with-english-terms",
+    "text": "Quelle est la version de Docker installée sur le serveur ?",
+    "keyTerms": [
+      {
+        "text": "Docker",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-13",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Le script Python plante quand le fichier CSV est vide.",
+    "keyTerms": [
+      {
+        "text": "Python",
+        "kind": "tech"
+      },
+      {
+        "text": "CSV",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-14",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Merci de ne pas pousser directement sur la branche main.",
+    "keyTerms": [
+      {
+        "text": "main",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-15",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "L'infrastructure est déployée sur un cloud européen avec une sauvegarde chiffrée.",
+    "keyTerms": [
+      {
+        "text": "infrastructure",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-16",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Active le mode debug et envoie-moi les logs du serveur.",
+    "keyTerms": [
+      {
+        "text": "debug",
+        "kind": "tech"
+      },
+      {
+        "text": "logs",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-17",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Le mot de passe doit contenir au moins 12 caractères."
+  },
+  {
+    "id": "fr-it-18",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Le service redémarre automatiquement en cas d'erreur."
+  },
+  {
+    "id": "fr-it-19",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "question",
+    "category": "fr-with-english-terms",
+    "text": "Peux-tu mettre à jour le fichier JSON de configuration ?",
+    "keyTerms": [
+      {
+        "text": "JSON",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "fr-it-20",
+    "language": "fr",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "fr-with-english-terms",
+    "text": "Le temps de réponse moyen est de 250 millisecondes."
+  }
+]

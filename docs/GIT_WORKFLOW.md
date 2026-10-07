@@ -104,6 +104,19 @@ git commit -m "Add microphone capture, audio import and engine comparison"
 git push -u origin milestone/m4-audio-compare
 ```
 
+## M5a — commands to run
+
+M4 is committed on `milestone/m4-audio-compare`; the M5a files are uncommitted on top of it.
+
+```bash
+git branch --show-current
+git switch -c milestone/m5-benchmark
+git add .gitignore benchmark docs src-tauri
+git status                      # check: no benchmark/audio, no samples-private, no wav/, vendor/, target
+git commit -m "Add benchmark dataset format, scripts and critical-error detector"
+git push -u origin milestone/m5-benchmark
+```
+
 ## Important: commit before you switch branches
 
 `git switch <branch>` is refused if it would overwrite uncommitted changes. If you then run `git merge`, it runs on the branch you are still on and reports "Already up to date". Always commit (or `git stash`) first, check `git branch --show-current`, and only then merge.

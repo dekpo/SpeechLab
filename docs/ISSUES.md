@@ -28,6 +28,7 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-022 | Mitigated | environment | `vswhere.exe` missing: Visual Studio CMake generator unusable; NMake used instead |
 | I-028 | Mitigated | audio input | Owner's microphone input seems to saturate (recording quality mediocre); a level/clipping indicator was added, cause not confirmed |
 | I-029 | Open | engines | Long audio (45 s private clip, 1969 speech MP3): Canary truncates, Whisper tiny (both runtimes) repeats near the end; chunking/VAD needed (see I-018, I-019) |
+| I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
 | I-025 | Open | audio input | Recordings are about 1.5 % (~0.1 s on 6 s) shorter than the time held; cause not isolated |
 | I-026 | Open | audio input | Non-WAV import relies on the platform WebView decoders (Ogg/Opus on macOS unverified) |
@@ -138,3 +139,6 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-027 — Orphan clips after reload (resolved)
 - Cause: the clip list was React state only. Fix: `list_clips` at startup, lazy playback via `read_clip`, deletion via `delete_clip`, all confined to the store directory (unit-tested).
+
+### I-030 — Swiss number words
+- A Swiss French speaker says "septante", "huitante", "nonante". Whisper/Canary usually output digits, but when they output words the scoring does not know them. Cheap to add to `numbers.rs` (70, 80 in some cantons, 90) once a Swiss clip shows it matters. Not verified on any real output yet.

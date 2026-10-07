@@ -3,12 +3,13 @@
 //! Original strings are never modified: normalisation is applied to copies for scoring only.
 //! Basic normalisation (M4) lower-cases, turns hyphens/dashes and punctuation into spaces and
 //! unifies apostrophes. It deliberately KEEPS digits, decimal separators between digits and
-//! `%`, so a changed dosage still counts as an error. Critical-error detection (numbers,
-//! units, negations, drug names) is a separate step planned for M5; WER alone must never be
-//! read as clinical safety.
+//! `%`, so a changed dosage still counts as an error. Spoken numbers are folded to digits on
+//! both sides ("quinze" = "15", see `numbers.rs`), which removes spelling-only differences but
+//! keeps "15" and "50" apart. Critical-error detection (numbers, units, negations, key terms)
+//! lives in `critical.rs`; WER alone must never be read as clinical safety.
 //!
 //! Known limits: no Unicode NFC/NFD normalisation (decomposed accents compare as different),
-//! no number-word equivalence ("trois" vs "3" counts as an error, on purpose for now).
+//! only the units listed in `numbers::canonical_unit` are unified ("mg" = "milligrammes").
 
 use serde::{Deserialize, Serialize};
 
@@ -66,11 +67,12 @@ pub fn normalize_words(text: &str) -> Vec<String> {
             cleaned.push(' ');
         }
     }
-    cleaned
+    let words: Vec<String> = cleaned
         .split_whitespace()
         .map(|w| w.trim_matches('\'').to_string())
         .filter(|w| !w.is_empty())
-        .collect()
+        .collect();
+    super::numbers::unify_units(super::numbers::fold_numbers(&words))
 }
 
 /// Minimum-edit alignment between two word sequences (substitution preferred on ties).
@@ -198,6 +200,19 @@ mod tests {
         assert!(c.wer.unwrap() > 0.0);
         let c = compare_texts("dose de 2,5 mg", "dose de 2.5 mg");
         assert_eq!(c.substitutions, 1, "decimal separators are kept as written");
+    }
+
+    #[test]
+    fn spoken_and_written_numbers_are_equivalent_but_different_values_are_not() {
+        assert_eq!(
+            compare_texts("rendez-vous à 15 heures 30", "rendez-vous à quinze heures trente").wer,
+            Some(0.0)
+        );
+        assert_eq!(compare_texts("500 mg", "cinq cents mg").wer, Some(0.0));
+        assert_eq!(compare_texts("500 mg", "cinq cents milligrammes").wer, Some(0.0));
+        assert!(compare_texts("500 mg", "500 g").wer.unwrap() > 0.0);
+        assert!(compare_texts("15 heures", "cinquante heures").wer.unwrap() > 0.0);
+        assert!(compare_texts("trois fois par jour", "2 fois par jour").wer.unwrap() > 0.0);
     }
 
     #[test]

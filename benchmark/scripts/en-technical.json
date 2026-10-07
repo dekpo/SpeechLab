@@ -1,0 +1,122 @@
+[
+  {
+    "id": "en-it-01",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "The PostgreSQL database has not responded since this morning.",
+    "keyTerms": [
+      {
+        "text": "PostgreSQL",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "en-it-02",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "Please restart the Kubernetes cluster before noon.",
+    "keyTerms": [
+      {
+        "text": "Kubernetes",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "en-it-03",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "The REST API returns a 500 error when the token expires.",
+    "keyTerms": [
+      {
+        "text": "REST API",
+        "kind": "tech"
+      },
+      {
+        "text": "token",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "en-it-04",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "Authentication is enabled for all accounts.",
+    "keyTerms": [
+      {
+        "text": "authentication",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "en-it-05",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "Open port 443 on the firewall.",
+    "keyTerms": [
+      {
+        "text": "firewall",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "en-it-06",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "The backup runs every night but the restore was never tested.",
+    "keyTerms": [
+      {
+        "text": "backup",
+        "kind": "tech"
+      },
+      {
+        "text": "restore",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "en-it-07",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "Add an index on the email column of the users table.",
+    "keyTerms": [
+      {
+        "text": "index",
+        "kind": "tech"
+      }
+    ]
+  },
+  {
+    "id": "en-it-08",
+    "language": "en",
+    "domain": "it",
+    "utteranceType": "statement",
+    "category": "en-technical",
+    "text": "The pull request is ready, we only need to rerun the unit tests.",
+    "keyTerms": [
+      {
+        "text": "pull request",
+        "kind": "tech"
+      }
+    ]
+  }
+]

@@ -4,11 +4,14 @@
 //! Each engine (sherpa-onnx, whisper.cpp, ...) is an adapter implementing the traits.
 
 pub mod clips;
+pub mod critical;
+pub mod dataset;
 pub mod download;
 pub mod error;
 pub mod metrics;
 pub mod mock;
 pub mod models;
+pub mod numbers;
 pub mod provider;
 pub mod registry;
 pub mod sherpa;
