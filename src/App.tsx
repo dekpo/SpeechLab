@@ -93,7 +93,7 @@ export default function App() {
   return (
     <main>
       <h1>SpeechLab</h1>
-      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M2: sherpa-onnx STT)</p>
+      <p className="sub">Offline speech-to-text / text-to-speech evaluation (experimental, M3: sherpa-onnx + whisper.cpp STT)</p>
 
       <section>
         <strong>Models</strong>
@@ -143,7 +143,7 @@ export default function App() {
         {selected && (
           <p>
             Cancellation: {selected.capabilities.supportsCancellation ? "yes" : "no (only before a run starts)"} ·
-            Auto language detection: {selected.capabilities.supportsLanguageAutoDetect ? "yes" : "no"}
+            Auto language detection (available, not used): {selected.capabilities.supportsLanguageAutoDetect ? "yes" : "no"}
           </p>
         )}
 
@@ -186,7 +186,7 @@ export default function App() {
               {result.audioMs !== null && ` for ${result.audioMs} ms of audio`}
               {result.rtf !== null && ` (RTF ${result.rtf.toFixed(3)})`} ·{" "}
               {result.coldStart ? `cold start, model load ${result.loadMs} ms` : "warm (model already loaded)"} ·{" "}
-              {result.threads} threads
+              {result.threads} threads · decoding: {result.decoding}
             </small>
           </>
         )}

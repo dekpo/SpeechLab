@@ -75,6 +75,40 @@ git push -u origin milestone/m2-sherpa-stt
 
 If you are still on the M1 branch with these changes uncommitted, `git switch -c milestone/m2-sherpa-stt` carries them over.
 
+## M3 — commands to run
+
+Start from the branch you are on (the work is not committed yet, so do NOT `git switch main` first; the new branch carries the uncommitted changes with it):
+
+```bash
+git switch -c milestone/m3-whisper-cpp
+git add src-tauri/src/speech/wav.rs
+git commit -m "Report the real audio format for non-WAV files"
+git add .gitignore README.md docs scripts src src-tauri
+git status                      # check: no wav/, vendor/, models, target, .cargo
+git commit -m "Add whisper.cpp provider and ggml model support"
+git push -u origin milestone/m3-whisper-cpp
+```
+
+Then merge everything into `main` with the section "Merging the milestones into `main`" below.
+
+## Important: commit before you switch branches
+
+`git switch <branch>` is refused if it would overwrite uncommitted changes. If you then run `git merge`, it runs on the branch you are still on and reports "Already up to date". Always commit (or `git stash`) first, check `git branch --show-current`, and only then merge.
+
+## Merging the milestones into `main` (once M0, M1, M2 are committed on their branches)
+
+Each milestone branch contains the previous ones, so merge them in order from `main`:
+
+```bash
+git switch main
+git branch --show-current                     # must print: main
+git merge --no-ff milestone/m0-feasibility    -m "Merge milestone M0 feasibility"
+git merge --no-ff milestone/m1-tauri-skeleton -m "Merge milestone M1 Tauri skeleton"
+git merge --no-ff milestone/m2-sherpa-stt     -m "Merge milestone M2 sherpa-onnx STT"
+git merge --no-ff milestone/m3-whisper-cpp    -m "Merge milestone M3 whisper.cpp"
+git push origin main
+```
+
 ## Pattern for every later milestone
 
 ```bash

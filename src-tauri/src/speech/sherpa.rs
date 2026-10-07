@@ -45,9 +45,12 @@ impl SherpaOnnxProvider {
         language: &str,
     ) -> Result<OfflineRecognizerConfig, SpeechError> {
         let dir = self.models.model_dir(def);
-        let path = |name: &str| -> Option<String> { Some(file_str(&dir.join(name))) };
+        let f = &def.files;
+        let path = |field: &Option<String>, what: &str| -> Result<Option<String>, SpeechError> {
+            Ok(Some(file_str(&dir.join(f.get(field, what)?))))
+        };
         let mut config = OfflineRecognizerConfig::default();
-        config.model_config.tokens = path(&def.files.tokens);
+        config.model_config.tokens = path(&f.tokens, "tokens")?;
         config.model_config.num_threads = self.threads as i32;
         config.model_config.provider = Some("cpu".into());
         config.decoding_method = Some("greedy_search".into());
@@ -55,8 +58,8 @@ impl SherpaOnnxProvider {
         match def.family {
             ModelFamily::Whisper => {
                 config.model_config.whisper = OfflineWhisperModelConfig {
-                    encoder: path(&def.files.encoder),
-                    decoder: path(&def.files.decoder),
+                    encoder: path(&f.encoder, "encoder")?,
+                    decoder: path(&f.decoder, "decoder")?,
                     language: Some(language.to_string()),
                     task: Some("transcribe".into()),
                     tail_paddings: -1,
@@ -65,23 +68,26 @@ impl SherpaOnnxProvider {
             }
             ModelFamily::Canary => {
                 config.model_config.canary = OfflineCanaryModelConfig {
-                    encoder: path(&def.files.encoder),
-                    decoder: path(&def.files.decoder),
+                    encoder: path(&f.encoder, "encoder")?,
+                    decoder: path(&f.decoder, "decoder")?,
                     src_lang: Some(language.to_string()),
                     tgt_lang: Some(language.to_string()),
                     use_pnc: true,
                 };
             }
             ModelFamily::NemoTransducer => {
-                let joiner = def.files.joiner.as_deref().ok_or_else(|| {
-                    SpeechError::Engine(format!("manifest for {} lacks a joiner file", def.id))
-                })?;
                 config.model_config.transducer = OfflineTransducerModelConfig {
-                    encoder: path(&def.files.encoder),
-                    decoder: path(&def.files.decoder),
-                    joiner: path(joiner),
+                    encoder: path(&f.encoder, "encoder")?,
+                    decoder: path(&f.decoder, "decoder")?,
+                    joiner: path(&f.joiner, "joiner")?,
                 };
                 config.model_config.model_type = Some("nemo_transducer".into());
+            }
+            ModelFamily::GgmlWhisper => {
+                return Err(SpeechError::InvalidRequest(format!(
+                    "model {} is a ggml model; it belongs to the whisper.cpp provider",
+                    def.id
+                )))
             }
         }
         Ok(config)
@@ -193,6 +199,7 @@ impl SpeechToTextProvider for SherpaOnnxProvider {
             audio_ms: Some(audio_ms),
             rtf: (audio_ms > 0).then(|| processing_ms as f64 / audio_ms as f64),
             threads: self.threads,
+            decoding: "greedy search".into(),
             is_mock: false,
         })
     }

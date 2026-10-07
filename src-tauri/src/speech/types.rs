@@ -55,6 +55,8 @@ pub struct TranscribeResult {
     /// Real-time factor = processing_ms / audio_ms (below 1.0 is faster than real time).
     pub rtf: Option<f64>,
     pub threads: u32,
+    /// Decoding strategy actually used, e.g. "greedy search" or "beam search (5 beams)".
+    pub decoding: String,
     pub is_mock: bool,
 }
 

@@ -5,6 +5,7 @@ use super::models::ModelManager;
 use super::provider::SpeechToTextProvider;
 use super::sherpa::SherpaOnnxProvider;
 use super::types::ProviderInfo;
+use super::whisper_cpp::WhisperCppProvider;
 
 /// Holds every registered provider. Adding an engine = implementing the trait and registering it here.
 pub struct ProviderRegistry {
@@ -17,9 +18,12 @@ impl ProviderRegistry {
     }
 
     pub fn with_default_providers(models: Arc<ModelManager>) -> Self {
-        // Real engines are registered here (whisper.cpp arrives in M3).
-        // The mock provider is intentionally NOT registered: it exists for tests only.
-        Self::new(vec![Box::new(SherpaOnnxProvider::new(models))])
+        // Real engines are registered here. The mock provider is intentionally NOT
+        // registered: it exists for tests only.
+        Self::new(vec![
+            Box::new(SherpaOnnxProvider::new(Arc::clone(&models))),
+            Box::new(WhisperCppProvider::new(models)),
+        ])
     }
 
     pub fn list_stt(&self) -> Vec<ProviderInfo> {
@@ -63,13 +67,13 @@ mod tests {
     }
 
     #[test]
-    fn default_registry_exposes_sherpa_and_no_mock() {
+    fn default_registry_exposes_both_engines_and_no_mock() {
         let models =
             Arc::new(ModelManager::new(std::env::temp_dir().join("speechlab_reg")).unwrap());
         let list = ProviderRegistry::with_default_providers(models).list_stt();
-        assert_eq!(list.len(), 1);
-        assert_eq!(list[0].id, "sherpa-onnx");
-        assert!(!list[0].is_mock);
+        let ids: Vec<_> = list.iter().map(|p| p.id.as_str()).collect();
+        assert_eq!(ids, vec!["sherpa-onnx", "whisper-cpp"]);
+        assert!(list.iter().all(|p| !p.is_mock));
     }
 
     #[test]

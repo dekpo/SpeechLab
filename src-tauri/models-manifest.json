@@ -4,18 +4,29 @@
     "displayName": "Whisper tiny (multilingual, ONNX)",
     "provider": "sherpa-onnx",
     "family": "whisper",
-    "languages": ["fr", "en"],
+    "languages": [
+      "fr",
+      "en"
+    ],
     "architecture": "Whisper encoder-decoder (tiny)",
     "quantization": "fp32 (archive also ships int8 files)",
     "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-tiny.tar.bz2",
     "archiveBytes": 116204861,
     "sha256": "c46116994e539aa165266d96b325252728429c12535eb9d8b6a2b10f129e66b1",
     "dirName": "sherpa-onnx-whisper-tiny",
-    "files": { "encoder": "tiny-encoder.onnx", "decoder": "tiny-decoder.onnx", "tokens": "tiny-tokens.txt" },
+    "files": {
+      "encoder": "tiny-encoder.onnx",
+      "decoder": "tiny-decoder.onnx",
+      "tokens": "tiny-tokens.txt"
+    },
     "license": "MIT (OpenAI Whisper weights)",
     "sourceUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models",
     "runtime": "sherpa-onnx (ONNX Runtime, CPU)",
-    "platforms": ["windows-x64", "macos-arm64", "macos-x64"],
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
     "expectedMemoryMb": null
   },
   {
@@ -23,18 +34,29 @@
     "displayName": "NVIDIA Canary 180M Flash (en/es/de/fr, int8)",
     "provider": "sherpa-onnx",
     "family": "canary",
-    "languages": ["fr", "en"],
+    "languages": [
+      "fr",
+      "en"
+    ],
     "architecture": "FastConformer encoder + Transformer decoder (Canary)",
     "quantization": "int8",
     "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-nemo-canary-180m-flash-en-es-de-fr-int8.tar.bz2",
     "archiveBytes": 153692328,
     "sha256": "7a38ed8b13f014ad632b09ff8d22e0c6f1359dd046af9235d281dfae841b9ab9",
     "dirName": "sherpa-onnx-nemo-canary-180m-flash-en-es-de-fr-int8",
-    "files": { "encoder": "encoder.int8.onnx", "decoder": "decoder.int8.onnx", "tokens": "tokens.txt" },
+    "files": {
+      "encoder": "encoder.int8.onnx",
+      "decoder": "decoder.int8.onnx",
+      "tokens": "tokens.txt"
+    },
     "license": "CC-BY-4.0 (NVIDIA)",
     "sourceUrl": "https://huggingface.co/nvidia/canary-180m-flash",
     "runtime": "sherpa-onnx (ONNX Runtime, CPU)",
-    "platforms": ["windows-x64", "macos-arm64", "macos-x64"],
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
     "expectedMemoryMb": null
   },
   {
@@ -42,18 +64,146 @@
     "displayName": "NVIDIA Parakeet TDT 0.6B v3 (multilingual, int8)",
     "provider": "sherpa-onnx",
     "family": "nemo-transducer",
-    "languages": ["fr", "en"],
+    "languages": [
+      "fr",
+      "en"
+    ],
     "architecture": "FastConformer TDT transducer",
     "quantization": "int8",
     "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2",
     "archiveBytes": 487170055,
     "sha256": "5793d0fd397c5778d2cf2126994d58e9d56b1be7c04d13c7a15bb1b4eafb16bf",
     "dirName": "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8",
-    "files": { "encoder": "encoder.int8.onnx", "decoder": "decoder.int8.onnx", "joiner": "joiner.int8.onnx", "tokens": "tokens.txt" },
+    "files": {
+      "encoder": "encoder.int8.onnx",
+      "decoder": "decoder.int8.onnx",
+      "joiner": "joiner.int8.onnx",
+      "tokens": "tokens.txt"
+    },
     "license": "CC-BY-4.0 (NVIDIA)",
     "sourceUrl": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3",
     "runtime": "sherpa-onnx (ONNX Runtime, CPU)",
-    "platforms": ["windows-x64", "macos-arm64", "macos-x64"],
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "whisper-cpp-tiny",
+    "displayName": "Whisper tiny (ggml fp16)",
+    "provider": "whisper-cpp",
+    "family": "ggml-whisper",
+    "packaging": "file",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "architecture": "Whisper tiny encoder-decoder (ggml)",
+    "quantization": "fp16",
+    "archiveUrl": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin",
+    "archiveBytes": 77691713,
+    "sha256": "be07e048e1e599ad46341c8d2a135645097a538221678b7acdd1b1919c6e1b21",
+    "dirName": "whisper-cpp-tiny",
+    "files": {
+      "model": "ggml-tiny.bin"
+    },
+    "license": "MIT (OpenAI Whisper weights, ggml conversion by ggml-org)",
+    "sourceUrl": "https://huggingface.co/ggerganov/whisper.cpp",
+    "runtime": "whisper.cpp v1.9.4 (CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "whisper-cpp-base-q5_1",
+    "displayName": "Whisper base (ggml q5_1)",
+    "provider": "whisper-cpp",
+    "family": "ggml-whisper",
+    "packaging": "file",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "architecture": "Whisper base encoder-decoder (ggml)",
+    "quantization": "q5_1",
+    "archiveUrl": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base-q5_1.bin",
+    "archiveBytes": 59707625,
+    "sha256": "422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898",
+    "dirName": "whisper-cpp-base-q5_1",
+    "files": {
+      "model": "ggml-base-q5_1.bin"
+    },
+    "license": "MIT (OpenAI Whisper weights, ggml conversion by ggml-org)",
+    "sourceUrl": "https://huggingface.co/ggerganov/whisper.cpp",
+    "runtime": "whisper.cpp v1.9.4 (CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "whisper-cpp-small-q5_1",
+    "displayName": "Whisper small (ggml q5_1)",
+    "provider": "whisper-cpp",
+    "family": "ggml-whisper",
+    "packaging": "file",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "architecture": "Whisper small encoder-decoder (ggml)",
+    "quantization": "q5_1",
+    "archiveUrl": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin",
+    "archiveBytes": 190085487,
+    "sha256": "ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb",
+    "dirName": "whisper-cpp-small-q5_1",
+    "files": {
+      "model": "ggml-small-q5_1.bin"
+    },
+    "license": "MIT (OpenAI Whisper weights, ggml conversion by ggml-org)",
+    "sourceUrl": "https://huggingface.co/ggerganov/whisper.cpp",
+    "runtime": "whisper.cpp v1.9.4 (CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "whisper-cpp-large-v3-turbo-q5_0",
+    "displayName": "Whisper large-v3-turbo (ggml q5_0)",
+    "provider": "whisper-cpp",
+    "family": "ggml-whisper",
+    "packaging": "file",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "architecture": "Whisper large-v3-turbo encoder-decoder (ggml)",
+    "quantization": "q5_0",
+    "archiveUrl": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin",
+    "archiveBytes": 574041195,
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2",
+    "dirName": "whisper-cpp-large-v3-turbo-q5_0",
+    "files": {
+      "model": "ggml-large-v3-turbo-q5_0.bin"
+    },
+    "license": "MIT (OpenAI Whisper weights, ggml conversion by ggml-org)",
+    "sourceUrl": "https://huggingface.co/ggerganov/whisper.cpp",
+    "runtime": "whisper.cpp v1.9.4 (CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
     "expectedMemoryMb": null
   }
 ]

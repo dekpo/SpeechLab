@@ -7,7 +7,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M0 feasibility: done.
 - M1 minimal Tauri app and provider contract: done.
 - M2 sherpa-onnx speech-to-text (model manager, WAV transcription fr/en): done.
-- Next: M3 whisper.cpp adapter. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
+- M3 whisper.cpp speech-to-text (external process, ggml models, real cancellation): done.
+- Next: M4 microphone capture and engine comparison view. See [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md).
 
 ## Read first
 
@@ -29,7 +30,7 @@ Node.js, pnpm, Rust (MSVC toolchain), MSVC Build Tools with the Windows SDK, Web
 powershell -ExecutionPolicy Bypass -File scripts\check-env.ps1
 ```
 
-CMake and LLVM are only needed later for whisper.cpp (milestone M3).
+For whisper.cpp you also need CMake (`winget install Kitware.CMake`). LLVM is not needed.
 
 ## Run
 
@@ -40,6 +41,12 @@ pnpm tauri dev      # starts Vite on port 1430 and opens the native window
 ```
 
 `scripts/fetch-sherpa-libs.ps1` downloads the prebuilt sherpa-onnx libraries (checksum-verified) and writes a git-ignored `src-tauri/.cargo/config.toml`. It is required only when the automatic download in the crate build fails, typically because an antivirus or proxy intercepts HTTPS (see docs/ISSUES.md I-009). It is harmless otherwise.
+
+To use the whisper.cpp engine, build its CLI once (clones the official repository at a pinned tag into the git-ignored `vendor/` and compiles it, about 2 minutes):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\build-whisper-cpp.ps1
+```
 
 ## Models and test audio
 
