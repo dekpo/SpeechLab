@@ -40,7 +40,7 @@ turn text into phonemes with espeak-ng (GPL-3.0). A character-based voice does n
 | Piper fr_FR gilles low | fr | CC0 (same corpus as CSS10 French) | **fine-tuned from the English Ryan voice** | not stated separately | espeak-ng | **excluded** | yes (comparison only) |
 | Kokoro multi-lang v1.0 (int8) | fr, en | Apache-2.0 / MIT audio, **synthetic audio from closed TTS services**, SIWIS (CC BY 4.0), Koniwa (CC BY 3.0) | not applicable | Apache-2.0 | espeak-ng | **review** | yes |
 | Piper fr_FR mls medium | fr | CC BY 4.0 (Multilingual LibriSpeech) | **trained from scratch** | not stated separately | espeak-ng | would be `attribution` | no: not in the sherpa-onnx release, needs a conversion step |
-| Piper en_US kristin medium | en | public domain (LibriVox) | trained from scratch | not stated separately | espeak-ng | would be `clear` | no: available in the sherpa-onnx release (64 MB), not downloaded yet |
+| Piper en_US kristin medium | en | public domain (LibriVox) | trained from scratch | not stated separately | espeak-ng | **clear** | yes (installed 2026-10-08 on the owner's approval; not yet measured or listened to) |
 | Piper fr_FR upmc medium | fr | CC BY-SA 4.0 | fine-tuned from Lessac | not stated separately | espeak-ng | review (share-alike plus Lessac) | no |
 | Piper en_US lessac medium | en | Blizzard 2013 **research** licence agreement | from scratch | not stated separately | espeak-ng | review at best (licence granted to a named person or organisation; clauses not read in full) | no |
 | Piper en_US amy, en_GB alan | en | "See URL" (not read) | fine-tuned from Lessac | not stated | espeak-ng | review (unread) | no |
@@ -50,6 +50,9 @@ turn text into phonemes with espeak-ng (GPL-3.0). A character-based voice does n
 | Piper fr_FR miro, tjiho | fr | no readable card | unknown | unknown | espeak-ng | review (unreadable) | no |
 | Kitten TTS nano (en) | en | not read | not read | Apache-2.0 (model card) | espeak-ng (to confirm) | not rated: English only | no |
 | Supertonic | multi | not read | not read | OpenRAIL-M (use-based restrictions) | none known | review | no |
+| Chatterbox (Resemble AI, base and multilingual) | multi incl. fr | not read | not read | MIT (Hugging Face metadata, 2026-10-08) | none read (not a sherpa-onnx model; PyTorch/ONNX/GGUF/MLX; voice cloning from a reference clip) | review: lineage and data unread, CPU speed unknown | no |
+| Chatterbox-TTS-French (community fine-tune, `Thomcles`) | fr | not read | fine-tune of Chatterbox | CC-BY-4.0 (metadata); training data licence unread | as above | review | no |
+| Qwen3-TTS (0.6B and 1.7B) | multi (French to confirm) | not read | not read | Apache-2.0 (metadata) | none read (not a sherpa-onnx model) | review: data unread, CPU speed unknown | no |
 | Pocket TTS | multi | not read | not read | CC-BY-4.0, gated (M0 note, card not readable now) | not read | not rated | no |
 
 Runtime components for context: sherpa-onnx Apache-2.0, ONNX Runtime MIT, espeak-ng GPL-3.0 (inside
@@ -63,6 +66,10 @@ the standard sherpa-onnx libraries, D-012).
   agreement and CC BY-NC-SA. `siwis` is now `review`, `gilles` is `excluded`.
 - The best-documented clean choices found so far: English **Piper ljspeech** (`clear`) and French
   **Coqui css10** (`attribution`, and the only French voice that needs no phonemizer).
+
+## Owner's stance (2026-10-08, D-041)
+
+A beta is acceptable only if it needs no paid licence; no legal consultation for now; a budget may be considered later depending on users and revenue. Public domain is preferred. So only `clear` and `attribution` voices are offered by default; the voices the owner liked best in French (Piper siwis `review`, gilles `excluded`) stay out of any distribution (`docs/TTS_LISTENING_NOTES.md`).
 
 ## Open points (the owner or a lawyer must settle them)
 
