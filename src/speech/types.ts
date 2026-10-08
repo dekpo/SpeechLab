@@ -188,6 +188,8 @@ export interface VoiceInfo {
   modelId: string;
   speakerId: number;
   speakerCount: number;
+  /** The package reads characters only: its default is to rewrite digits and units into words. */
+  normalizeText: boolean;
 }
 
 export interface SynthesizeRequest {
@@ -197,6 +199,26 @@ export interface SynthesizeRequest {
   text: string;
   /** 1.0 = normal speed. */
   speed: number;
+  /** Rewrite digits, dates and units into words first. Omitted or null = the voice package's default. */
+  normalise?: boolean | null;
+}
+
+/** One sentence of a request: its span in the original text and the text the voice receives for it. */
+export interface SentencePlan {
+  text: string;
+  spoken: string;
+  /** UTF-16 offsets into the original text (JavaScript string indices). */
+  start: number;
+  end: number;
+  paragraphEnd: boolean;
+}
+
+/** Where one sentence sits in the generated audio; offsets refer to the original text. */
+export interface Segment {
+  start: number;
+  end: number;
+  startMs: number;
+  endMs: number;
 }
 
 export interface SynthesizeResult {
@@ -211,5 +233,9 @@ export interface SynthesizeResult {
   rtf: number | null;
   speed: number;
   peakMemoryMb: number | null;
+  /** One entry per sentence, in order. Empty when the engine gives no timings. */
+  segments: Segment[];
+  /** The text was rewritten into words before synthesis. */
+  normalised: boolean;
   isMock: boolean;
 }

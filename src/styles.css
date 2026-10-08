@@ -35,3 +35,40 @@ code { background: #f1f1f1; padding: 0 4px; border-radius: 3px; font-size: .85em
 .tier-clear, .tier-attribution { background: #e6f4ea; border-color: #8fc79f; }
 .tier-review { background: #fff4d6; border-color: #e0b84d; }
 .tier-excluded { background: #fde7e7; border-color: #e08a8a; }
+
+/* Read-along view (D-040, D-042): the sentence being read gets a grey background. The block sets its own
+   text and background colours, so the contrast holds whatever the rest of the page does. */
+.readalong {
+  --ra-bg: #fff;
+  --ra-fg: #1c1c1c;
+  --ra-border: #ccc;
+  --ra-active-bg: #d4d4d4;
+  --ra-active-fg: #111;
+  background: var(--ra-bg);
+  color: var(--ra-fg);
+  border: 1px solid var(--ra-border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-top: 8px;
+  max-height: 16rem;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  line-height: 1.7;
+}
+.readalong .sentence-span { border-radius: 3px; padding: 1px 0; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.readalong [aria-current="true"] { background: var(--ra-active-bg); color: var(--ra-active-fg); }
+@media (prefers-color-scheme: dark) {
+  .readalong {
+    --ra-bg: #1e1e1e;
+    --ra-fg: #e6e6e6;
+    --ra-border: #555;
+    --ra-active-bg: #4d4d4d;
+    --ra-active-fg: #fff;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .readalong .sentence-span { transition: background-color 120ms; }
+}
+.spoken-list { margin: 6px 0; padding-left: 20px; font-size: .9rem; }
+.spoken-list li { margin: 3px 0; }
+.spoken-list .changed { color: #1b5e20; }

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import ReadAlong from "./ReadAlong";
 import {
   cancelModelDownload,
   cancelSynthesis,
@@ -8,6 +9,7 @@ import {
   listTtsProviders,
   listTtsVoices,
   onDownloadProgress,
+  previewSpokenText,
   readTtsAudio,
   synthesize,
 } from "../speech/api";
@@ -15,6 +17,7 @@ import type {
   DownloadProgress,
   ModelInfo,
   ProviderInfo,
+  SentencePlan,
   SynthesizeResult,
   VoiceInfo,
 } from "../speech/types";
@@ -57,7 +60,19 @@ export default function TtsPanel({ onError }: Props) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [installing, setInstalling] = useState<string | null>(null);
   const [progress, setProgress] = useState<DownloadProgress | null>(null);
-  const player = useRef<HTMLAudioElement>(null);
+  // null = follow the voice package's default for rewriting digits and units into words.
+  const [normaliseChoice, setNormaliseChoice] = useState<boolean | null>(null);
+  const [showSpoken, setShowSpoken] = useState(false);
+  const [spoken, setSpoken] = useState<SentencePlan[]>([]);
+  // The text the current audio was made from: the highlight is valid only while the text is unchanged.
+  const [sourceText, setSourceText] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
+  const player = useRef<HTMLAudioElement | null>(null);
+  const attachPlayer = useCallback((el: HTMLAudioElement | null) => {
+    player.current = el;
+    setAudioEl(el);
+  }, []);
 
   const refresh = useCallback(async (providerId: string) => {
     try {
@@ -86,11 +101,34 @@ export default function TtsPanel({ onError }: Props) {
   // Free the audio object URL when it is replaced or the panel goes away.
   useEffect(() => () => { if (audioUrl) URL.revokeObjectURL(audioUrl); }, [audioUrl]);
 
+  const showRead = !!result && result.segments.length > 0 && sourceText !== null && sourceText === text && !editing;
   const languageVoices = voices.filter((v) => v.language === language);
   const voice = voices.find((v) => v.id === voiceId);
+  const normalise = normaliseChoice ?? voice?.normalizeText ?? false;
   useEffect(() => {
     if (!languageVoices.some((v) => v.id === voiceId)) setVoiceId(languageVoices[0]?.id ?? "");
   }, [languageVoices, voiceId]);
+
+  // The voice decides the default; a manual choice applies to the current voice only.
+  useEffect(() => setNormaliseChoice(null), [voiceId]);
+
+  // Text sent to the voice, shown on request (what the rewriting did, sentence by sentence).
+  useEffect(() => {
+    if (!showSpoken || !text.trim()) {
+      setSpoken([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      previewSpokenText(text, language, normalise)
+        .then((plan) => !cancelled && setSpoken(plan))
+        .catch((e) => !cancelled && onError(String(e)));
+    }, 150);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [showSpoken, text, language, normalise, onError]);
 
   function changeLanguage(next: string) {
     // Replace the text only if it is still the untouched sample of the other language.
@@ -119,11 +157,14 @@ export default function TtsPanel({ onError }: Props) {
     onError(null);
     setResult(null);
     setAudioUrl(null);
+    setSourceText(null);
     try {
-      const r = await synthesize({ providerId: provider.id, voiceId: voice.id, language, text, speed });
+      const r = await synthesize({ providerId: provider.id, voiceId: voice.id, language, text, speed, normalise });
       const bytes = await readTtsAudio(r.wavPath);
       setAudioUrl(URL.createObjectURL(new Blob([bytes], { type: "audio/wav" })));
       setResult(r);
+      setSourceText(text);
+      setEditing(false);
     } catch (e) {
       // A cancellation the user asked for is not an error.
       if (!String(e).includes("operation cancelled")) onError(String(e));
@@ -145,6 +186,7 @@ export default function TtsPanel({ onError }: Props) {
       const n = await clearTtsAudio();
       setResult(null);
       setAudioUrl(null);
+      setSourceText(null);
       onError(null);
       window.alert(`${n} generated audio file(s) deleted.`);
     } catch (e) {
@@ -237,10 +279,47 @@ export default function TtsPanel({ onError }: Props) {
       />
       <small>The effect on duration differs between voices: check the audio duration shown after each generation.</small>
 
-      <label htmlFor="tts-text">Text</label>
-      <textarea id="tts-text" value={text} onChange={(e) => setText(e.target.value)} rows={4} maxLength={5000} />
+      <label className="check">
+        <input
+          id="tts-normalise"
+          type="checkbox"
+          checked={normalise}
+          onChange={(e) => setNormaliseChoice(e.target.checked)}
+        />
+        Rewrite numbers, dates, times and units into words before speaking
+        {voice?.normalizeText ? " (needed by this voice: it does not read digits)" : " (this voice reads digits itself)"}
+      </label>
+      <label className="check">
+        <input id="tts-show-spoken" type="checkbox" checked={showSpoken} onChange={(e) => setShowSpoken(e.target.checked)} />
+        Show the text sent to the voice
+      </label>
+      {showSpoken && (
+        <ol className="spoken-list" id="tts-spoken">
+          {spoken.map((p) => (
+            <li key={p.start} className={p.spoken !== p.text ? "changed" : undefined}>
+              {p.spoken}
+            </li>
+          ))}
+        </ol>
+      )}
 
-      <button onClick={() => void generate()} disabled={busy || !voice || !text.trim()}>
+      <label htmlFor={showRead ? "tts-readalong" : "tts-text"}>Text</label>
+      {showRead && result && sourceText !== null ? (
+        <>
+          <ReadAlong text={sourceText} segments={result.segments} audio={audioEl} />
+          <button id="tts-edit" onClick={() => setEditing(true)}>Edit text</button>
+          <small> Editing removes the highlight until you generate again.</small>
+        </>
+      ) : (
+        <>
+          <textarea id="tts-text" value={text} onChange={(e) => setText(e.target.value)} rows={4} maxLength={5000} />
+          {result && result.segments.length > 0 && sourceText !== null && sourceText !== text && (
+            <p className="hint">The text changed since the audio was generated: generate again to get the highlight.</p>
+          )}
+        </>
+      )}
+
+      <button id="tts-generate" onClick={() => void generate()} disabled={busy || !voice || !text.trim()}>
         {busy ? "Generating…" : "Generate"}
       </button>
       <button onClick={() => void cancelSynthesis()} disabled={!busy}>
@@ -250,9 +329,9 @@ export default function TtsPanel({ onError }: Props) {
       {result && audioUrl && (
         <>
           <p>
-            <audio ref={player} controls src={audioUrl} preload="metadata" />
+            <audio ref={attachPlayer} controls src={audioUrl} preload="metadata" />
           </p>
-          <button onClick={stop}>Stop</button>{" "}
+          <button id="tts-stop" onClick={stop}>Stop</button>{" "}
           <a href={audioUrl} download={`speechlab-tts-${language}.wav`}>
             <button type="button">Save WAV</button>
           </a>{" "}
@@ -261,6 +340,7 @@ export default function TtsPanel({ onError }: Props) {
             <small>
               generation {result.generationMs} ms for {result.audioMs} ms of audio
               {result.rtf !== null && ` (RTF ${result.rtf.toFixed(3)})`} · {result.sampleRate} Hz ·{" "}
+              {result.segments.length} sentence(s){result.normalised ? ", text rewritten into words" : ""} ·{" "}
               {result.coldStart ? `cold start, voice load ${result.loadMs} ms` : "warm (voice already loaded)"} · speed{" "}
               {result.speed.toFixed(2)}
               {result.peakMemoryMb !== null && ` · peak memory ${Math.round(result.peakMemoryMb)} MB`}

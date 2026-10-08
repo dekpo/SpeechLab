@@ -10,6 +10,7 @@ import type {
   DownloadProgress,
   ModelInfo,
   ProviderInfo,
+  SentencePlan,
   SynthesizeRequest,
   SynthesizeResult,
   VoiceInfo,
@@ -90,6 +91,10 @@ export const synthesize = (request: SynthesizeRequest): Promise<SynthesizeResult
   invoke<SynthesizeResult>("synthesize", { request });
 
 export const cancelSynthesis = (): Promise<void> => invoke<void>("cancel_synthesis");
+
+/** The sentences of a text and what the voice would receive for each one (nothing is synthesised). */
+export const previewSpokenText = (text: string, language: string, normalise: boolean): Promise<SentencePlan[]> =>
+  invoke<SentencePlan[]>("preview_spoken_text", { text, language, normalise });
 
 /** WAV bytes of a generated file (for the player and the export). */
 export const readTtsAudio = (path: string): Promise<ArrayBuffer> =>
