@@ -57,6 +57,7 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-059 | Open | UI | The application has no dark theme; only the read-along block follows the system setting |
 | I-060 | Open | TTS voices | Piper `mls` (converted locally) is weak by a recogniser proxy (74 of 125 speakers at 90 % word error rate or worse) and cannot be installed from the app |
 | I-061 | Open | TTS normaliser | Known limits: acronyms, gender of "un", Roman numerals, ambiguous "10.30" and "5 100", English untested by ear |
+| I-063 | Open, accepted for now (owner, D-043) | TTS licensing and quality | French: the voices judged good (siwis, gilles) have restricted parent checkpoints, every clean French voice is judged unsatisfactory; the owner keeps siwis and gilles for now and will re-train them from the clean base before any commercial release (BLOCKER for commercialisation) |
 | I-062 | Open | TTS read-along | Sentence segmentation is a heuristic (line breaks inside a wrapped paragraph split it, short abbreviation list) |
 | I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
@@ -331,3 +332,10 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-062 — Sentence segmentation is a heuristic
 - A line break inside a hard-wrapped paragraph splits the sentence; a sentence that really ends before a lower-case word ("... Bonjour. merci") is not split; the abbreviation list is short and fixed. Wrong splits only change where pauses and shading fall, never the text spoken. Status: open, low priority.
+
+### I-063 — The good French voices have a restricted lineage (owner's session 2 and interface tests)
+- Owner's reading (2026-10-08): best French voices Piper siwis (female) and gilles (male), all other French voices unsatisfactory (Coqui css10 with the normaliser: 3 out of 5, converted `mls`: 1 to 2). siwis = `review` (parent Lessac, Blizzard 2013 research licence), gilles = `excluded` (parent Ryan, CC BY-NC-SA 4.0): see I-052. No other French voice of the sherpa-onnx release qualifies (tom, tjiho: AGPL-3.0; upmc: BY-SA from Lessac; miro: non-commercial; mms: non-commercial).
+- Status: open. Proposed way out: re-train both voices from the clean public base checkpoint (D-043); interim for a beta: English voices plus Coqui for French. Related: I-052, I-060, I-058.
+
+### I-063 update (2026-10-08) — owner's decision
+- Decision D-043: keep Piper siwis and gilles now; re-train both from the clean base checkpoint later, when the software is to be commercialised. Until then they are for development, evaluation and non-commercial use; their ratings stay `review` and `excluded`. Status: open as a commercial-release blocker; nothing was re-trained, nothing about the legal question was resolved. Still to confirm: whether handing a free beta to other people counts as non-commercial use (a legal question).

@@ -789,3 +789,50 @@ Owner's instruction (after M6 was committed): the voices must be judged first by
 - The owner does listening session 2 and pastes the notes (steps in `docs/TTS_LISTENING_NOTES.md`), then M7 packaging (`docs/prompts/06-packaging-validation.md`).
 
 **Identity check (end of entry)**: the repository was searched for AI and vendor names (only the pre-existing mentions of the upstream Whisper weights' licence and the Opus codec remain; nothing added); the editor name in this run's `preflight-*.json` was replaced by `code-editor.exe`; no private content; `git status` lists no model, audio or `vendor/` file.
+
+---
+
+## 2026-10-08 — M6e — Owner's listening session 2 and interface tests; French licence problem re-examined
+
+**Done**
+- **The owner's session 2 notes are recorded verbatim** in `docs/TTS_LISTENING_NOTES.md` (scores, the owner's note on the interface tests with an English gloss, analysis kept apart).
+- **French licence problem re-examined with sources** (read-only, nothing downloaded): the complete list of French voices of the sherpa-onnx release (`gh api`, 644 assets), the Blizzard 2013 licence, the Piper maintainer's answers (discussions 271 and 94), the `piper-checkpoints` repository (clean base model, siwis and mls checkpoints), the SIWIS dataset licence, the tjiho and miro cards. Details and the options in `docs/TTS_LICENSES.md` ("French voice: lineage problem and ways out"), D-043 (proposed), I-063.
+
+**Verified (with evidence)**
+- The owner's conclusion is exact: the French voices judged good (siwis, gilles) are exactly the ones with a restricted parent checkpoint (cards: "Finetuned from ... lessac", "Finetuned from ... Ryan"); the Coqui voice with the normaliser scores 3 out of 5 and the converted `mls` speakers 1 to 2.
+- A clean public parent checkpoint exists (`rhasspy/piper-checkpoints/_base_model`, card: trained from scratch on LibriTTS-R, CC BY 4.0, repository MIT); the Piper maintainer wrote that he would re-train voices from it so that they can be used commercially. The SIWIS dataset is CC BY 4.0 with "usable for any purpose" in its README.
+- The release's French voices are tom and tjiho (AGPL-3.0, the `LICENSE.txt` of tjiho read), upmc (CC BY-SA, from Lessac), miro (non-commercial, trained on synthetic data), siwis, gilles, Coqui css10, mms (non-commercial).
+
+**Failed or surprises**
+- **My earlier statement was wrong**: the M6d entry and `docs/TTS_LICENSES.md` said the sherpa-onnx release lists only `vits-coqui-fr-css10` and `vits-mms-fra` for French. A page summary had covered only the first 100,000 of 988,351 characters. The real list (644 assets) has more French voices, none usable, so the conclusion stands but my evidence was incomplete. Corrected in `docs/TTS_LICENSES.md`.
+- The owner's usage differs from my default: the rewriting of numbers, dates, times and units is wanted on the phonemizer voices as well (D-043 proposes making it the default everywhere).
+
+**Not verified**
+- Whether weights fine-tuned from the Lessac or Ryan checkpoints inherit a restriction (legal question, untested according to the maintainer); the effort, cost and quality of re-training siwis and gilles from the clean base (no GPU on this machine, nothing tried); whether the gilles data is the CSS10 French corpus (only the Kaggle dataset title was checked); the licence terms of Piper's training code for a shipped product (it is not shipped, GPL-3.0, not read in full).
+
+**Next**
+- The owner chooses a way out of the French problem (D-043). Then either a training guide for a GPU session outside this machine, or M7 packaging (`docs/prompts/06-packaging-validation.md`, its step 0 no longer applies: the notes are recorded).
+
+**Identity check (end of entry)**: no AI or vendor name added; third-party project names (Piper, Lessac Technologies, OpenVoiceOS) appear only as the voices' sources and licensors.
+
+### 2026-10-08 — M6e addendum — Paid French voices (owner's question), rewriting default approved
+- The owner asked whether paid French voices exist and at what price. Answer and table in `docs/TTS_LICENSES.md` ("Paid French voices"): cloud offers (Google, Amazon, Azure, OpenAI, ElevenLabs) cost $4 to $160 per million characters, ElevenLabs about $0.04 to $0.08 per 1,000 characters; only on-device SDKs (Acapela, ReadSpeaker, CereProc, Cerence) respect the offline rule and they publish no price. NOT VERIFIED: prices come from search results and third-party sites, not from the vendors' pages; nothing was listened to or tested.
+- The owner approved the proposal of D-043 to turn the rewriting of numbers, dates, times and units ON by default for every voice, and asked for no coding for now: it stays to do (manifest `normalizeText` true everywhere, adjust the unit test in `models.rs`, keep the checkbox).
+
+### 2026-10-08 — M6e addendum 2 — Owner's decision on the French voices (D-043)
+- **Decision (owner)**: keep Piper siwis and gilles now, re-train them from the clean base checkpoint later, when the software is to be commercialised. Recorded in D-043 ("Owner's decision"), I-063 (update) and `docs/TTS_LICENSES.md`. D-041 is amended for these two voices until commercialisation; their ratings and the in-app warning are unchanged.
+- Number rewriting ON by default for every voice: approved, coded in the next step (see addendum 3).
+- Not recorded on purpose: the owner's comparison with another assistant's answer about the Piper licences (the owner asked to wait). The paid-voice table was recorded before that request.
+- Not verified: whether a free beta given to others is non-commercial use (legal question); re-training time, cost and quality (nothing tried).
+
+### 2026-10-08 — M6e addendum 3 — Number rewriting ON by default for every voice (D-043)
+
+**Done**
+- `normalizeText` is now `true` for all 8 voice packages of `models-manifest.json` (it was true only for Coqui css10). The manifest unit test in `models.rs` now requires it on for every voice instead of tying it to the phonemizer field. The checkbox stays and the request can still switch it off (`normalise: false`). The UI label no longer says that phonemizer voices read digits themselves ("on by default; the Coqui voice does not read digits at all"). The read-along UI test script now expects the box checked for the Piper siwis voice (it expected it unchecked).
+- The real-voice unit test asserts that a Piper siwis request with no override reports `normalised = true` and that `normalise: Some(false)` gives `normalised = false`.
+
+**Verified**: `cargo test --lib` 163 passed (including the two tests that use the real Piper siwis voice), `pnpm typecheck`, `pnpm test` 16 passed, `pnpm build`, `node --check` of the UI test script.
+
+**Not verified**: the read-along UI test (`scripts/ui_test_readalong.mjs`) was NOT re-run after this change: the owner's own `pnpm tauri dev` session was open on port 1430 (not touched), so the default state of the checkbox on a phonemizer voice has not been observed in the real page since the change. How the rewriting sounds on siwis, gilles, libritts_r, kristin and ljspeech is the owner's own observation (their interface tests used it); the English rules were never listened to on a character-based English voice. Steps to verify: close the app, start it with the remote-debugging switch (`docs/HANDOFF.md` section 5), run `node scripts/ui_test_readalong.mjs`; expect 33 of 33.
+
+**Next**: M7 packaging (`docs/prompts/06-packaging-validation.md`).

@@ -22,15 +22,15 @@ English. Work autonomously, but follow the project rules to the letter.
    D-034, D-038, D-039, D-041, D-042, `docs/TTS_LICENSES.md`, `docs/TTS_LISTENING_NOTES.md`, `docs/ISSUES.md` (I-009, I-010, I-024, I-026,
    I-051, I-059, I-060), `Plan.md` (packaging and compatibility sections) and `docs/prompts/next-tasks.md` section T7.
 
-## Step 0 — the owner's listening session 2 (only if the owner pastes notes)
-The owner may paste the notes of the blind listening session 2 (`benchmark/tts-samples/session2/index.html`: Piper
-`kristin`, `ljspeech`, `libritts_r`; Coqui css10 with the text normaliser ON and OFF; three speakers of the converted
-Piper `mls` voice). Before anything else, record them VERBATIM in `docs/TTS_LISTENING_NOTES.md` (replace the "PENDING"
-paragraph of session 2 by a scores table in the format of session 1, the owner's comments in French with an English
-gloss, and a short analysis kept apart from the opinion), resolve the codes A to H with the page's own text, then update
-D-041/D-042 consequences, I-055, I-058 and I-060, `docs/HANDOFF.md` section 3 and the beta voice list (which French and
-English voice is the default). If the notes are not pasted, say in French that session 2 is still pending and go on: the
-packaging does not depend on them. Do not ask the owner to repeat the listening.
+## Step 0 — what changed since the notes were written (read, no action)
+The owner's listening session 2 is DONE and recorded (`docs/TTS_LISTENING_NOTES.md`). The French voices the owner keeps
+(Piper siwis `review`, gilles `excluded`) have restricted parent checkpoints: by the owner's decision (D-043, amending D-041)
+they stay available for development, evaluation and non-commercial use and must be re-trained from the clean base before
+any commercial release (I-063). Models are never bundled, the app must keep showing their rating, and the packaging report
+must list this as a blocker for a commercial build. Do not start the re-training in this session unless the owner asks.
+The rewriting of numbers is ON by default for every voice (owner's approval, D-043, coded in M6e addendum 3). The read-along
+UI test was NOT re-run after that change: re-run `node scripts/ui_test_readalong.mjs` on the packaged app (expect 33 of 33,
+the phonemizer-voice check now expects the box checked).
 
 ## Context
 New since the M6 work (D-042): the TTS tab shows a read-along view (sentence highlight, auto-scroll), a text
@@ -54,7 +54,7 @@ Everything so far was run from `pnpm tauri dev` and from `cargo` examples. Nothi
 - The espeak-ng phonemizer (GPL-3.0) is linked in whenever TTS is present (D-012, I-051, I-054): the
   installer of a build that contains it carries that licence obligation. Do not decide it; document it.
 - Voices are rated for commercial use (D-039, `docs/TTS_LICENSES.md`). No voice rated `review` or
-  `excluded` may be a default of the packaged app, models are downloaded not bundled, and the credits
+  `excluded` may be a default of a COMMERCIAL build (the owner suspended this rule for siwis and gilles until commercialisation, D-043), models are downloaded not bundled, and the credits
   required by `attribution` voices (CC BY 4.0, BSD-3-Clause) need a place in the app (an About/credits
   view) and in the installer. Check what the packaged app shows.
 - An antivirus intercepts TLS on this machine (I-009); it may also flag a new unsigned executable.

@@ -40,15 +40,34 @@ Owner's choice: **B, D, G and H** ("Je choisirais B D G et H").
 5. **Drug names**: the owner heard them well pronounced on seven voices out of eight, approximate on Coqui. The speech-recogniser round trip (`roundtrip-parakeet.txt`) had counted many more failures: the machine check was too pessimistic to be a proxy for a human ear (the recogniser itself misspells drug names), so it is kept only as a rough sanity check.
 6. Limits: one listener, three sentences of text, no listening to long texts, no reading of a real report, no comparison of speaker numbers other than libritts_r speaker 0.
 
-## Session 2 (2026-10-08): `kristin` against the other English voices, Coqui normaliser ON against OFF, `mls` speakers — PENDING
+## Session 2 (2026-10-08): `kristin` against the other English voices, Coqui normaliser ON against OFF, `mls` speakers — RESULTS (owner's opinion, recorded verbatim)
 
-Page: `benchmark/tts-samples/session2/index.html` (built by `python -I -X utf8 scripts/tts_listening.py --session 2`; audio is git-ignored). Eight voices under codes A to H, three clips each, blind. The owner's notes are to be pasted here VERBATIM when received, as opinion, in the same format as session 1 (scores, choice, comments, original French with an English gloss).
+Page: `benchmark/tts-samples/session2/index.html` (built by `python -I -X utf8 scripts/tts_listening.py --session 2`; audio is git-ignored). Eight voices under codes A to H, three clips each, blind, one listener. Scale 1 (very bad) to 5 (very good). The owner's words about the page: "Les voix proposées dans le fichier benchmark/tts-samples/session2/index.html sont médiocres" (the voices offered in the session 2 file are mediocre). No free-text comment was written for any voice.
 
-What is compared (the codes are resolved only in the pasted result):
-- English, to choose the best public-domain or attributable voice: Piper `kristin` (`clear`), Piper `ljspeech` (`clear`), Piper `libritts_r` speaker 0 (`attribution`).
-- French, Coqui css10 with the text normaliser ON and OFF (same voice, digit-heavy sentences: a date and a time and a dose, then an invoice number with a price and a phone number).
-- French, three speakers (24, 65, 117) of the converted Piper `mls` voice (CC BY 4.0, `attribution`), picked as the best of 125 by a recogniser proxy (33 % word error rate each, against 6.7 % for Coqui on the same sentences). The proxy says nothing about naturalness: this is what the owner's ear decides.
+| Code | Voice | Lang | Licence rating | Clarity | Natural | Accent | Numbers, date, time, price, phone | Pleasant for long listening |
+|---|---|---|---|---|---|---|---|---|
+| A | Piper `mls` speaker 24 | fr | attribution | 2 | **1** | 3 | approximate | 2 |
+| B | Piper `mls` speaker 117 | fr | attribution | 2 | **1** | 2 | approximate | 2 |
+| C | Coqui css10, normaliser ON | fr | attribution | 3 | 3 | 3 | **well said** | 3 |
+| D | Piper `mls` speaker 65 | fr | attribution | 2 | **1** | 3 | wrong, absent or unintelligible | **1** |
+| E | Coqui css10, normaliser OFF | fr | attribution | **1** | 2 | 2 | wrong, absent or unintelligible | **1** |
+| F | Piper `ljspeech` | en | clear | **4** | **4** | **4** | well said | 3 |
+| G | Piper `libritts_r` speaker 0 | en | attribution | 3 | 3 | 3 | well said | 3 |
+| H | Piper `kristin` | en | clear | 3 | 2 | 3 | well said | 3 |
 
-Machine facts that go with it (measurements, not opinion): `kristin`, `ljspeech`, `libritts_r` and Coqui were measured together at 17 to 25 times faster than real time on this CPU (`benchmark/results/20261008-141002-tts-m6d-overhead/overhead.md`); the `mls` speakers ran at RTF 0.05 to 0.09 in the speaker scan (single runs, not a controlled measurement); with the normaliser on, a recogniser heard the key numbers of six sentences in 28/36 and 30/36 cases, against 0/36 with it off (`normaliser-roundtrip-parakeet.txt`).
+General remark field: empty.
 
-Decisions the notes should allow: the French voice to offer in the beta (Coqui with the normaliser, a converted `mls` speaker, or none until a better free voice exists); which English voice to make the default.
+### Owner's note on the interface tests (verbatim, original French)
+
+"Dans les tests de l'interface la meilleure voix française est Piper fr_FR siwis (medium) pour la femme et Piper fr_FR gilles (low) pour l'homme à la vitesse par défaut et la réécritures des nombres des dates des heures et des unités en toutes lettres. Et en anglais Piper en_US libritts_r (medium) vitesse 0.9 avec différents locuteurs (hommes/femmes) et la réécritures des nombres des dates des heures et des unités en toutes lettres. Piper en_US kristin (medium) et iper en_US ljspeech (medium) toujours avec la réécritures des nombres des dates des heures et des unités en toutes lettres sont correctes donc nous avons un problème pour la licence en français c'est exacte ? Car malheureusement toutes les autres voix ne sont pas satisfaisantes."
+
+English gloss: in the interface tests the best French voices are Piper siwis (female) and Piper gilles (male) at default speed with numbers, dates, times and units rewritten in words; in English Piper libritts_r at speed 0.9 with several speakers (men and women), and kristin and ljspeech, always with the rewriting on, are correct; therefore there is a licence problem for French. All the other voices are unsatisfactory.
+
+### What the notes show (analysis, not opinion)
+
+1. **The normaliser works as intended on the voice that needs it**: Coqui with it ON (C) is rated "numbers well said" and 3/3/3/3, with it OFF (E) clarity 1 and numbers "wrong, absent or unintelligible". It does not make Coqui good (3 out of 5 at best).
+2. **The converted `mls` voice is rejected**: every speaker is 1 or 2 on naturalness and 2 on clarity, as the recogniser proxy (best of 125 at 33 % word error rate against 6.7 % for Coqui) suggested. `mls` is not a way out (I-060).
+3. **English**: `ljspeech` (F, `clear`) is the best of this session (4, 4, 4); `libritts_r` speaker 0 and `kristin` score 3. The owner's interface note, which listens to more than three clips and uses other speakers and speed 0.9, ranks `libritts_r` first and `kristin` and `ljspeech` correct: English has three usable voices, one `attribution` and two `clear`.
+4. **The owner also uses the rewriting of numbers, dates, times and units on the phonemizer voices** (Piper siwis, gilles, libritts_r, kristin, ljspeech), not only on Coqui: the manifest default (off for phonemizer voices) does not match this use (proposal in D-043).
+5. **French: the licence conflict is confirmed by the owner's own reading**: the only voices judged good in French are siwis (`review`) and gilles (`excluded`); every French voice that could be offered under D-041 is judged unsatisfactory. Resolution options and the evidence behind them: `docs/TTS_LICENSES.md` ("French voice: lineage problem and ways out"), D-043 (proposed) and I-063.
+6. Limits: one listener, three clips per voice in this session; the interface test used the owner's own texts.
