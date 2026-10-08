@@ -287,7 +287,7 @@ export default function TtsPanel({ onError }: Props) {
           onChange={(e) => setNormaliseChoice(e.target.checked)}
         />
         Rewrite numbers, dates, times and units into words before speaking
-        {voice?.normalizeText ? " (needed by this voice: it does not read digits)" : " (this voice reads digits itself)"}
+        {voice?.normalizeText ? " (on by default; the Coqui voice does not read digits at all)" : ""}
       </label>
       <label className="check">
         <input id="tts-show-spoken" type="checkbox" checked={showSpoken} onChange={(e) => setShowSpoken(e.target.checked)} />

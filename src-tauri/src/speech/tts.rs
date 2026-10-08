@@ -599,6 +599,9 @@ mod tests {
         let text = "Bonjour monsieur Martin. Votre rendez-vous est confirmé.\n\nMerci de votre confiance.";
         let r = p.synthesize(&req(&id, text, 1.0), &CancelToken::new()).unwrap();
         assert_eq!(r.segments.len(), 3);
+        assert!(r.normalised, "the rewriting is on by default for every voice, a phonemizer voice included (D-043)");
+        let off = p.synthesize(&SynthesizeRequest { normalise: Some(false), ..req(&id, "Bonjour.", 1.0) }, &CancelToken::new()).unwrap();
+        assert!(!off.normalised, "the request can still switch it off");
         let units: Vec<u16> = text.encode_utf16().collect();
         let spoken: Vec<String> = r.segments.iter().map(|s| String::from_utf16(&units[s.start..s.end]).unwrap()).collect();
         assert_eq!(spoken, ["Bonjour monsieur Martin.", "Votre rendez-vous est confirmé.", "Merci de votre confiance."]);

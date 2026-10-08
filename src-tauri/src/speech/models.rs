@@ -399,8 +399,9 @@ mod tests {
             assert!(LICENSE_TIERS.contains(&d.license_tier.as_str()) && d.license_tier != "unrated", "{} needs a licence tier", d.id);
             assert!(d.license_notes.trim().len() > 20, "{} needs licence notes", d.id);
             assert!(!d.phonemizer.trim().is_empty(), "{} must state its phonemizer", d.id);
-            // Text normalisation is for voices that read characters (no phonemizer); phonemizer voices speak digits.
-            assert_eq!(d.normalize_text, d.phonemizer.starts_with("none"), "{}: normalizeText must match the phonemizer", d.id);
+            // Owner's decision (D-043): the rewriting of numbers, dates, times and units is on by default for every
+            // voice. Character-based voices need it; phonemizer voices read digits but not units or dates well.
+            assert!(d.normalize_text, "{}: normalizeText must be on by default (D-043)", d.id);
         }
     }
 

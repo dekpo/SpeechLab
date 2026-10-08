@@ -254,7 +254,7 @@ try {
       await ev(clickButtonJs("Edit text"));
       await ev(setSelectJs("tts-voice", piperFr));
       await sleep(300);
-      check("phonemizer voice: the rewriting box is unchecked by default", !(await ev(`document.getElementById('tts-normalise').checked`)));
+      check("phonemizer voice: the rewriting box is checked by default too (D-043)", await ev(`document.getElementById('tts-normalise').checked`));
     }
   } else {
     check("Coqui voice installed (needed for the normaliser checks)", false, "voice not installed");

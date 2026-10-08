@@ -267,7 +267,8 @@
       "macos-arm64",
       "macos-x64"
     ],
-    "expectedMemoryMb": null
+    "expectedMemoryMb": null,
+    "normalizeText": true
   },
   {
     "id": "tts-vits-piper-fr_FR-gilles-low",
@@ -300,7 +301,8 @@
       "macos-arm64",
       "macos-x64"
     ],
-    "expectedMemoryMb": null
+    "expectedMemoryMb": null,
+    "normalizeText": true
   },
   {
     "id": "tts-vits-piper-en_US-libritts_r-medium",
@@ -333,7 +335,8 @@
       "macos-arm64",
       "macos-x64"
     ],
-    "expectedMemoryMb": null
+    "expectedMemoryMb": null,
+    "normalizeText": true
   },
   {
     "id": "tts-kokoro-int8-multi-lang-v1_0",
@@ -369,7 +372,8 @@
       "macos-arm64",
       "macos-x64"
     ],
-    "expectedMemoryMb": null
+    "expectedMemoryMb": null,
+    "normalizeText": true
   },
   {
     "id": "tts-vits-piper-en_US-ljspeech-medium",
@@ -402,7 +406,8 @@
       "macos-arm64",
       "macos-x64"
     ],
-    "expectedMemoryMb": null
+    "expectedMemoryMb": null,
+    "normalizeText": true
   },
   {
     "id": "tts-vits-coqui-fr-css10",
@@ -468,7 +473,8 @@
       "macos-arm64",
       "macos-x64"
     ],
-    "expectedMemoryMb": null
+    "expectedMemoryMb": null,
+    "normalizeText": true
   },
   {
     "id": "tts-vits-piper-fr_FR-mls-medium",
@@ -495,7 +501,7 @@
     "licenseTier": "attribution",
     "licenseNotes": "Voice card (read 2026-10-08): dataset Multilingual LibriSpeech (LibriVox audiobooks) under CC BY 4.0, 'Trained from scratch', so no research-licence parent. The only constraints are the credit and the espeak-ng phonemizer (GPL-3.0) of the runtime. The SHA-256 below is the one of the SOURCE .onnx downloaded from the Piper repository; the installed file is that file plus sherpa-onnx metadata added by scripts/convert_piper_voice.py (the procedure was checked against two official packages). Speaker quality varies a lot between the 125 speakers.",
     "phonemizer": "espeak-ng (GPL-3.0)",
-    "normalizeText": false,
+    "normalizeText": true,
     "sourceUrl": "https://huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/mls/medium",
     "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
     "platforms": [
