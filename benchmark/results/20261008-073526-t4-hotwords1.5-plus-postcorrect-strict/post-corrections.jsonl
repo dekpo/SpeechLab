@@ -1,0 +1,2 @@
+{"decoding":"greedy search","distance":2,"from":"tension artériel","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy search","distance":1,"from":"amoxycilline","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-01-owner","to":"amoxicilline"}

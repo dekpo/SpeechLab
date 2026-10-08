@@ -108,7 +108,7 @@ fn units_of(tokens: &[String]) -> Vec<String> {
 
 // ---------- negations ----------
 
-const STRONG_NEGATIONS: &[&str] = &[
+pub(crate) const STRONG_NEGATIONS: &[&str] = &[
     "pas", "jamais", "aucun", "aucune", "aucuns", "aucunes", "sans", "non", "rien", "ni", "nul", "nulle",
     "not", "no", "never", "without", "none", "nothing", "nobody", "cannot",
 ];
@@ -127,7 +127,7 @@ fn negation_count(tokens: &[String]) -> usize {
 
 // ---------- dates ----------
 
-const DATE_WORDS: &[&str] = &[
+pub(crate) const DATE_WORDS: &[&str] = &[
     "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche", "janvier", "février", "mars",
     "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre", "monday",
     "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "january", "february", "march",

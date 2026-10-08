@@ -1,0 +1,22 @@
+{"decoding":"beam search (5 beams)","distance":2,"from":"autantification","model":"whisper-cpp-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"antico-agulant","model":"whisper-cpp-tiny","sample":"fr-med-05-owner","to":"anticoagulant"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"posgreSQL","model":"whisper-cpp-tiny","sample":"fr-it-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"autantification","model":"whisper-cpp-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"amoxiciline","model":"whisper-cpp-base-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"péniciline","model":"whisper-cpp-base-q5_1","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"tension arthrielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"hipertension arthrielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"ibuprofne","model":"whisper-cpp-base-q5_1","sample":"fr-med-09-owner","to":"ibuprofène"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"insuffisance rénal","model":"whisper-cpp-base-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"amoxiciline","model":"whisper-cpp-base-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"péniciline","model":"whisper-cpp-base-q5_1","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"tension art-hrielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"hipertension art-hrielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"ibuprofne","model":"whisper-cpp-base-q5_1","sample":"fr-med-09-owner","to":"ibuprofène"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"tension artarielle","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"paracetamol","model":"whisper-cpp-small-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"tension artarielle","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"tension artériel","model":"whisper-cpp-small-q5_1","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"hypertension artériel","model":"whisper-cpp-small-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"paracetamol","model":"whisper-cpp-small-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"anticoagulan","model":"whisper-cpp-small-q5_1","sample":"fr-med-05-owner","to":"anticoagulant"}

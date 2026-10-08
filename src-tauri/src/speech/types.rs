@@ -37,6 +37,10 @@ pub struct TranscribeRequest {
     pub language: String,
     /// Path of a WAV file on disk.
     pub audio_path: String,
+    /// Terms the engine should favour (drug names, technical terms), for engines that can be
+    /// biased (D-036). Empty = no biasing, the default. Engines that cannot use it ignore it.
+    #[serde(default)]
+    pub vocabulary: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

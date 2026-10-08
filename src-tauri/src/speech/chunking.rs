@@ -553,7 +553,7 @@ mod tests {
     }
 
     fn request(path: &str) -> TranscribeRequest {
-        TranscribeRequest { provider_id: "rec".into(), model_id: "rec".into(), language: "fr".into(), audio_path: path.into() }
+        TranscribeRequest { provider_id: "rec".into(), model_id: "rec".into(), language: "fr".into(), audio_path: path.into(), vocabulary: Vec::new() }
     }
 
     #[test]

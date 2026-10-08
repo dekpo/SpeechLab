@@ -261,6 +261,10 @@ fn one_segment() -> u32 {
     1
 }
 
+fn biasing_none() -> String {
+    "none".into()
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RunSpec {
@@ -280,6 +284,11 @@ pub struct RunOptions {
     pub chunking: bool,
     /// Longest segment in seconds when chunking (None = the default of `ChunkConfig`, 25 s).
     pub chunk_max_s: Option<f32>,
+    /// Vocabulary to bias the engine with, by language code (T4, D-036). Empty = no biasing.
+    pub vocabulary: std::collections::BTreeMap<String, Vec<String>>,
+    /// sherpa-onnx NeMo transducer: use modified beam search with this hotwords score (the
+    /// vocabulary above is then boosted). Some without a vocabulary is the beam-search control.
+    pub hotwords_score: Option<f32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -316,6 +325,16 @@ pub struct RunRecord {
     /// Speech detection, planning and writing the pieces; not part of `inference_ms`.
     #[serde(default)]
     pub chunking_ms: u64,
+    /// How the engine was biased toward a vocabulary: "none", or the engine's own description
+    /// (for example "initial prompt"), or "ignored by engine" (D-036).
+    #[serde(default = "biasing_none")]
+    pub biasing: String,
+    /// Post-correction applied after the engine ("none" or the preset name, D-036). When it is
+    /// not "none", `text` is the corrected text and `raw_text` the engine's own output.
+    #[serde(default = "biasing_none")]
+    pub post_correction: String,
+    #[serde(default)]
+    pub raw_text: Option<String>,
     pub threads: u32,
     pub peak_memory_mb: Option<f64>,
     pub cpu_ms: Option<u64>,
@@ -392,14 +411,19 @@ pub fn select_samples<'a>(ds: &'a Dataset, opts: &RunOptions) -> Vec<&'a Sample>
 fn build_provider(
     models: &Arc<ModelManager>,
     spec: &RunSpec,
+    opts: &RunOptions,
 ) -> Result<(Box<dyn SpeechToTextProvider>, String, String), SpeechError> {
     let def = models.def(&spec.model_id)?;
     match def.provider.as_str() {
-        "sherpa-onnx" => Ok((
-            Box::new(SherpaOnnxProvider::new(Arc::clone(models))),
-            def.provider.clone(),
-            "greedy search".into(),
-        )),
+        "sherpa-onnx" => {
+            let mut provider = SherpaOnnxProvider::new(Arc::clone(models));
+            if let Some(score) = opts.hotwords_score {
+                provider = provider.with_hotwords(score);
+            }
+            // The label is the engine's base setting, shared by all variants of the study so the
+            // records can be paired; the technique itself is recorded in `biasing`.
+            Ok((Box::new(provider), def.provider.clone(), "greedy search".into()))
+        }
         "whisper-cpp" => {
             let beams = spec.beam_size.unwrap_or(5).max(1);
             Ok((
@@ -423,7 +447,7 @@ pub fn run_spec(
     cancel: &CancelToken,
     on_record: &mut dyn FnMut(&RunRecord),
 ) -> Result<Vec<RunRecord>, SpeechError> {
-    let (provider, provider_id, decoding) = build_provider(models, spec)?;
+    let (provider, provider_id, decoding) = build_provider(models, spec, opts)?;
     let vad_model = if opts.chunking { Some(models.vad_model_path()?) } else { None };
     let chunk_cfg = ChunkConfig {
         max_segment_s: opts.chunk_max_s.unwrap_or(ChunkConfig::default().max_segment_s),
@@ -443,6 +467,7 @@ pub fn run_spec(
                 model_id: spec.model_id.clone(),
                 language: sample.language.clone(),
                 audio_path: ds.audio_path(sample).display().to_string(),
+                vocabulary: opts.vocabulary.get(&sample.language).cloned().unwrap_or_default(),
             };
             let mut rec = RunRecord {
                 run_id: run_id.to_string(),
@@ -467,6 +492,9 @@ pub fn run_spec(
                 chunking: if opts.chunking { "vad".into() } else { chunking_off() },
                 segments: 1,
                 chunking_ms: 0,
+                biasing: biasing_none(),
+                post_correction: biasing_none(),
+                raw_text: None,
                 threads: 0,
                 peak_memory_mb: None,
                 cpu_ms: None,
@@ -495,6 +523,14 @@ pub fn run_spec(
                 Ok((r, segments, chunking_ms)) => {
                     rec.segments = segments;
                     rec.chunking_ms = chunking_ms;
+                    if !request.vocabulary.is_empty() {
+                        rec.biasing = match r.decoding.split_once(" + ") {
+                            Some((_, technique)) => technique.to_string(),
+                            None => "ignored by engine".into(),
+                        };
+                    } else if opts.hotwords_score.is_some() && r.decoding.starts_with("modified beam") {
+                        rec.biasing = format!("{} without vocabulary (control)", r.decoding);
+                    }
                     let cmp = metrics::compare_texts(&sample.reference, &r.text);
                     let report = critical::analyze(&sample.reference, &r.text, &sample.key_terms);
                     rec.cold_start = r.cold_start;
@@ -859,7 +895,7 @@ mod tests {
             run_id: "t".into(), scoring_version: SCORING_VERSION, timestamp_ms: 0, model_id: model.into(), provider: "p".into(), decoding: "greedy search".into(),
             sample_id: sample.into(), speaker_id: "s".into(), category: cat.into(), language: "fr".into(), domain: "general".into(),
             utterance_type: "statement".into(), private: false, repetition: rep, cold_start: rep == 1, load_ms: 100, inference_ms: infer,
-            audio_ms: 1000, rtf: Some(infer as f64 / 1000.0), chunking: "off".into(), segments: 1, chunking_ms: 0, threads: 4, peak_memory_mb: Some(200.0 + infer as f64), cpu_ms: Some(infer * 2),
+            audio_ms: 1000, rtf: Some(infer as f64 / 1000.0), chunking: "off".into(), segments: 1, chunking_ms: 0, biasing: "none".into(), post_correction: "none".into(), raw_text: None, threads: 4, peak_memory_mb: Some(200.0 + infer as f64), cpu_ms: Some(infer * 2),
             avg_cores: Some(2.0), reference: "r".into(), text: text.into(), wer: Some(wer), cer: Some(wer / 2.0), substitutions: errs.0,
             deletions: errs.1, insertions: errs.2, reference_words: words, critical: vec![], has_critical: false, error: None,
         }

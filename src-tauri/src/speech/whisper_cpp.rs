@@ -182,6 +182,14 @@ pub fn run_cancellable(mut cmd: Command, cancel: &CancelToken) -> Result<Process
     })
 }
 
+/// The initial prompt built from a vocabulary: the terms as a plain comma-separated list. Whisper
+/// reads the prompt as text that came just before the audio, so a list of the spellings it should
+/// use nudges the output toward them (D-036). None when the vocabulary is empty.
+pub fn vocabulary_prompt(vocabulary: &[String]) -> Option<String> {
+    let terms: Vec<&str> = vocabulary.iter().map(|t| t.trim()).filter(|t| !t.is_empty()).collect();
+    (!terms.is_empty()).then(|| format!("{}.", terms.join(", ")))
+}
+
 /// whisper-cli prints one transcript line per segment on stdout (`-nt`).
 pub fn clean_transcript(stdout: &str) -> String {
     stdout
@@ -259,6 +267,10 @@ impl SpeechToTextProvider for WhisperCppProvider {
             .arg("-bo")
             .arg(self.beam_size.to_string())
             .arg("-nt");
+        let prompt = vocabulary_prompt(&request.vocabulary);
+        if let Some(prompt) = &prompt {
+            cmd.arg("--prompt").arg(prompt);
+        }
 
         let wall = Instant::now();
         let output = run_cancellable(cmd, cancel)?;
@@ -287,7 +299,10 @@ impl SpeechToTextProvider for WhisperCppProvider {
             threads: self.threads,
             peak_memory_mb: output.peak_memory_mb,
             cpu_ms: output.cpu_ms,
-            decoding: self.decoding_label(),
+            decoding: match prompt {
+                Some(_) => format!("{} + initial prompt", self.decoding_label()),
+                None => self.decoding_label(),
+            },
             is_mock: false,
         })
     }
@@ -318,6 +333,14 @@ whisper_print_timings:    total time =   822.42 ms
     fn transcript_lines_are_trimmed_and_joined() {
         assert_eq!(clean_transcript("\n Bonjour.\n  Salut.\n\n"), "Bonjour. Salut.");
         assert_eq!(clean_transcript(""), "");
+    }
+
+    #[test]
+    fn vocabulary_becomes_a_comma_separated_prompt() {
+        assert_eq!(vocabulary_prompt(&[]), None);
+        assert_eq!(vocabulary_prompt(&["  ".into()]), None);
+        let v = vec!["amoxicilline".to_string(), " ibuprofène ".to_string()];
+        assert_eq!(vocabulary_prompt(&v).as_deref(), Some("amoxicilline, ibuprofène."));
     }
 
     #[test]

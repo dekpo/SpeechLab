@@ -1,0 +1,265 @@
+| configuration | WER base -> variant | drug found | term found | tech found | critical samples | fixed words | broken words (all) | broken words outside key terms | extra words |
+|---|---|---|---|---|---|---|---|---|---|
+| whisper-cpp-base-q5_1 (beam search (5 beams)) | 8.4 % -> 8.3 % | 3/6 -> 2/6 | 5/10 -> 6/10 | 24/34 -> 31/34 | 12 -> 11 | 26 | 27 | 21 | -2 |
+| whisper-cpp-base-q5_1 (greedy (beam 1)) | 11.4 % -> 9.8 % | 2/6 -> 3/6 | 5/10 -> 7/10 | 20/34 -> 30/34 | 15 -> 12 | 37 | 27 | 23 | -7 |
+| whisper-cpp-small-q5_1 (beam search (5 beams)) | 3.9 % -> 3.3 % | 3/6 -> 4/6 | 9/10 -> 9/10 | 28/34 -> 33/34 | 7 -> 7 | 11 | 7 | 5 | -2 |
+| whisper-cpp-small-q5_1 (greedy (beam 1)) | 4.5 % -> 3.8 % | 3/6 -> 3/6 | 8/10 -> 8/10 | 27/34 -> 33/34 | 7 -> 8 | 16 | 11 | 6 | -2 |
+| whisper-cpp-tiny (beam search (5 beams)) | 16.1 % -> 17.1 % | 1/6 -> 2/6 | 5/10 -> 5/10 | 19/34 -> 29/34 | 13 -> 17 | 35 | 54 | 51 | -9 |
+| whisper-cpp-tiny (greedy (beam 1)) | 19.8 % -> 20.0 % | 2/6 -> 2/6 | 4/10 -> 5/10 | 17/34 -> 28/34 | 18 -> 21 | 39 | 51 | 48 | -10 |
+
+#### whisper-cpp-base-q5_1 (beam search (5 beams))
+- Fixed: `en-gen-s-02-owner` expected `letter`, baseline `ladder`, variant `letter`
+- Fixed: `en-it-04-owner` expected `accounts`, baseline `counts`, variant `accounts`
+- Fixed: `en-it-05-owner` expected `open`, baseline `opened`, variant `open`
+- Fixed: `fr-adm-03-owner` expected `incomplet`, baseline `incomplé`, variant `incomplet`
+- Fixed: `fr-adm-06-owner` expected `suisses`, baseline `suisse`, variant `suisses`
+- Fixed: `fr-adm-07-owner` expected `2045`, baseline `245`, variant `2045`
+- Fixed: `fr-dict-01-owner` expected `7`, baseline `cette`, variant `7`
+- Fixed: `fr-dict-01-owner` expected `jours`, baseline `jour`, variant `jours`
+- Fixed: `fr-gen-q-01-owner` expected `de`, baseline `(missing)`, variant `de`
+- Fixed: `fr-gen-s-08-owner` expected `monsieur`, baseline `m`, variant `monsieur`
+- Fixed: `fr-it-01-owner` expected `de`, baseline `des`, variant `de`
+- Fixed: `fr-it-01-owner` expected `postgresql`, baseline `grésculelles`, variant `postgresql` (key term)
+- Fixed: `fr-it-02-owner` expected `kubernetes`, baseline `qbernet`, variant `kubernetes` (key term)
+- Fixed: `fr-it-04-owner` expected `symfony`, baseline `symphonie`, variant `symfony` (key term)
+- Fixed: `fr-it-07-owner` expected `firewall`, baseline `wall`, variant `firewall` (key term)
+- Fixed: `fr-it-10-owner` expected `pull`, baseline `poule`, variant `pull` (key term)
+- Fixed: `fr-it-10-owner` expected `request`, baseline `riquest`, variant `request` (key term)
+- Fixed: `fr-it-16-owner` expected `debug`, baseline `débug`, variant `debug` (key term)
+- Fixed: `fr-it-19-owner` expected `json`, baseline `jason`, variant `json` (key term)
+- Fixed: `fr-med-01-owner` expected `d'amoxicilline`, baseline `d'amoxiciline`, variant `d'amoxicilline` (key term)
+- Fixed: `fr-med-02-owner` expected `connue`, baseline `connu`, variant `connue`
+- Fixed: `fr-med-04-owner` expected `paracétamol`, baseline `sétamol`, variant `paracétamol` (key term)
+- Fixed: `fr-med-05-owner` expected `contre`, baseline `(missing)`, variant `contre` (key term)
+- Fixed: `fr-med-05-owner` expected `indiqué`, baseline `contraindiqué`, variant `indiqué` (key term)
+- Fixed: `fr-med-06-owner` expected `posologie`, baseline `pausologie`, variant `posologie` (key term)
+- Broken: `en-gen-s-05-owner` expected `we`, baseline `we`, variant `you`
+- Broken: `fr-adm-05-owner` expected `veuillez`, baseline `veuillez`, variant `voyez`
+- Broken: `fr-dict-01-owner` expected `jeudi`, baseline `jeudi`, variant `jedi`
+- Broken: `fr-dict-01-owner` expected `patient`, baseline `patient`, variant `patiente`
+- Broken: `fr-dict-01-owner` expected `artérielle`, baseline `artérielle`, variant `riel` (key term)
+- Broken: `fr-dict-01-owner` expected `d'amoxicilline`, baseline `d'amoxicilline`, variant `d'amoxiciline` (key term)
+- Broken: `fr-dict-01-owner` expected `et`, baseline `et`, variant `de`
+- Broken: `fr-dict-01-owner` expected `est`, baseline `est`, variant `et`
+- Broken: `fr-dict-02-owner` expected `soumises`, baseline `soumises`, variant `soumis`
+- Broken: `fr-gen-q-02-owner` expected `peux`, baseline `peux`, variant `peut`
+- Broken: `fr-gen-q-09-owner` expected `qui`, baseline `qui`, variant `(missing)`
+- Broken: `fr-gen-q-09-owner` expected `m'a`, baseline `m'a`, variant `kima`
+- Broken: `fr-gen-q-11-owner` expected `y`, baseline `y`, variant `(missing)`
+- Broken: `fr-gen-q-11-owner` expected `a`, baseline `a`, variant `y'a`
+- Broken: `fr-it-03-owner` expected `erreur`, baseline `erreur`, variant `erre`
+- Broken: `fr-it-03-owner` expected `quand`, baseline `quand`, variant `qu'on`
+- Broken: `fr-it-19-owner` expected `peux`, baseline `peux`, variant `peut`
+- Broken: `fr-leg-06-owner` expected `nulle`, baseline `nulle`, variant `nul`
+- Broken: `fr-med-02-owner` expected `pénicilline`, baseline `pénicilline`, variant `péniciline` (key term)
+- Broken: `fr-med-03-owner` expected `artérielle`, baseline `artérielle`, variant `arthrielle` (key term)
+- Broken: `fr-med-03-owner` expected `14`, baseline `14`, variant `(missing)`
+- Broken: `fr-med-03-owner` expected `sur`, baseline `sur`, variant `(missing)`
+- Broken: `fr-med-03-owner` expected `9`, baseline `9`, variant `149`
+- Broken: `fr-med-03-owner` expected `artérielle`, baseline `artérielle`, variant `arthrielle` (key term)
+- Broken: `fr-med-05-owner` expected `l'anticoagulant`, baseline `l'anticoagulant`, variant `agulant` (key term)
+
+#### whisper-cpp-base-q5_1 (greedy (beam 1))
+- Fixed: `en-gen-s-02-owner` expected `letter`, baseline `ladder`, variant `letter`
+- Fixed: `en-it-01-owner` expected `postgresql`, baseline `ql`, variant `postgresql` (key term)
+- Fixed: `en-it-02-owner` expected `restart`, baseline `restarts`, variant `restart`
+- Fixed: `en-it-03-owner` expected `token`, baseline `10`, variant `token` (key term)
+- Fixed: `en-it-04-owner` expected `accounts`, baseline `counts`, variant `accounts`
+- Fixed: `en-it-05-owner` expected `open`, baseline `opened`, variant `open`
+- Fixed: `fr-adm-03-owner` expected `incomplet`, baseline `incomplé`, variant `incomplet`
+- Fixed: `fr-adm-06-owner` expected `suisses`, baseline `suis`, variant `suisses`
+- Fixed: `fr-dict-01-owner` expected `7`, baseline `cette`, variant `7`
+- Fixed: `fr-dict-01-owner` expected `jours`, baseline `jour`, variant `jours`
+- Fixed: `fr-dict-02-owner` expected `nos`, baseline `le`, variant `nos`
+- Fixed: `fr-dict-02-owner` expected `salutations`, baseline `salutation`, variant `salutations`
+- Fixed: `fr-gen-q-01-owner` expected `de`, baseline `(missing)`, variant `de`
+- Fixed: `fr-gen-q-02-owner` expected `tu`, baseline `tue`, variant `tu`
+- Fixed: `fr-gen-s-08-owner` expected `monsieur`, baseline `m`, variant `monsieur`
+- Fixed: `fr-it-01-owner` expected `de`, baseline `des`, variant `de`
+- Fixed: `fr-it-01-owner` expected `postgresql`, baseline `grésculelles`, variant `postgresql` (key term)
+- Fixed: `fr-it-02-owner` expected `kubernetes`, baseline `qbernet`, variant `kubernetes` (key term)
+- Fixed: `fr-it-03-owner` expected `token`, baseline `tocan`, variant `token` (key term)
+- Fixed: `fr-it-07-owner` expected `firewall`, baseline `wall`, variant `firewall` (key term)
+- Fixed: `fr-it-08-owner` expected `backup`, baseline `backeur`, variant `backup` (key term)
+- Fixed: `fr-it-10-owner` expected `pull`, baseline `poule`, variant `pull` (key term)
+- Fixed: `fr-it-10-owner` expected `request`, baseline `riqueste`, variant `request` (key term)
+- Fixed: `fr-it-16-owner` expected `debug`, baseline `débug`, variant `debug` (key term)
+- Fixed: `fr-it-19-owner` expected `json`, baseline `jason`, variant `json` (key term)
+- Broken: `en-gen-s-05-owner` expected `we`, baseline `we`, variant `you`
+- Broken: `fr-adm-05-owner` expected `veuillez`, baseline `veuillez`, variant `voyez`
+- Broken: `fr-dict-01-owner` expected `jeudi`, baseline `jeudi`, variant `jedi`
+- Broken: `fr-dict-01-owner` expected `patient`, baseline `patient`, variant `patiente`
+- Broken: `fr-dict-01-owner` expected `artérielle`, baseline `artérielle`, variant `art鋒iel` (key term)
+- Broken: `fr-dict-01-owner` expected `signale`, baseline `signale`, variant `à`
+- Broken: `fr-dict-01-owner` expected `d'amoxicilline`, baseline `d'amoxicilline`, variant `d'amoxiciline` (key term)
+- Broken: `fr-dict-01-owner` expected `et`, baseline `et`, variant `de`
+- Broken: `fr-dict-02-owner` expected `agréer`, baseline `agréer`, variant `agrer`
+- Broken: `fr-gen-q-09-owner` expected `qui`, baseline `qui`, variant `(missing)`
+- Broken: `fr-gen-q-09-owner` expected `m'a`, baseline `m'a`, variant `kima`
+- Broken: `fr-gen-q-09-owner` expected `appelé`, baseline `appelé`, variant `appellait`
+- Broken: `fr-gen-q-10-owner` expected `jeudi`, baseline `jeudi`, variant `jedi`
+- Broken: `fr-gen-q-11-owner` expected `y`, baseline `y`, variant `(missing)`
+- Broken: `fr-gen-q-11-owner` expected `a`, baseline `a`, variant `(missing)`
+- Broken: `fr-gen-q-11-owner` expected `t`, baseline `t`, variant `(missing)`
+- Broken: `fr-gen-q-11-owner` expected `il`, baseline `il`, variant `yattil`
+- Broken: `fr-it-03-owner` expected `erreur`, baseline `erreur`, variant `erre`
+- Broken: `fr-it-18-owner` expected `en`, baseline `en`, variant `(missing)`
+- Broken: `fr-leg-06-owner` expected `nulle`, baseline `nulle`, variant `nul`
+- Broken: `fr-med-03-owner` expected `artérielle`, baseline `artérielle`, variant `hrielle` (key term)
+- Broken: `fr-med-03-owner` expected `14`, baseline `14`, variant `(missing)`
+- Broken: `fr-med-03-owner` expected `sur`, baseline `sur`, variant `(missing)`
+- Broken: `fr-med-03-owner` expected `9`, baseline `9`, variant `149`
+- Broken: `fr-med-03-owner` expected `artérielle`, baseline `artérielle`, variant `hrielle` (key term)
+
+#### whisper-cpp-small-q5_1 (beam search (5 beams))
+- Fixed: `fr-adm-02-owner` expected `parties`, baseline `partis`, variant `parties`
+- Fixed: `fr-dict-01-owner` expected `d'amoxicilline`, baseline `d'amoxiciline`, variant `d'amoxicilline` (key term)
+- Fixed: `fr-it-01-owner` expected `postgresql`, baseline `gréscuelles`, variant `postgresql` (key term)
+- Fixed: `fr-it-03-owner` expected `rest`, baseline `reste`, variant `rest` (key term)
+- Fixed: `fr-it-04-owner` expected `symfony`, baseline `symphonie`, variant `symfony` (key term)
+- Fixed: `fr-it-10-owner` expected `pull`, baseline `poule`, variant `pull` (key term)
+- Fixed: `fr-it-12-owner` expected `installée`, baseline `installé`, variant `installée`
+- Fixed: `fr-it-13-owner` expected `python`, baseline `piton`, variant `python` (key term)
+- Fixed: `fr-med-01-owner` expected `d'amoxicilline`, baseline `d'amoxiciline`, variant `d'amoxicilline` (key term)
+- Fixed: `fr-med-05-owner` expected `contre`, baseline `(missing)`, variant `contre` (key term)
+- Fixed: `fr-med-05-owner` expected `indiqué`, baseline `contraindiqué`, variant `indiqué` (key term)
+- Broken: `fr-adm-03-owner` expected `revenus`, baseline `revenus`, variant `revenu`
+- Broken: `fr-dict-01-owner` expected `rendu`, baseline `rendu`, variant `endue`
+- Broken: `fr-dict-01-owner` expected `artérielle`, baseline `artérielle`, variant `artarielle` (key term)
+- Broken: `fr-gen-q-11-owner` expected `créneau`, baseline `créneau`, variant `(missing)`
+- Broken: `fr-gen-q-11-owner` expected `libre`, baseline `libre`, variant `crénolibre`
+- Broken: `fr-gen-s-08-owner` expected `monsieur`, baseline `monsieur`, variant `m`
+- Broken: `fr-med-04-owner` expected `paracétamol`, baseline `paracétamol`, variant `paracetamol` (key term)
+
+#### whisper-cpp-small-q5_1 (greedy (beam 1))
+- Fixed: `en-gen-q-02-owner` expected `johnson`, baseline `jensen`, variant `johnson`
+- Fixed: `fr-adm-02-owner` expected `parties`, baseline `partis`, variant `parties`
+- Fixed: `fr-dict-01-owner` expected `d'amoxicilline`, baseline `d'amoxiciline`, variant `d'amoxicilline` (key term)
+- Fixed: `fr-gen-s-03-owner` expected `rappelle`, baseline `rappele`, variant `rappelle`
+- Fixed: `fr-it-01-owner` expected `postgresql`, baseline `gréscuelles`, variant `postgresql` (key term)
+- Fixed: `fr-it-03-owner` expected `rest`, baseline `reste`, variant `rest` (key term)
+- Fixed: `fr-it-04-owner` expected `symfony`, baseline `symphonie`, variant `symfony` (key term)
+- Fixed: `fr-it-10-owner` expected `pull`, baseline `poule`, variant `pull` (key term)
+- Fixed: `fr-it-12-owner` expected `docker`, baseline `dockeur`, variant `docker` (key term)
+- Fixed: `fr-it-12-owner` expected `installée`, baseline `installé`, variant `installée`
+- Fixed: `fr-it-13-owner` expected `python`, baseline `ton`, variant `python` (key term)
+- Fixed: `fr-it-20-owner` expected `millisecondes`, baseline `ms`, variant `millisecondes`
+- Fixed: `fr-med-01-owner` expected `d'amoxicilline`, baseline `d'amoxiciline`, variant `d'amoxicilline` (key term)
+- Fixed: `fr-med-05-owner` expected `contre`, baseline `(missing)`, variant `contre` (key term)
+- Fixed: `fr-med-05-owner` expected `indiqué`, baseline `contreindiqué`, variant `indiqué` (key term)
+- Fixed: `fr-med-10-owner` expected `rénale`, baseline `renale`, variant `rénale` (key term)
+- Broken: `en-it-03-owner` expected `a`, baseline `a`, variant `(missing)`
+- Broken: `fr-adm-03-owner` expected `revenus`, baseline `revenus`, variant `revenu`
+- Broken: `fr-dict-01-owner` expected `rendu`, baseline `rendu`, variant `endue`
+- Broken: `fr-dict-01-owner` expected `artérielle`, baseline `artérielle`, variant `artarielle` (key term)
+- Broken: `fr-gen-s-08-owner` expected `monsieur`, baseline `monsieur`, variant `m`
+- Broken: `fr-it-05-owner` expected `à`, baseline `à`, variant `a`
+- Broken: `fr-it-19-owner` expected `peux`, baseline `peux`, variant `peut`
+- Broken: `fr-med-03-owner` expected `artérielle`, baseline `artérielle`, variant `artériel` (key term)
+- Broken: `fr-med-03-owner` expected `artérielle`, baseline `artérielle`, variant `artériel` (key term)
+- Broken: `fr-med-04-owner` expected `paracétamol`, baseline `paracétamol`, variant `paracetamol` (key term)
+- Broken: `fr-med-05-owner` expected `l'anticoagulant`, baseline `l'anticoagulant`, variant `l'anticoagulan` (key term)
+
+#### whisper-cpp-tiny (beam search (5 beams))
+- Fixed: `en-gen-q-05-owner` expected `330`, baseline `3.30`, variant `330`
+- Fixed: `en-gen-s-02-owner` expected `letter`, baseline `ladder`, variant `letter`
+- Fixed: `en-it-01-owner` expected `postgresql`, baseline `ql`, variant `postgresql` (key term)
+- Fixed: `en-it-05-owner` expected `firewall`, baseline `wall`, variant `firewall` (key term)
+- Fixed: `en-it-07-owner` expected `table`, baseline `sample`, variant `table`
+- Fixed: `fr-adm-04-owner` expected `est`, baseline `et`, variant `est`
+- Fixed: `fr-adm-04-owner` expected `reporté`, baseline `reportez`, variant `reporté`
+- Fixed: `fr-adm-04-owner` expected `mardi`, baseline `mars`, variant `mardi`
+- Fixed: `fr-adm-06-owner` expected `francs`, baseline `fran`, variant `francs`
+- Fixed: `fr-dict-01-owner` expected `d'amoxicilline`, baseline `d'amoxiciline`, variant `d'amoxicilline` (key term)
+- Fixed: `fr-gen-s-05-owner` expected `ajoute`, baseline `ajoutez`, variant `ajoute`
+- Fixed: `fr-gen-s-08-owner` expected `est`, baseline `et`, variant `est`
+- Fixed: `fr-it-01-owner` expected `postgresql`, baseline `gresql`, variant `postgresql` (key term)
+- Fixed: `fr-it-06-owner` expected `staging`, baseline `(missing)`, variant `staging` (key term)
+- Fixed: `fr-it-06-owner` expected `est`, baseline `stelgin`, variant `est`
+- Fixed: `fr-it-08-owner` expected `backup`, baseline `up`, variant `backup` (key term)
+- Fixed: `fr-it-10-owner` expected `pull`, baseline `poule`, variant `pull` (key term)
+- Fixed: `fr-it-10-owner` expected `request`, baseline `richoueste`, variant `request` (key term)
+- Fixed: `fr-it-12-owner` expected `de`, baseline `(missing)`, variant `de`
+- Fixed: `fr-it-12-owner` expected `docker`, baseline `d'octeur`, variant `docker` (key term)
+- Fixed: `fr-it-13-owner` expected `python`, baseline `on`, variant `python` (key term)
+- Fixed: `fr-it-13-owner` expected `est`, baseline `(missing)`, variant `est`
+- Fixed: `fr-it-13-owner` expected `vide`, baseline `évide`, variant `vide`
+- Fixed: `fr-it-16-owner` expected `debug`, baseline `débeggre`, variant `debug` (key term)
+- Fixed: `fr-it-17-owner` expected `12`, baseline `douce`, variant `12`
+- Broken: `fr-adm-04-owner` expected `au`, baseline `au`, variant `aux`
+- Broken: `fr-adm-06-owner` expected `suisses`, baseline `suisses`, variant `suisse`
+- Broken: `fr-adm-07-owner` expected `est`, baseline `est`, variant `et`
+- Broken: `fr-dict-01-owner` expected `artérielle`, baseline `artérielle`, variant `rielle` (key term)
+- Broken: `fr-dict-01-owner` expected `ne`, baseline `ne`, variant `n'est`
+- Broken: `fr-dict-01-owner` expected `signale`, baseline `signale`, variant `signal`
+- Broken: `fr-dict-01-owner` expected `la`, baseline `la`, variant `(missing)`
+- Broken: `fr-dict-01-owner` expected `tension`, baseline `tension`, variant `l'attention` (key term)
+- Broken: `fr-dict-01-owner` expected `et`, baseline `et`, variant `de`
+- Broken: `fr-dict-02-owner` expected `manquante`, baseline `manquante`, variant `mancante`
+- Broken: `fr-gen-q-02-owner` expected `ouvrir`, baseline `ouvrir`, variant `(missing)`
+- Broken: `fr-gen-q-03-owner` expected `h`, baseline `h`, variant `leur`
+- Broken: `fr-gen-q-06-owner` expected `où`, baseline `où`, variant `ou`
+- Broken: `fr-gen-q-07-owner` expected `quel`, baseline `quel`, variant `qu'est`
+- Broken: `fr-gen-q-07-owner` expected `jour`, baseline `jour`, variant `ce`
+- Broken: `fr-gen-q-08-owner` expected `tu`, baseline `tu`, variant `peuture`
+- Broken: `fr-gen-q-08-owner` expected `résumer`, baseline `résumer`, variant `résumé`
+- Broken: `fr-gen-q-09-owner` expected `qui`, baseline `qui`, variant `qu'il`
+- Broken: `fr-gen-q-09-owner` expected `10`, baseline `10`, variant `(missing)`
+- Broken: `fr-gen-q-09-owner` expected `h`, baseline `h`, variant `diseur`
+- Broken: `fr-gen-q-10-owner` expected `jeudi`, baseline `jeudi`, variant `judi`
+- Broken: `fr-gen-s-08-owner` expected `martin`, baseline `martin`, variant `martins`
+- Broken: `fr-it-01-owner` expected `ne`, baseline `ne`, variant `n'aurait`
+- Broken: `fr-it-01-owner` expected `répond`, baseline `répond`, variant `pas`
+- Broken: `fr-it-03-owner` expected `renvoie`, baseline `renvoie`, variant `envoie`
+
+#### whisper-cpp-tiny (greedy (beam 1))
+- Fixed: `en-dict-01-owner` expected `postgresql`, baseline `creole`, variant `postgresql` (key term)
+- Fixed: `en-gen-s-02-owner` expected `letter`, baseline `ladder`, variant `letter`
+- Fixed: `en-it-01-owner` expected `postgresql`, baseline `ql`, variant `postgresql` (key term)
+- Fixed: `en-it-05-owner` expected `firewall`, baseline `wall`, variant `firewall` (key term)
+- Fixed: `fr-adm-03-owner` expected `justificatif`, baseline `activif`, variant `justificatif` (key term)
+- Fixed: `fr-adm-03-owner` expected `revenus`, baseline `revenu`, variant `revenus`
+- Fixed: `fr-dict-01-owner` expected `signale`, baseline `a`, variant `signale`
+- Fixed: `fr-dict-01-owner` expected `14`, baseline `(missing)`, variant `14`
+- Fixed: `fr-dict-01-owner` expected `sur`, baseline `(missing)`, variant `sur`
+- Fixed: `fr-dict-01-owner` expected `9`, baseline `149`, variant `9`
+- Fixed: `fr-dict-02-owner` expected `restent`, baseline `reste`, variant `restent`
+- Fixed: `fr-dict-02-owner` expected `nos`, baseline `salutationniste`, variant `nos`
+- Fixed: `fr-dict-02-owner` expected `salutations`, baseline `un`, variant `salutations`
+- Fixed: `fr-gen-q-07-owner` expected `nous`, baseline `s'amneau`, variant `nous`
+- Fixed: `fr-gen-s-07-owner` expected `serai`, baseline `serais`, variant `serai`
+- Fixed: `fr-it-01-owner` expected `de`, baseline `donné`, variant `de`
+- Fixed: `fr-it-01-owner` expected `données`, baseline `postes`, variant `données`
+- Fixed: `fr-it-01-owner` expected `matin`, baseline `temps`, variant `matin`
+- Fixed: `fr-it-06-owner` expected `staging`, baseline `stégen`, variant `staging` (key term)
+- Fixed: `fr-it-08-owner` expected `backup`, baseline `tout`, variant `backup` (key term)
+- Fixed: `fr-it-08-owner` expected `restore`, baseline `restaurant`, variant `restore` (key term)
+- Fixed: `fr-it-10-owner` expected `pull`, baseline `rique`, variant `pull` (key term)
+- Fixed: `fr-it-10-owner` expected `request`, baseline `ou`, variant `request` (key term)
+- Fixed: `fr-it-12-owner` expected `docker`, baseline `docure`, variant `docker` (key term)
+- Fixed: `fr-it-13-owner` expected `python`, baseline `puton`, variant `python` (key term)
+- Broken: `fr-adm-06-owner` expected `s'élèvent`, baseline `s'élèvent`, variant `lèves`
+- Broken: `fr-adm-07-owner` expected `est`, baseline `est`, variant `245`
+- Broken: `fr-adm-07-owner` expected `payable`, baseline `payable`, variant `apiable`
+- Broken: `fr-dict-01-owner` expected `artérielle`, baseline `artérielle`, variant `rielle` (key term)
+- Broken: `fr-dict-01-owner` expected `actuel`, baseline `actuel`, variant `actuelle`
+- Broken: `fr-dict-02-owner` expected `de`, baseline `de`, variant `des`
+- Broken: `fr-dict-02-owner` expected `manquante`, baseline `manquante`, variant `mancante`
+- Broken: `fr-dict-02-owner` expected `de`, baseline `de`, variant `des`
+- Broken: `fr-dict-02-owner` expected `dossier`, baseline `dossier`, variant `dossiers`
+- Broken: `fr-gen-q-04-owner` expected `hier`, baseline `hier`, variant `ihera`
+- Broken: `fr-gen-q-05-owner` expected `patients`, baseline `patients`, variant `patientes`
+- Broken: `fr-gen-q-06-owner` expected `où`, baseline `où`, variant `ou`
+- Broken: `fr-gen-q-08-owner` expected `tu`, baseline `tu`, variant `peuture`
+- Broken: `fr-gen-q-08-owner` expected `résumer`, baseline `résumer`, variant `résumé`
+- Broken: `fr-gen-q-09-owner` expected `qui`, baseline `qui`, variant `à`
+- Broken: `fr-gen-q-09-owner` expected `m'a`, baseline `m'a`, variant `peu`
+- Broken: `fr-gen-q-09-owner` expected `appelé`, baseline `appelé`, variant `les`
+- Broken: `fr-gen-q-09-owner` expected `ce`, baseline `ce`, variant `se`
+- Broken: `fr-gen-s-03-owner` expected `rappelle`, baseline `rappelle`, variant `(missing)`
+- Broken: `fr-gen-s-03-owner` expected `moi`, baseline `moi`, variant `rappelmoire`
+- Broken: `fr-gen-s-05-owner` expected `ajoute`, baseline `ajoute`, variant `ajout`
+- Broken: `fr-it-09-owner` expected `colonne`, baseline `colonne`, variant `colonie`
+- Broken: `fr-it-10-owner` expected `reste`, baseline `reste`, variant `(missing)`
+- Broken: `fr-it-10-owner` expected `à`, baseline `à`, variant `resta`
+- Broken: `fr-it-12-owner` expected `quelle`, baseline `quelle`, variant `(missing)`

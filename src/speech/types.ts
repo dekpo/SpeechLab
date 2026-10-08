@@ -27,6 +27,8 @@ export interface TranscribeRequest {
   language: string;
   /** Path of a WAV file on disk. */
   audioPath: string;
+  /** Terms to favour (drug names, technical terms) for engines that support it. Default: none. */
+  vocabulary?: string[];
 }
 
 export interface TranscribeResult {

@@ -1,0 +1,44 @@
+{"decoding":"greedy search","distance":0,"from":"fire wall","model":"sherpa-whisper-tiny","sample":"en-it-05-owner","to":"firewall"}
+{"decoding":"greedy search","distance":1,"from":"Amoxiciline","model":"sherpa-whisper-tiny","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":2,"from":"autantification","model":"sherpa-whisper-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"greedy search","distance":2,"from":"reconduction tassite","model":"sherpa-whisper-tiny","sample":"fr-leg-07-owner","to":"reconduction tacite"}
+{"decoding":"greedy search","distance":0,"from":"hyper tension artérielle","model":"sherpa-whisper-tiny","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy search","distance":1,"from":"API reste","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-03-owner","to":"API REST"}
+{"decoding":"greedy search","distance":0,"from":"back - up","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-08-owner","to":"backup"}
+{"decoding":"greedy search","distance":1,"from":"amoxiciline","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":0,"from":"contre - indiqué","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy search","distance":1,"from":"amoxycilline","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":1,"from":"amoxycilline","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"fire wall","model":"whisper-cpp-tiny","sample":"en-it-05-owner","to":"firewall"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"Amoxiciline","model":"whisper-cpp-tiny","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"post-greSQL","model":"whisper-cpp-tiny","sample":"fr-it-01-owner","to":"PostgreSQL"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"autantification","model":"whisper-cpp-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"back-up","model":"whisper-cpp-tiny","sample":"fr-it-08-owner","to":"backup"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reconduction tassite","model":"whisper-cpp-tiny","sample":"fr-leg-07-owner","to":"reconduction tacite"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"tension arterielle","model":"whisper-cpp-tiny","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"hyper tension arterielle","model":"whisper-cpp-tiny","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"anti coagulant","model":"whisper-cpp-tiny","sample":"fr-med-05-owner","to":"anticoagulant"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"fire wall","model":"whisper-cpp-tiny","sample":"en-it-05-owner","to":"firewall"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"autantification","model":"whisper-cpp-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reconduction tassite","model":"whisper-cpp-tiny","sample":"fr-leg-07-owner","to":"reconduction tacite"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"fire wall","model":"whisper-cpp-base-q5_1","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"amoxiciline","model":"whisper-cpp-base-q5_1","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"hipertension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"para sétamol","model":"whisper-cpp-base-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"contraindiqué","model":"whisper-cpp-base-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"insuffisance rénal","model":"whisper-cpp-base-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"fire wall","model":"whisper-cpp-base-q5_1","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"confidenciélité","model":"whisper-cpp-base-q5_1","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"péniciline","model":"whisper-cpp-base-q5_1","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"hipertension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"para sétamol","model":"whisper-cpp-base-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"contraindiquée","model":"whisper-cpp-base-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"insuffisance rénal","model":"whisper-cpp-base-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"contraindiqué","model":"whisper-cpp-small-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"dockeur","model":"whisper-cpp-small-q5_1","sample":"fr-it-12-owner","to":"Docker"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"contreindiqué","model":"whisper-cpp-small-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"insuffisance renale","model":"whisper-cpp-small-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}

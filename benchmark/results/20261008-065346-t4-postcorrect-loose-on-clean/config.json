@@ -1,0 +1,45 @@
+{
+  "beams": [
+    5,
+    1
+  ],
+  "categories": [],
+  "forcedDespitePreflight": false,
+  "includePrivate": false,
+  "isolatedProcesses": true,
+  "limit": null,
+  "models": [
+    "sherpa-whisper-tiny",
+    "sherpa-canary-180m-flash-int8",
+    "sherpa-parakeet-tdt-0.6b-v3-int8",
+    "whisper-cpp-tiny",
+    "whisper-cpp-base-q5_1",
+    "whisper-cpp-small-q5_1"
+  ],
+  "postCorrection": {
+    "note": "text in runs.jsonl is the corrected text, rawText the engine output; timings are those of the source run",
+    "preset": "loose",
+    "sourceRun": "20261007-215116-full-owner-reps1-clean",
+    "vocabularyTerms": {
+      "en": 10,
+      "fr": 56
+    }
+  },
+  "preflight": {
+    "idleCpuPercent": 19.38612985610962,
+    "onAcPower": true,
+    "problems": [],
+    "topProcesses": [
+      [
+        "code-editor.exe",
+        1.1586860418319702
+      ]
+    ],
+    "windowMs": 8000
+  },
+  "repetitions": 1,
+  "runId": "20261008-065346-t4-postcorrect-loose-on-clean",
+  "samples": 95,
+  "startedAtMs": 1791409876912,
+  "threadsPerEngine": 4
+}

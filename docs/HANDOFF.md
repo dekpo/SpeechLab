@@ -41,6 +41,7 @@ the chat, write files in English.
 | M5c benchmark runner, full benchmark | done: first run (disturbed) plus clean re-run `20261007-215116-full-owner-reps1-clean` (855/855 transcripts identical; speed figures measured at about 20 % background CPU, D-034). Variance still unmeasured (1 repetition) |
 | M5d timing study (3 repetitions) | done: `20261008-035938-timing-3reps`, 40 short sentences x 9 configurations x 3 repetitions, 0 changing transcripts, within-run spread 1 to 4 % (I-012 partly closed) |
 | M5e long audio, chunking at silences (Silero VAD) | done: D-035; 828/828 short transcripts unchanged with chunking on; helps sherpa Whisper tiny (30 s limit), neutral for Parakeet and whisper.cpp, harmful for Canary (I-041); Whisper loops not fixed |
+| T4 drug names / key terms (D-036) | done: strict post-correction 0 broken words and fixes 2 of 6 drug names for the best engines; whisper.cpp prompt helps small/base but costs speed; Parakeet hotwords need a surrogate vocabulary and over-boost at score 3.0; all OFF by default; upper bound (vocabulary taken from the test sentences) |
 | M6 TTS laboratory | not started |
 | M7 Windows/macOS packaging validation | not started (no Mac available: macOS stays NOT VERIFIED, document the steps) |
 | M8 final report, licensing table, recommendation | not started |
@@ -54,6 +55,7 @@ than real time on this CPU (RTF 1.1 to 1.2), tiny/base Whisper are too inaccurat
 misspells drug names. Accuracy is load-independent (clean re-run identical to the disturbed run).
 Timing study: inside one run the same sample varies by 1 to 4 % (median) and never changes its transcript; between two runs the fast models differed by up to 20 %, so quote speed with a 10 to 20 % margin. Details and caveats: last M5c and M5d entries of `docs/PROJECT_LOG.md`, results in `benchmark/results/`.
 Long audio (M5e, 3 reference dictations + 2 private clips, little statistical power): only Parakeet and whisper.cpp had no failure; sherpa Whisper tiny cannot take more than 30 s and loops; Canary drops endings and degrades on 24 s pieces. Speed figures differ by 1 to 48 % between runs (I-042): compare inside one run only.
+Drug names (T4, D-036): every engine misspells them (best: 4 of 6 found). Strict dictionary post-correction fixed 2 more with no word broken; vocabulary biasing inside the engine is riskier (loose correction and high hotword score are regressions). One speaker, 6 drug occurrences, vocabulary taken from the test sentences: an upper bound.
 Provisional shortlist: D-032 (not final).
 
 ## 4. Repository map
@@ -69,8 +71,10 @@ benchmark/results/<run>/     benchmark outputs (summary.md, summary.csv, runs.js
 src/                         React UI (components, audio capture, engine-agnostic TypeScript contract)
 src-tauri/src/speech/        Rust: provider traits, sherpa.rs, whisper_cpp.rs, models.rs, download.rs, clips.rs,
                              dataset.rs, metrics.rs, numbers.rs, critical.rs, probe.rs, benchmark.rs,
-                             chunking.rs + vad.rs (long audio cut at silences)
-src-tauri/examples/          CLI tools: transcribe.rs (one file), bench.rs (benchmark)
+                             chunking.rs + vad.rs (long audio cut at silences),
+                             postcorrect.rs (dictionary correction, OFF), termstudy.rs (key-term study)
+src-tauri/examples/          CLI tools: transcribe.rs (one file), bench.rs (benchmark), hotwords_probe.rs (T4 experiment)
+benchmark/vocab/             fr.txt, en.txt: vocabulary files for the drug-name study (committed)
 src-tauri/models-manifest.json   model inventory (data, no code change to add a model)
 scripts/                     PowerShell/Python helpers (env check, library/CLI builds, comparison, bootstrap CI)
 vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's private audio)
@@ -96,7 +100,7 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 ```bash
 pnpm install
 pnpm typecheck && pnpm test && pnpm build          # frontend checks
-cd src-tauri && cargo test --lib                    # Rust unit tests (92)
+cd src-tauri && cargo test --lib                    # Rust unit tests (118)
 pnpm tauri dev                                      # the app (port 1430)
 powershell -ExecutionPolicy Bypass -File scripts/check-env.ps1     # machine and tool check
 
@@ -112,6 +116,11 @@ cargo build --release --example bench
 ./target/release/examples/bench.exe rescore --dir ../benchmark/results/<run>    # apply newer scoring rules
 ./target/release/examples/bench.exe summarize --dir ../benchmark/results/<run>
 
+./target/release/examples/bench.exe run --vocab-dir ../benchmark/vocab --models whisper-cpp-small-q5_1 --label x          # initial prompt
+./target/release/examples/bench.exe run --vocab-dir ../benchmark/vocab --hotwords-score 1.5 --models sherpa-parakeet-tdt-0.6b-v3-int8 --label x   # Parakeet hotwords (without --vocab-dir: beam-search control)
+./target/release/examples/bench.exe postcorrect --dir ../benchmark/results/<run> --vocab-dir ../benchmark/vocab --preset strict --label x   # offline, no engine
+./target/release/examples/bench.exe termstudy --dir ../benchmark/results/<baseline> [--against ../benchmark/results/<variant>] [--category a,b]   # key terms found, fixed vs broken words
+
 python ../scripts/bootstrap_ci.py ../benchmark/results/<run> [--exclude en-it-05-owner]
 python ../scripts/compare_runs.py ../benchmark/results/<old> ../benchmark/results/<new>
 python ../scripts/timing_study.py ../benchmark/results/<run with --reps 3>
@@ -126,8 +135,8 @@ python ../scripts/chunking_study.py runs|same|clips ...      # whole versus chun
 | 2 | Owner listens to `en-it-05`, re-record if needed, re-run only that sample | all engines hear "543", script says "443" (I-033) | in next-tasks.md |
 | 3 | ~~Timing study, 3 repetitions~~ DONE 2026-10-08 (I-012 partly closed; between-run offset unexplained) | | next-tasks.md T2 (kept for reference) |
 | 4 | ~~Long audio, VAD chunking~~ DONE 2026-10-08 (D-035; open follow-ups: per-engine segment limit and output guard, I-041, I-035) | | `docs/prompts/02-long-audio-vad-chunking.md` (kept for reference) |
-| 5 | **Next:** drug-name handling (hotwords, prompts, dictionary correction) | every engine misspells drug names | `docs/prompts/03-drug-name-handling.md` |
-| 6 | Private accent clips (Swiss-Romande, Maghreb) as long private samples | accents are in the plan | next-tasks.md T5 |
+| 5 | ~~Drug-name handling~~ DONE 2026-10-08 (D-036, I-043, I-044, I-045; open: real SentencePiece vocabulary, free-text false-correction rate, owner's choice of technique) | | `docs/prompts/03-drug-name-handling.md` (kept for reference) |
+| 6 | **Next:** private accent clips (Swiss-Romande, Maghreb) as long private samples | accents are in the plan | `docs/prompts/04-private-accent-clips.md` |
 | 7 | Detector false alarms for times ("10.30", "9h00"), sherpa-onnx thread usage | I-034, I-036 | small fixes |
 | 8 | M6 TTS laboratory | plan section 5C | next-tasks.md T6 |
 | 9 | M7 packaging validation | plan section 9 | next-tasks.md T7 |

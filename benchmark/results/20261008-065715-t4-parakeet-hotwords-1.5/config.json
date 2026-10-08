@@ -1,0 +1,39 @@
+{
+  "beams": [
+    5,
+    1
+  ],
+  "categories": [],
+  "chunkMaxS": null,
+  "chunking": "off",
+  "forcedDespitePreflight": false,
+  "hotwordsScore": 1.5,
+  "includePrivate": false,
+  "isolatedProcesses": true,
+  "limit": null,
+  "models": [
+    "sherpa-parakeet-tdt-0.6b-v3-int8"
+  ],
+  "preflight": {
+    "idleCpuPercent": 19.35559892654419,
+    "onAcPower": true,
+    "problems": [],
+    "topProcesses": [
+      [
+        "code-editor.exe",
+        1.1539747714996338
+      ]
+    ],
+    "windowMs": 8000
+  },
+  "repetitions": 1,
+  "runId": "20261008-065715-t4-parakeet-hotwords-1.5",
+  "samples": 95,
+  "startedAtMs": 1791442635334,
+  "threadsPerEngine": 4,
+  "vocabularyDir": "../benchmark/vocab",
+  "vocabularyTerms": {
+    "en": 10,
+    "fr": 56
+  }
+}

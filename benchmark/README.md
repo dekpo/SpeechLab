@@ -101,3 +101,7 @@ Values: language `fr|en`; domain `general|medical|administrative|legal|it`; utte
 - Separate critical-error flags: changed, lost or added numbers; changed units; dropped or added
   negations; changed weekday or month; missing key terms (with "probable misspelling" hints).
   These are heuristics for evaluation, not a safety guarantee.
+
+## Vocabulary files (drug-name study, D-036)
+
+`vocab/fr.txt` and `vocab/en.txt`: one term per line, `#` for comments. They hold the key terms of the dataset plus a few common drug names (names only). Because the key terms come from the test sentences themselves, results obtained with these files are an upper bound on what a vocabulary known in advance can do. Used by `bench run --vocab-dir`, `bench postcorrect` and the engines' biasing (never on by default).

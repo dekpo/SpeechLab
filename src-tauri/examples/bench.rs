@@ -5,6 +5,8 @@
 //!   cargo run --release --example bench -- run [options]
 //!   cargo run --release --example bench -- summarize --dir <results folder>
 //!   cargo run --release --example bench -- rescore --dir <results folder>
+//!   cargo run --release --example bench -- termstudy --dir <baseline> [--against <variant>] [--category a,b] [--out file.md]
+//!   cargo run --release --example bench -- postcorrect --dir <run> --vocab-dir <dir> [--preset strict|medium|loose] --label <name>
 //!
 //! run options:
 //!   --models a,b,c      model ids (default: every installed model)
@@ -17,6 +19,11 @@
 //!   --chunking vad      cut clips longer than 25 s at silences (Silero VAD) before the engine; the
 //!                       default is off (whole clip). Needs the support model: transcribe install silero-vad
 //!   --chunk-max-s N     longest segment when chunking, in seconds (default 25; experiments only)
+//!   --vocab-dir DIR     bias the engines with the vocabulary files DIR/fr.txt and DIR/en.txt (one term per
+//!                       line): whisper.cpp gets an initial prompt, sherpa-onnx Parakeet gets hotwords when
+//!                       --hotwords-score is also given; other engines ignore it (D-036)
+//!   --hotwords-score S  sherpa-onnx NeMo transducer: modified beam search with this hotwords score; without
+//!                       --vocab-dir it is the beam-search control run
 //!   --no-isolate        run every model inside this process (memory figures then mix models)
 //!   --force             run even if the quiet-machine check fails (config.json records it)
 //!
@@ -36,7 +43,9 @@ use speechlab_lib::speech::benchmark::{
 };
 use speechlab_lib::speech::dataset::{default_root, Dataset};
 use speechlab_lib::speech::models::ModelManager;
+use speechlab_lib::speech::postcorrect::{self, PostCorrectConfig};
 use speechlab_lib::speech::provider::CancelToken;
+use speechlab_lib::speech::termstudy::{self, KeyTerms};
 use speechlab_lib::speech::types::InstallStatus;
 
 // Background CPU load tolerated before a run (D-033, relaxed from 15 % to 30 % by D-034 so that the
@@ -100,8 +109,22 @@ impl Args {
                 Some(other) => panic!("--chunking expects 'vad' or 'off', got '{other}'"),
             },
             chunk_max_s: self.get("chunk-max-s").and_then(|v| v.parse().ok()),
+            vocabulary: self.get("vocab-dir").map(|d| load_vocab_dir(&PathBuf::from(d))).unwrap_or_default(),
+            hotwords_score: self.get("hotwords-score").and_then(|v| v.parse().ok()),
         }
     }
+}
+
+/// Vocabulary files by language: DIR/fr.txt and DIR/en.txt.
+fn load_vocab_dir(dir: &std::path::Path) -> std::collections::BTreeMap<String, Vec<String>> {
+    ["fr", "en"]
+        .iter()
+        .map(|lang| {
+            let file = dir.join(format!("{lang}.txt"));
+            let terms = postcorrect::load_vocabulary(&file).unwrap_or_else(|e| panic!("cannot read {}: {e}", file.display()));
+            (lang.to_string(), terms)
+        })
+        .collect()
 }
 
 fn check() {
@@ -257,6 +280,12 @@ fn run(args: &Args) {
         if opts.include_private {
             cmd.arg("--include-private");
         }
+        if let Some(d) = args.get("vocab-dir") {
+            cmd.args(["--vocab-dir", d]);
+        }
+        if let Some(s) = args.get("hotwords-score") {
+            cmd.args(["--hotwords-score", s]);
+        }
         if opts.chunking {
             cmd.args(["--chunking", "vad"]);
             if let Some(m) = opts.chunk_max_s {
@@ -289,6 +318,9 @@ fn run(args: &Args) {
         "includePrivate": opts.include_private,
         "chunking": if opts.chunking { "vad" } else { "off" },
         "chunkMaxS": opts.chunk_max_s,
+        "vocabularyDir": args.get("vocab-dir"),
+        "vocabularyTerms": opts.vocabulary.iter().map(|(l, v)| (l.clone(), v.len())).collect::<std::collections::BTreeMap<_, _>>(),
+        "hotwordsScore": opts.hotwords_score,
         "isolatedProcesses": !args.flag("no-isolate"),
         "samples": n,
         "threadsPerEngine": 4,
@@ -338,6 +370,89 @@ fn rescore_dir(args: &Args) {
     resummarize(args);
 }
 
+fn read_records(dir: &std::path::Path) -> Vec<RunRecord> {
+    let text = std::fs::read_to_string(dir.join("runs.jsonl")).unwrap_or_else(|e| panic!("{}: {e}", dir.join("runs.jsonl").display()));
+    text.lines().filter(|l| !l.trim().is_empty()).map(|l| serde_json::from_str(l).expect("record")).collect()
+}
+
+fn dataset_key_terms() -> KeyTerms {
+    let ds = Dataset::load(&default_root()).expect("dataset");
+    ds.samples.iter().filter(|s| !s.private).map(|s| (s.id.clone(), s.key_terms.clone())).collect()
+}
+
+fn keep_categories(records: Vec<RunRecord>, categories: &[String]) -> Vec<RunRecord> {
+    records.into_iter().filter(|r| categories.is_empty() || categories.contains(&r.category)).collect()
+}
+
+/// Key-term outcome of one run, or the comparison of two runs (fixes versus false corrections).
+fn termstudy_cmd(args: &Args) {
+    let base_dir = PathBuf::from(args.get("dir").expect("--dir <baseline results folder>"));
+    let cats = args.list("category");
+    let terms = dataset_key_terms();
+    let base = keep_categories(read_records(&base_dir), &cats);
+    let report = match args.get("against") {
+        None => termstudy::baseline_markdown(&base, &terms),
+        Some(other) => {
+            let var = keep_categories(read_records(&PathBuf::from(other)), &cats);
+            termstudy::comparison_markdown(&base, &var, &terms)
+        }
+    };
+    println!("{report}");
+    if let Some(out) = args.get("out") {
+        std::fs::write(out, &report).expect("write report");
+    }
+}
+
+/// Applies the dictionary post-correction to the stored transcripts of a run (no engine is run) and
+/// writes a new results folder with the corrected texts, re-scored; `rawText` keeps the engine output.
+fn postcorrect_cmd(args: &Args) {
+    let src = PathBuf::from(args.get("dir").expect("--dir <results folder>"));
+    let vocab = load_vocab_dir(&PathBuf::from(args.get("vocab-dir").expect("--vocab-dir <dir>")));
+    let preset = args.get("preset").unwrap_or("strict");
+    let cfg = PostCorrectConfig::by_name(preset).unwrap_or_else(|| panic!("unknown --preset {preset} (strict, medium, loose)"));
+    let mut records = read_records(&src);
+    let mut log = String::new();
+    let mut changed = 0;
+    for r in records.iter_mut().filter(|r| r.error.is_none()) {
+        let terms = vocab.get(&r.language).map(Vec::as_slice).unwrap_or(&[]);
+        let out = postcorrect::correct(&r.text, terms, &cfg);
+        r.post_correction = preset.to_string();
+        if out.changes.is_empty() {
+            continue;
+        }
+        changed += 1;
+        for c in &out.changes {
+            log.push_str(&format!(
+                "{}\n",
+                serde_json::json!({"model": r.model_id, "decoding": r.decoding, "sample": r.sample_id, "from": c.from, "to": c.to, "distance": c.distance})
+            ));
+        }
+        r.raw_text = Some(std::mem::replace(&mut r.text, out.text));
+    }
+    let ds = Dataset::load(&default_root()).expect("dataset");
+    let key_terms = ds.samples.iter().map(|s| (s.id.clone(), s.key_terms.clone())).collect();
+    rescore(&mut records, &key_terms);
+
+    let started = now_ms();
+    let label = args.get("label").unwrap_or("postcorrect");
+    let run_id = format!("{}-{label}", utc_stamp(started));
+    let out_dir = default_root().join("results").join(&run_id);
+    let system: SystemInfo = serde_json::from_str(&std::fs::read_to_string(src.join("system.json")).expect("system.json")).expect("system");
+    let mut config: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(src.join("config.json")).expect("config.json")).expect("config");
+    config["runId"] = serde_json::json!(run_id);
+    config["postCorrection"] = serde_json::json!({
+        "preset": preset, "sourceRun": src.file_name().map(|n| n.to_string_lossy().into_owned()),
+        "vocabularyTerms": vocab.iter().map(|(l, v)| (l.clone(), v.len())).collect::<std::collections::BTreeMap<_, _>>(),
+        "note": "text in runs.jsonl is the corrected text, rawText the engine output; timings are those of the source run"
+    });
+    for r in records.iter_mut() {
+        r.run_id = run_id.clone();
+    }
+    write_results(&out_dir, &system, &config, &records).expect("write results");
+    std::fs::write(out_dir.join("post-corrections.jsonl"), log).expect("write log");
+    println!("post-correction ({preset}): {changed} of {} transcripts changed; results in {}", records.len(), out_dir.display());
+}
+
 fn main() {
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let args = Args::parse(raw.get(1..).unwrap_or(&[]));
@@ -360,6 +475,8 @@ fn main() {
         Some("run-one") => run_one(&args),
         Some("summarize") => resummarize(&args),
         Some("rescore") => rescore_dir(&args),
+        Some("termstudy") => termstudy_cmd(&args),
+        Some("postcorrect") => postcorrect_cmd(&args),
         _ => eprintln!("usage: bench check | bench run [--models a,b] [--beams 5,1] [--reps N] [--category c] [--limit N] [--label x] [--chunking vad] [--include-private] [--no-isolate]"),
     }
 }

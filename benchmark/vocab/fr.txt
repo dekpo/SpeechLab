@@ -1,0 +1,65 @@
+# Vocabulary for the drug-name / key-term study (T4, D-036). One term per line.
+# Built ONLY from (1) the key terms of the French samples of the dataset (benchmark/samples/*.json,
+# keyTerms) and (2) a small list of common drug NAMES added as distractors (names only, no clinical
+# content). Because list (1) is taken from the test sentences themselves, results obtained with this
+# file are an UPPER BOUND on what a vocabulary known in advance can do, not a general claim.
+
+# --- dataset key terms
+amoxicilline
+anticoagulant
+API REST
+attestation
+authentification
+backup
+confidentialité
+consentement
+contre-indiqué
+convention
+CSV
+debug
+Docker
+firewall
+hypertension artérielle
+ibuprofène
+index
+infrastructure
+insuffisance rénale
+JSON
+justificatif
+Kubernetes
+logs
+main
+paracétamol
+posologie
+PostgreSQL
+pull request
+Python
+pénicilline
+reconduction tacite
+recours
+responsabilité civile
+restore
+SSL
+staging
+Symfony
+tension artérielle
+token
+users
+
+# --- added common drug names (distractors)
+doliprane
+aspirine
+metformine
+ramipril
+atorvastatine
+oméprazole
+lévothyroxine
+bisoprolol
+amlodipine
+furosémide
+warfarine
+salbutamol
+tramadol
+diclofénac
+prednisone
+insuline

@@ -1,0 +1,365 @@
+{"decoding":"greedy search","distance":3,"from":"Postgresary","model":"sherpa-whisper-tiny","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy search","distance":3,"from":"the Kubernetes","model":"sherpa-whisper-tiny","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"greedy search","distance":0,"from":"fire wall","model":"sherpa-whisper-tiny","sample":"en-it-05-owner","to":"firewall"}
+{"decoding":"greedy search","distance":3,"from":"The pull request","model":"sherpa-whisper-tiny","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"greedy search","distance":3,"from":"une attestation","model":"sherpa-whisper-tiny","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"greedy search","distance":2,"from":"La convention","model":"sherpa-whisper-tiny","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"greedy search","distance":3,"from":"justif-cative","model":"sherpa-whisper-tiny","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"greedy search","distance":2,"from":"sa tension artérielle","model":"sherpa-whisper-tiny","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy search","distance":2,"from":"d'Amoxiciline","model":"sherpa-whisper-tiny","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":2,"from":"Après","model":"sherpa-whisper-tiny","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"greedy search","distance":2,"from":"la convention","model":"sherpa-whisper-tiny","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-whisper-tiny","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"la testation","model":"sherpa-whisper-tiny","sample":"fr-dict-02-owner","to":"attestation"}
+{"decoding":"greedy search","distance":2,"from":"la confidentialité","model":"sherpa-whisper-tiny","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"greedy search","distance":2,"from":"après","model":"sherpa-whisper-tiny","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-whisper-tiny","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-whisper-tiny","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-whisper-tiny","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"après","model":"sherpa-whisper-tiny","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-whisper-tiny","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"reste","model":"sherpa-whisper-tiny","sample":"fr-it-03-owner","to":"restore"}
+{"decoding":"greedy search","distance":2,"from":"autantification","model":"sherpa-whisper-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"greedy search","distance":2,"from":"le firewall","model":"sherpa-whisper-tiny","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-whisper-tiny","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-whisper-tiny","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"greedy search","distance":3,"from":"poulre request","model":"sherpa-whisper-tiny","sample":"fr-it-10-owner","to":"pull request"}
+{"decoding":"greedy search","distance":2,"from":"reste","model":"sherpa-whisper-tiny","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"greedy search","distance":1,"from":"Jason","model":"sherpa-whisper-tiny","sample":"fr-it-19-owner","to":"JSON"}
+{"decoding":"greedy search","distance":2,"from":"Le consentement","model":"sherpa-whisper-tiny","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"greedy search","distance":2,"from":"La responsabilité civile","model":"sherpa-whisper-tiny","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"greedy search","distance":2,"from":"de recours","model":"sherpa-whisper-tiny","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"greedy search","distance":2,"from":"reconduction tassite","model":"sherpa-whisper-tiny","sample":"fr-leg-07-owner","to":"reconduction tacite"}
+{"decoding":"greedy search","distance":1,"from":"d'amoxicilline","model":"sherpa-whisper-tiny","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":2,"from":"pénisiline","model":"sherpa-whisper-tiny","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy search","distance":0,"from":"hyper tension artérielle","model":"sherpa-whisper-tiny","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-whisper-tiny","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"Lors","model":"sherpa-whisper-tiny","sample":"fr-med-09-owner","to":"logs"}
+{"decoding":"greedy search","distance":3,"from":"Libby Profene","model":"sherpa-whisper-tiny","sample":"fr-med-09-owner","to":"ibuprofène"}
+{"decoding":"greedy search","distance":2,"from":"une suffisance rénale","model":"sherpa-whisper-tiny","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"greedy search","distance":2,"from":"postgress","model":"sherpa-canary-180m-flash-int8","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy search","distance":3,"from":"the Kubernetes","model":"sherpa-canary-180m-flash-int8","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"greedy search","distance":2,"from":"pool request","model":"sherpa-canary-180m-flash-int8","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"greedy search","distance":3,"from":"une attestation","model":"sherpa-canary-180m-flash-int8","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"greedy search","distance":2,"from":"La convention","model":"sherpa-canary-180m-flash-int8","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"greedy search","distance":2,"from":"le justificatif","model":"sherpa-canary-180m-flash-int8","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"greedy search","distance":2,"from":"sa tension artérielle","model":"sherpa-canary-180m-flash-int8","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy search","distance":1,"from":"d'amoxicilline","model":"sherpa-canary-180m-flash-int8","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":2,"from":"Après","model":"sherpa-canary-180m-flash-int8","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"greedy search","distance":2,"from":"la convention","model":"sherpa-canary-180m-flash-int8","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-canary-180m-flash-int8","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"la confidentialité","model":"sherpa-canary-180m-flash-int8","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"greedy search","distance":2,"from":"après","model":"sherpa-canary-180m-flash-int8","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-canary-180m-flash-int8","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-canary-180m-flash-int8","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-canary-180m-flash-int8","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"après","model":"sherpa-canary-180m-flash-int8","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"greedy search","distance":3,"from":"post - grescuel","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"Kubernet","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-02-owner","to":"Kubernetes"}
+{"decoding":"greedy search","distance":1,"from":"API reste","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-03-owner","to":"API REST"}
+{"decoding":"greedy search","distance":2,"from":"Symphony","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-04-owner","to":"Symfony"}
+{"decoding":"greedy search","distance":2,"from":"de staging","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-06-owner","to":"staging"}
+{"decoding":"greedy search","distance":2,"from":"le Firewall","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"greedy search","distance":0,"from":"back - up","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-08-owner","to":"backup"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"mail","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-09-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"poule Request","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-10-owner","to":"pull request"}
+{"decoding":"greedy search","distance":2,"from":"reste","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"greedy search","distance":1,"from":"Jason","model":"sherpa-canary-180m-flash-int8","sample":"fr-it-19-owner","to":"JSON"}
+{"decoding":"greedy search","distance":2,"from":"Le consentement","model":"sherpa-canary-180m-flash-int8","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"greedy search","distance":2,"from":"La responsabilité civile","model":"sherpa-canary-180m-flash-int8","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"greedy search","distance":2,"from":"la confidentialité","model":"sherpa-canary-180m-flash-int8","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"greedy search","distance":2,"from":"de recours","model":"sherpa-canary-180m-flash-int8","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"greedy search","distance":2,"from":"d'amoxiciline","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":2,"from":"la pénicilline","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy search","distance":2,"from":"La tension artérielle","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"greedy search","distance":3,"from":"une hypertension artérielle","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy search","distance":2,"from":"de paracétamol","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"greedy search","distance":3,"from":"est contre - indiqué","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy search","distance":2,"from":"pausologie","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-06-owner","to":"posologie"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"ibuprophène","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-09-owner","to":"ibuprofène"}
+{"decoding":"greedy search","distance":3,"from":"une insuffisance rénale","model":"sherpa-canary-180m-flash-int8","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"greedy search","distance":3,"from":"the PostgreSQL","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy search","distance":3,"from":"The PostgreSQL","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"en-it-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy search","distance":3,"from":"the Kubernetes","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"greedy search","distance":3,"from":"The pull request","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"greedy search","distance":3,"from":"une attestation","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"greedy search","distance":2,"from":"La convention","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"greedy search","distance":2,"from":"le justificatif","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"greedy search","distance":2,"from":"sa tension artérielle","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy search","distance":2,"from":"d'amoxycilline","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":2,"from":"Après","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"greedy search","distance":2,"from":"la convention","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"la confidentialité","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"greedy search","distance":2,"from":"après","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"après","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"La PI reste","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-03-owner","to":"API REST"}
+{"decoding":"greedy search","distance":2,"from":"de staging","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-06-owner","to":"staging"}
+{"decoding":"greedy search","distance":2,"from":"le firewall","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"greedy search","distance":1,"from":"mais","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"greedy search","distance":2,"from":"le restore","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-08-owner","to":"restore"}
+{"decoding":"greedy search","distance":2,"from":"La pull request","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-10-owner","to":"pull request"}
+{"decoding":"greedy search","distance":2,"from":"reste","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"greedy search","distance":2,"from":"Le consentement","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"greedy search","distance":2,"from":"La responsabilité civile","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"greedy search","distance":2,"from":"la confidentialité","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"greedy search","distance":2,"from":"de recours","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"greedy search","distance":2,"from":"d'amoxycilline","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy search","distance":2,"from":"la pénicilline","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy search","distance":2,"from":"La tension artérielle","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"greedy search","distance":3,"from":"une hypertension artérielle","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy search","distance":2,"from":"de paracétamol","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"greedy search","distance":3,"from":"est contre-indiqué","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy search","distance":2,"from":"La posologie","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-06-owner","to":"posologie"}
+{"decoding":"greedy search","distance":1,"from":"matin","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"greedy search","distance":3,"from":"une insuffisance rénale","model":"sherpa-parakeet-tdt-0.6b-v3-int8","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"the PostgreSQL","model":"whisper-cpp-tiny","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"the Kubernetes","model":"whisper-cpp-tiny","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"fire wall","model":"whisper-cpp-tiny","sample":"en-it-05-owner","to":"firewall"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"The pull request","model":"whisper-cpp-tiny","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"une attestation","model":"whisper-cpp-tiny","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La convention","model":"whisper-cpp-tiny","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le justificatif","model":"whisper-cpp-tiny","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"sa tension artérielle","model":"whisper-cpp-tiny","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"d'Amoxiciline","model":"whisper-cpp-tiny","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"Après","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la convention","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la testation","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"attestation"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reste","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la confidentialité","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"après","model":"whisper-cpp-tiny","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-tiny","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-tiny","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-tiny","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"après","model":"whisper-cpp-tiny","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"post-greSQL","model":"whisper-cpp-tiny","sample":"fr-it-01-owner","to":"PostgreSQL"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-tiny","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reste","model":"whisper-cpp-tiny","sample":"fr-it-03-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"autantification","model":"whisper-cpp-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le firewall","model":"whisper-cpp-tiny","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"back-up","model":"whisper-cpp-tiny","sample":"fr-it-08-owner","to":"backup"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-tiny","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le restore","model":"whisper-cpp-tiny","sample":"fr-it-08-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reste","model":"whisper-cpp-tiny","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"Jason","model":"whisper-cpp-tiny","sample":"fr-it-19-owner","to":"JSON"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"Le consentement","model":"whisper-cpp-tiny","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La responsabilité civile","model":"whisper-cpp-tiny","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la confidentialité","model":"whisper-cpp-tiny","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"de recours","model":"whisper-cpp-tiny","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reconduction tassite","model":"whisper-cpp-tiny","sample":"fr-leg-07-owner","to":"reconduction tacite"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"d'amoxicilline","model":"whisper-cpp-tiny","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"pénithyline","model":"whisper-cpp-tiny","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La tension arterielle","model":"whisper-cpp-tiny","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"hyper tension arterielle","model":"whisper-cpp-tiny","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"anti coagulant","model":"whisper-cpp-tiny","sample":"fr-med-05-owner","to":"anticoagulant"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-tiny","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"Lors","model":"whisper-cpp-tiny","sample":"fr-med-09-owner","to":"logs"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"une suffisance rénale","model":"whisper-cpp-tiny","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"Postgres","model":"whisper-cpp-tiny","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"restarze","model":"whisper-cpp-tiny","sample":"en-it-02-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"the Kubernetes","model":"whisper-cpp-tiny","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"fire wall","model":"whisper-cpp-tiny","sample":"en-it-05-owner","to":"firewall"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"The pull request","model":"whisper-cpp-tiny","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"une attestation","model":"whisper-cpp-tiny","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La convention","model":"whisper-cpp-tiny","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"sa tension artérielle","model":"whisper-cpp-tiny","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"d'Amoxicilline","model":"whisper-cpp-tiny","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"Après","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la convention","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la testation","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"attestation"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reste","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la confidentialité","model":"whisper-cpp-tiny","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"après","model":"whisper-cpp-tiny","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-tiny","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-tiny","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-tiny","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"après","model":"whisper-cpp-tiny","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reste","model":"whisper-cpp-tiny","sample":"fr-it-03-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"autantification","model":"whisper-cpp-tiny","sample":"fr-it-05-owner","to":"authentification"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"le firewall","model":"whisper-cpp-tiny","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-tiny","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reste","model":"whisper-cpp-tiny","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"Jason","model":"whisper-cpp-tiny","sample":"fr-it-19-owner","to":"JSON"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"Le consentement","model":"whisper-cpp-tiny","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La responsabilité civile","model":"whisper-cpp-tiny","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la confidentialité","model":"whisper-cpp-tiny","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"de recours","model":"whisper-cpp-tiny","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reconduction tassite","model":"whisper-cpp-tiny","sample":"fr-leg-07-owner","to":"reconduction tacite"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"d'amoxicilline","model":"whisper-cpp-tiny","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"pénithyline","model":"whisper-cpp-tiny","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"tension verteurielle","model":"whisper-cpp-tiny","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"hyper tension verteurielle","model":"whisper-cpp-tiny","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-tiny","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"Lors","model":"whisper-cpp-tiny","sample":"fr-med-09-owner","to":"logs"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"une suffisance rénale","model":"whisper-cpp-tiny","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"the PostgreSQL","model":"whisper-cpp-base-q5_1","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"The PostgreSQL","model":"whisper-cpp-base-q5_1","sample":"en-it-01-owner","to":"PostgreSQL"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"the Kubernetes","model":"whisper-cpp-base-q5_1","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"The pull request","model":"whisper-cpp-base-q5_1","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"une attestation","model":"whisper-cpp-base-q5_1","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La convention","model":"whisper-cpp-base-q5_1","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le justificatif","model":"whisper-cpp-base-q5_1","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"sa tension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"d'amoxicilline","model":"whisper-cpp-base-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"Après","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la convention","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la testation","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"attestation"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la confidentialité","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"après","model":"whisper-cpp-base-q5_1","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-base-q5_1","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"après","model":"whisper-cpp-base-q5_1","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reste","model":"whisper-cpp-base-q5_1","sample":"fr-it-03-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"de Staging","model":"whisper-cpp-base-q5_1","sample":"fr-it-06-owner","to":"staging"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"fire wall","model":"whisper-cpp-base-q5_1","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-base-q5_1","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le restore","model":"whisper-cpp-base-q5_1","sample":"fr-it-08-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"poule Riquest","model":"whisper-cpp-base-q5_1","sample":"fr-it-10-owner","to":"pull request"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reste","model":"whisper-cpp-base-q5_1","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":0,"from":"débug","model":"whisper-cpp-base-q5_1","sample":"fr-it-16-owner","to":"debug"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"Jason","model":"whisper-cpp-base-q5_1","sample":"fr-it-19-owner","to":"JSON"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"Le consentement","model":"whisper-cpp-base-q5_1","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La responsabilité civile","model":"whisper-cpp-base-q5_1","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la Confidentialité","model":"whisper-cpp-base-q5_1","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"de recours","model":"whisper-cpp-base-q5_1","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"d'amoxiciline","model":"whisper-cpp-base-q5_1","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la pénicilline","model":"whisper-cpp-base-q5_1","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La tension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"hipertension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"para sétamol","model":"whisper-cpp-base-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"contraindiqué","model":"whisper-cpp-base-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"pausologie","model":"whisper-cpp-base-q5_1","sample":"fr-med-06-owner","to":"posologie"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"insuffisance rénal","model":"whisper-cpp-base-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"the PostgreSQL","model":"whisper-cpp-base-q5_1","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"the Kubernetes","model":"whisper-cpp-base-q5_1","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"The pull request","model":"whisper-cpp-base-q5_1","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"une attestation","model":"whisper-cpp-base-q5_1","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La convention","model":"whisper-cpp-base-q5_1","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"le justificatif","model":"whisper-cpp-base-q5_1","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"sa tension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"d'amoxicilline","model":"whisper-cpp-base-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"Après","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la convention","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la testation","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"attestation"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la confidentialité","model":"whisper-cpp-base-q5_1","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"après","model":"whisper-cpp-base-q5_1","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-base-q5_1","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"après","model":"whisper-cpp-base-q5_1","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reste","model":"whisper-cpp-base-q5_1","sample":"fr-it-03-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"de Staging","model":"whisper-cpp-base-q5_1","sample":"fr-it-06-owner","to":"staging"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"fire wall","model":"whisper-cpp-base-q5_1","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-base-q5_1","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"le restore","model":"whisper-cpp-base-q5_1","sample":"fr-it-08-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reste","model":"whisper-cpp-base-q5_1","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":0,"from":"débug","model":"whisper-cpp-base-q5_1","sample":"fr-it-16-owner","to":"debug"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"Jason","model":"whisper-cpp-base-q5_1","sample":"fr-it-19-owner","to":"JSON"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"Le consentement","model":"whisper-cpp-base-q5_1","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La responsabilité civile","model":"whisper-cpp-base-q5_1","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"confidenciélité","model":"whisper-cpp-base-q5_1","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"de recours","model":"whisper-cpp-base-q5_1","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"d'amoxicilline","model":"whisper-cpp-base-q5_1","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"la péniciline","model":"whisper-cpp-base-q5_1","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La tension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"hipertension artérielle","model":"whisper-cpp-base-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"para sétamol","model":"whisper-cpp-base-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"contraindiquée","model":"whisper-cpp-base-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-base-q5_1","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"insuffisance rénal","model":"whisper-cpp-base-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"the PostgreSQL","model":"whisper-cpp-small-q5_1","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"The PostgreSQL","model":"whisper-cpp-small-q5_1","sample":"en-it-01-owner","to":"PostgreSQL"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"the Kubernetes","model":"whisper-cpp-small-q5_1","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"The pull request","model":"whisper-cpp-small-q5_1","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"une attestation","model":"whisper-cpp-small-q5_1","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La convention","model":"whisper-cpp-small-q5_1","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le justificatif","model":"whisper-cpp-small-q5_1","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"sa tension artérielle","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"d'amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"Après","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la convention","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la confidentialité","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"après","model":"whisper-cpp-small-q5_1","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-small-q5_1","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"après","model":"whisper-cpp-small-q5_1","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reste","model":"whisper-cpp-small-q5_1","sample":"fr-it-03-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"de staging","model":"whisper-cpp-small-q5_1","sample":"fr-it-06-owner","to":"staging"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le firewall","model":"whisper-cpp-small-q5_1","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"mais","model":"whisper-cpp-small-q5_1","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"le restore","model":"whisper-cpp-small-q5_1","sample":"fr-it-08-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"poule request","model":"whisper-cpp-small-q5_1","sample":"fr-it-10-owner","to":"pull request"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"reste","model":"whisper-cpp-small-q5_1","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"Le consentement","model":"whisper-cpp-small-q5_1","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La responsabilité civile","model":"whisper-cpp-small-q5_1","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la confidentialité","model":"whisper-cpp-small-q5_1","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"de recours","model":"whisper-cpp-small-q5_1","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"d'amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"la pénicilline","model":"whisper-cpp-small-q5_1","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La tension artérielle","model":"whisper-cpp-small-q5_1","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"une hypertension artérielle","model":"whisper-cpp-small-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"de paracétamol","model":"whisper-cpp-small-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"contraindiqué","model":"whisper-cpp-small-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"La posologie","model":"whisper-cpp-small-q5_1","sample":"fr-med-06-owner","to":"posologie"}
+{"decoding":"beam search (5 beams)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"beam search (5 beams)","distance":2,"from":"Libuprofen","model":"whisper-cpp-small-q5_1","sample":"fr-med-09-owner","to":"ibuprofène"}
+{"decoding":"beam search (5 beams)","distance":3,"from":"une insuffisance rénale","model":"whisper-cpp-small-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"the PostgreSQL","model":"whisper-cpp-small-q5_1","sample":"en-dict-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"The PostgreSQL","model":"whisper-cpp-small-q5_1","sample":"en-it-01-owner","to":"PostgreSQL"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"the Kubernetes","model":"whisper-cpp-small-q5_1","sample":"en-it-02-owner","to":"Kubernetes"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"The pull request","model":"whisper-cpp-small-q5_1","sample":"en-it-08-owner","to":"pull request"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"une attestation","model":"whisper-cpp-small-q5_1","sample":"fr-adm-01-owner","to":"attestation"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La convention","model":"whisper-cpp-small-q5_1","sample":"fr-adm-02-owner","to":"convention"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"le justificatif","model":"whisper-cpp-small-q5_1","sample":"fr-adm-03-owner","to":"justificatif"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"sa tension artérielle","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"d'amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-dict-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"Après","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la convention","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"convention"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la confidentialité","model":"whisper-cpp-small-q5_1","sample":"fr-dict-02-owner","to":"confidentialité"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"après","model":"whisper-cpp-small-q5_1","sample":"fr-gen-q-05-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-gen-q-09-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-gen-s-01-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-small-q5_1","sample":"fr-gen-s-04-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"après","model":"whisper-cpp-small-q5_1","sample":"fr-gen-s-07-owner","to":"API REST"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-it-01-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reste","model":"whisper-cpp-small-q5_1","sample":"fr-it-03-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"de staging","model":"whisper-cpp-small-q5_1","sample":"fr-it-06-owner","to":"staging"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"le firewall","model":"whisper-cpp-small-q5_1","sample":"fr-it-07-owner","to":"firewall"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"mais","model":"whisper-cpp-small-q5_1","sample":"fr-it-08-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"le restore","model":"whisper-cpp-small-q5_1","sample":"fr-it-08-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"poule request","model":"whisper-cpp-small-q5_1","sample":"fr-it-10-owner","to":"pull request"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"reste","model":"whisper-cpp-small-q5_1","sample":"fr-it-10-owner","to":"restore"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"dockeur","model":"whisper-cpp-small-q5_1","sample":"fr-it-12-owner","to":"Docker"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"Le consentement","model":"whisper-cpp-small-q5_1","sample":"fr-leg-01-owner","to":"consentement"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La responsabilité civile","model":"whisper-cpp-small-q5_1","sample":"fr-leg-02-owner","to":"responsabilité civile"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la confidentialité","model":"whisper-cpp-small-q5_1","sample":"fr-leg-03-owner","to":"confidentialité"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"de recours","model":"whisper-cpp-small-q5_1","sample":"fr-leg-05-owner","to":"recours"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"d'amoxiciline","model":"whisper-cpp-small-q5_1","sample":"fr-med-01-owner","to":"amoxicilline"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"la pénicilline","model":"whisper-cpp-small-q5_1","sample":"fr-med-02-owner","to":"pénicilline"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La tension artérielle","model":"whisper-cpp-small-q5_1","sample":"fr-med-03-owner","to":"tension artérielle"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"une hypertension artérielle","model":"whisper-cpp-small-q5_1","sample":"fr-med-03-owner","to":"hypertension artérielle"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"de paracétamol","model":"whisper-cpp-small-q5_1","sample":"fr-med-04-owner","to":"paracétamol"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"est contreindiqué","model":"whisper-cpp-small-q5_1","sample":"fr-med-05-owner","to":"contre-indiqué"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"La posologie","model":"whisper-cpp-small-q5_1","sample":"fr-med-06-owner","to":"posologie"}
+{"decoding":"greedy (beam 1)","distance":1,"from":"matin","model":"whisper-cpp-small-q5_1","sample":"fr-med-06-owner","to":"main"}
+{"decoding":"greedy (beam 1)","distance":2,"from":"LibuProfen","model":"whisper-cpp-small-q5_1","sample":"fr-med-09-owner","to":"ibuprofène"}
+{"decoding":"greedy (beam 1)","distance":3,"from":"une insuffisance renale","model":"whisper-cpp-small-q5_1","sample":"fr-med-10-owner","to":"insuffisance rénale"}

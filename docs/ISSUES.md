@@ -38,6 +38,9 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-037 | Open | performance | whisper.cpp small is slower than real time on this CPU (RTF 1.6 to 1.9) |
 | I-038 | Info | benchmark | One speaker, 95 sentences, 1 repetition, CPU only; sampling interval via bootstrap |
 | I-041 | Open | engines | Canary int8 degrades on pieces of about 24 s: a whole sentence dropped on `en-dict-01` chunked at 25 s, half the words and 63 s of runtime on a 45.8 s private clip |
+| I-043 | Open | engines | Parakeet hotwords need a surrogate SentencePiece vocabulary (the download has none); score 1.5 loses the elision ("d amoxicilline"), score 3.0 inserts vocabulary words into unrelated sentences |
+| I-044 | Open | engines | whisper.cpp initial prompt: 25 to 40 % slower, slightly worse on sentences without key terms, harmful for tiny, no reliable gain on drug names |
+| I-045 | Open | scoring / safety | Dictionary post-correction can silently replace a correct rare word; false-correction rate on free text unknown (measured only on 95 sentences) |
 | I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
@@ -230,3 +233,16 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 ### I-042 — Between-run speed offset larger than expected
 - Clips of 25 s or less take the same path with or without chunking, yet the median inference time of `20261008-050621-short-vad` was 1 % (whisper.cpp base greedy) to 48 % (sherpa Whisper tiny) above the clean full run, although the measured background load before the run was lower (14.4 % versus 19.4 %). The preflight reading is a single 8 s average and varies by more than 10 points between calls. Speed figures from different runs must not be compared; compare inside one run only. Related: I-012.
 
+### I-043 — Parakeet hotwords: surrogate vocabulary, lost elision, over-boosting
+- Symptom: with the default character unit the library cannot encode any hotword ("Cannot find ID for token"); with the `bpe` unit it needs a `bpe.vocab` that the model download does not contain. A surrogate derived from `tokens.txt` (score = minus the id) works but the cut of a hotword into pieces may differ from the model's own.
+- Measured (T4, 1 repetition, all 95 samples): score 1.5 fixes one drug name but writes "d amoxicilline" instead of "d'amoxicilline" (the hotword starts a new word) and breaks 4 words in the 36 s dictation; score 3.0 gives WER 5.1 % (baseline 2.3 %), 30 broken words, one runaway, vocabulary words inserted in English sentences.
+- Status: open. To try: the real SentencePiece vocabulary (needs a download, ask the owner), scores between 1.5 and 3.0, per-word scores, a hotword form that keeps the apostrophe.
+
+### I-044 — whisper.cpp initial prompt side effects
+- Measured (T4): inference 25 to 40 % slower (tiny 762 -> 1070 ms, small 5881 -> 7261 ms median; between-run offset up to 20 %, I-042); six categories without key terms slightly worse (small 2.4 -> 3.0 %, base 6.0 -> 7.2 %, tiny 12.4 -> 13.8 %, 5 beams); tiny gets 51 to 54 broken words overall; small greedy lost a drug name. Words changed by the prompt include "jeudi" -> "jedi", "veuillez" -> "voyez".
+- Status: open. Untested: prompt written as a sentence, `--carry-initial-prompt`, a shorter list.
+
+### I-045 — Dictionary post-correction can rewrite correct words
+- Mechanism: near-miss matching cannot tell a misspelling from a real word. Unit test `known_hazard_a_correct_look_alike_drug_name_is_replaced` shows "prednisolone" replaced by "prednisone" under the MEDIUM preset. The LOOSE preset turned "matin"/"mais" into "main" 63 times on the clean run.
+- Mitigations in the code: strict default, minimum length, same first letter, plural guard, protected numbers/units/negations/dates, ambiguity left alone, every change returned. Not mitigated: a rare real word one edit from a vocabulary term under STRICT; any text outside the 95 sentences.
+- Status: open until measured on free text and more speakers; the option stays OFF.

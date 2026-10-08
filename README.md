@@ -13,7 +13,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M5b in-app dataset recorder (read a sentence, record, save with its reference): done.
 - M5c reproducible benchmark runner, first full benchmark of 9 configurations on 95 recorded sentences: done (results in `benchmark/results/`, analysis in [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md)). A clean re-run (`20261007-215116-full-owner-reps1-clean`, about 20 % background CPU) reproduced all 855 transcripts identically and replaced the speed figures of the first, disturbed run; a 3-repetition timing study (`20261008-035938-timing-3reps`, M5d) then showed that the speed of the same sample varies by only 1 to 4 % within a run and that no transcript changes between repetitions.
 - M5e long audio: engine-independent chunking at silences with the Silero VAD (`bench run --chunking vad`, default off). Short audio is provably unchanged; chunking helps only sherpa-onnx Whisper tiny (its 30 s limit) and hurts Canary; Whisper loops remain (D-035, project log).
-- Next: owner checks one suspect sample (I-033), then drug-name correction, accent clips.
+- T4 drug names and key terms (D-036): vocabulary biasing (whisper.cpp initial prompt, Parakeet hotwords) and dictionary post-correction, all OFF by default. Strict post-correction fixed more drug names with no word broken; loose settings and a high hotword score are regressions. One speaker, a vocabulary taken from the test sentences: an upper bound.
+- Next: owner checks one suspect sample (I-033), then accent clips.
 
 ## Read first
 
@@ -90,6 +91,10 @@ cargo run --release --example bench -- run --reps 1 --label mine   # every insta
 cargo run --release --example bench -- run --models sherpa-parakeet-tdt-0.6b-v3-int8 --category fr-general --reps 3
 cargo run --release --example bench -- run --category fr-dictation,en-dictation --chunking vad --label long-vad   # cut clips over 25 s at silences
 cargo run --release --example bench -- rescore --dir ../benchmark/results/<folder>   # apply improved scoring rules
+cargo run --release --example bench -- run --vocab-dir ../benchmark/vocab --models whisper-cpp-small-q5_1 --label prompt   # initial prompt from benchmark/vocab/<lang>.txt
+cargo run --release --example bench -- run --vocab-dir ../benchmark/vocab --hotwords-score 1.5 --models sherpa-parakeet-tdt-0.6b-v3-int8 --label hotwords   # Parakeet hotwords
+cargo run --release --example bench -- postcorrect --dir ../benchmark/results/<folder> --vocab-dir ../benchmark/vocab --preset strict --label pc   # dictionary correction of stored transcripts
+cargo run --release --example bench -- termstudy --dir ../benchmark/results/<baseline> --against ../benchmark/results/<variant>   # key terms found, fixed versus broken words
 python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
 python ../scripts/chunking_study.py runs ../benchmark/results/<whole> ../benchmark/results/<chunked>   # whole clip versus chunked
 ```

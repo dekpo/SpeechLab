@@ -1,0 +1,50 @@
+{
+  "beams": [
+    5,
+    1
+  ],
+  "categories": [],
+  "chunkMaxS": null,
+  "chunking": "off",
+  "forcedDespitePreflight": false,
+  "hotwordsScore": null,
+  "includePrivate": false,
+  "isolatedProcesses": true,
+  "limit": null,
+  "models": [
+    "whisper-cpp-tiny",
+    "whisper-cpp-base-q5_1",
+    "whisper-cpp-small-q5_1"
+  ],
+  "postCorrection": {
+    "note": "text in runs.jsonl is the corrected text, rawText the engine output; timings are those of the source run",
+    "preset": "strict",
+    "sourceRun": "20261008-070031-t4-whisper-prompt",
+    "vocabularyTerms": {
+      "en": 10,
+      "fr": 56
+    }
+  },
+  "preflight": {
+    "idleCpuPercent": 10.708589553833008,
+    "onAcPower": true,
+    "problems": [],
+    "topProcesses": [
+      [
+        "code-editor.exe",
+        1.1545298099517822
+      ]
+    ],
+    "windowMs": 8000
+  },
+  "repetitions": 1,
+  "runId": "20261008-073525-t4-prompt-plus-postcorrect-strict",
+  "samples": 95,
+  "startedAtMs": 1791442831885,
+  "threadsPerEngine": 4,
+  "vocabularyDir": "../benchmark/vocab",
+  "vocabularyTerms": {
+    "en": 10,
+    "fr": 56
+  }
+}

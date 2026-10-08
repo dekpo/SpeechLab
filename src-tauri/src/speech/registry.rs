@@ -56,6 +56,7 @@ mod tests {
             model_id: "none".into(),
             language: "fr".into(),
             audio_path: path.into(),
+            vocabulary: Vec::new(),
         }
     }
 

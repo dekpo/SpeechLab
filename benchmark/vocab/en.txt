@@ -1,0 +1,15 @@
+# Vocabulary for the key-term study (T4, D-036). One term per line.
+# Built ONLY from the key terms of the English samples of the dataset (benchmark/samples/*.json,
+# keyTerms). Taken from the test sentences themselves: an UPPER BOUND, not a general claim.
+
+# --- dataset key terms
+authentication
+backup
+firewall
+index
+Kubernetes
+PostgreSQL
+pull request
+REST API
+restore
+token

@@ -94,6 +94,7 @@ fn main() {
                     model_id: id.clone(),
                     language: lang.clone(),
                     audio_path: wav.clone(),
+                    vocabulary: Vec::new(),
                 };
                 let (r, segments, chunking_ms, bounds) = match &vad_model {
                     Some(model) => {

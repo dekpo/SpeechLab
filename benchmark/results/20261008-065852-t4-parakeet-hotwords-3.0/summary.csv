@@ -1,0 +1,11 @@
+model,decoding,group,samples,runs,failures,wer_micro,wer_macro,cer_macro,runaway_outputs,samples_with_critical,critical_flags,unstable_samples,rtf_median,inference_ms_median,inference_ms_p95,load_ms_cold_median,peak_memory_mb_max,avg_cores_median
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,ALL,95,95,0,0.0512,0.0567,0.0293,1,7,9,0,0.150,726,1224,2271,1877,8.60
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,en-dictation,1,1,0,0.0185,0.0185,0.0032,0,1,1,0,0.092,2701,2701,2271,904,4.04
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,en-general,16,16,0,0.1870,0.1975,0.1303,1,2,2,0,0.150,637,839,,903,9.04
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,en-technical,8,8,0,0.0541,0.0626,0.0118,0,1,1,0,0.135,710,991,,903,8.41
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-administrative,7,7,0,0.0135,0.0143,0.0023,0,0,0,0,0.150,822,1307,2474,1631,7.97
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-dictation,2,2,0,0.0759,0.0663,0.0554,0,1,2,0,0.152,4403,5477,,1877,5.25
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-general,24,24,0,0.0293,0.0303,0.0108,0,0,0,0,0.149,696,915,,1873,8.64
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-with-english-terms,20,20,0,0.0150,0.0145,0.0018,0,1,2,0,0.149,739,895,,1874,8.75
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-legal,7,7,0,0.0147,0.0159,0.0089,0,0,0,0,0.155,846,1146,,1875,7.74
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-medical,10,10,0,0.0360,0.0345,0.0114,0,1,1,0,0.152,892,1224,,1876,7.79
