@@ -14,6 +14,9 @@
 //!   --limit N           only the first N samples (smoke tests)
 //!   --label text        suffix of the results folder name
 //!   --include-private   include samples-private/ (results then go to results/private/)
+//!   --chunking vad      cut clips longer than 25 s at silences (Silero VAD) before the engine; the
+//!                       default is off (whole clip). Needs the support model: transcribe install silero-vad
+//!   --chunk-max-s N     longest segment when chunking, in seconds (default 25; experiments only)
 //!   --no-isolate        run every model inside this process (memory figures then mix models)
 //!   --force             run even if the quiet-machine check fails (config.json records it)
 //!
@@ -91,6 +94,12 @@ impl Args {
             categories: self.list("category"),
             limit: self.get("limit").and_then(|v| v.parse().ok()),
             include_private: self.flag("include-private"),
+            chunking: match self.get("chunking") {
+                None | Some("off") => false,
+                Some("vad") => true,
+                Some(other) => panic!("--chunking expects 'vad' or 'off', got '{other}'"),
+            },
+            chunk_max_s: self.get("chunk-max-s").and_then(|v| v.parse().ok()),
         }
     }
 }
@@ -196,6 +205,9 @@ fn run(args: &Args) {
     let ds = Dataset::load(&default_root()).expect("dataset");
     let n = select_samples(&ds, &opts).len();
     assert!(n > 0, "no runnable samples (run `bench check`)");
+    if opts.chunking {
+        models.vad_model_path().expect("--chunking vad needs the support model: transcribe install silero-vad");
+    }
 
     // Quiet-machine check: timing and memory figures are only meaningful on an idle machine.
     let pre = preflight(8000, MAX_BACKGROUND_CPU_PERCENT);
@@ -245,6 +257,12 @@ fn run(args: &Args) {
         if opts.include_private {
             cmd.arg("--include-private");
         }
+        if opts.chunking {
+            cmd.args(["--chunking", "vad"]);
+            if let Some(m) = opts.chunk_max_s {
+                cmd.args(["--chunk-max-s", &m.to_string()]);
+            }
+        }
         cmd.stdout(Stdio::piped()).stderr(Stdio::inherit());
         let mut child = cmd.spawn().expect("spawn child");
         let reader = BufReader::new(child.stdout.take().expect("stdout"));
@@ -269,6 +287,8 @@ fn run(args: &Args) {
         "categories": opts.categories,
         "limit": opts.limit,
         "includePrivate": opts.include_private,
+        "chunking": if opts.chunking { "vad" } else { "off" },
+        "chunkMaxS": opts.chunk_max_s,
         "isolatedProcesses": !args.flag("no-isolate"),
         "samples": n,
         "threadsPerEngine": 4,
@@ -340,6 +360,6 @@ fn main() {
         Some("run-one") => run_one(&args),
         Some("summarize") => resummarize(&args),
         Some("rescore") => rescore_dir(&args),
-        _ => eprintln!("usage: bench check | bench run [--models a,b] [--beams 5,1] [--reps N] [--category c] [--limit N] [--label x] [--include-private] [--no-isolate]"),
+        _ => eprintln!("usage: bench check | bench run [--models a,b] [--beams 5,1] [--reps N] [--category c] [--limit N] [--label x] [--chunking vad] [--include-private] [--no-isolate]"),
     }
 }

@@ -33,7 +33,7 @@ for sherpa-onnx (first repetition versus the others), and the stability of trans
 repetitions (`unstableSamples`). Report in `docs/PROJECT_LOG.md`; close or update I-012 and I-036.
 Do not change the scoring or the code except to add a clearly needed report column.
 
-## T3 — Long-audio chunking with VAD (I-017, I-018, I-019, I-029)
+## T3 — (done 2026-10-08, see prompt 02 and D-035) Long-audio chunking with VAD (I-017, I-018, I-019, I-029)
 
 Goal: find out whether splitting long audio at silences removes truncation and repetition loops,
 and where the limit of each engine lies.
@@ -47,7 +47,7 @@ clips (private samples only; never quote their content). Compare whole-clip vers
 per engine: WER, output length versus reference, repetition loops, truncation, and time.
 Unit-test the chunker on synthetic audio. Report limits per engine honestly.
 
-## T4 — Drug-name and key-term handling
+## T4 — Drug-name and key-term handling (full prompt: 03-drug-name-handling.md)
 
 Goal: reduce critical errors on drug names (every engine misspells "amoxicilline", "ibuprofène").
 Options to test and compare on the `fr-medical` category and the key terms of the dataset:

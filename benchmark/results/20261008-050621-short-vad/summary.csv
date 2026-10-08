@@ -1,0 +1,73 @@
+model,decoding,group,samples,runs,failures,wer_micro,wer_macro,cer_macro,runaway_outputs,samples_with_critical,critical_flags,unstable_samples,rtf_median,inference_ms_median,inference_ms_p95,load_ms_cold_median,peak_memory_mb_max,avg_cores_median
+sherpa-whisper-tiny,greedy search,ALL,92,92,0,0.2667,0.2762,0.1638,5,17,45,0,0.108,524,843,496,638,7.42
+sherpa-whisper-tiny,greedy search,en-general,16,16,0,0.3659,0.3565,0.3467,3,2,2,0,0.084,345,691,496,319,7.57
+sherpa-whisper-tiny,greedy search,en-technical,8,8,0,0.2838,0.3810,0.2416,1,1,4,0,0.087,464,689,,320,7.48
+sherpa-whisper-tiny,greedy search,fr-administrative,7,7,0,0.2432,0.2332,0.1148,0,3,4,0,0.120,730,1066,765,598,7.14
+sherpa-whisper-tiny,greedy search,fr-general,24,24,0,0.1951,0.1958,0.0805,0,3,4,0,0.109,521,827,,604,7.39
+sherpa-whisper-tiny,greedy search,fr-with-english-terms,20,20,0,0.2650,0.2655,0.1420,1,2,16,0,0.117,569,827,,632,7.64
+sherpa-whisper-tiny,greedy search,fr-legal,7,7,0,0.2353,0.2313,0.0881,0,1,3,0,0.135,652,975,,632,7.41
+sherpa-whisper-tiny,greedy search,fr-medical,10,10,0,0.3153,0.3399,0.1399,0,5,12,0,0.114,726,877,,638,7.19
+sherpa-canary-180m-flash-int8,greedy search,ALL,92,92,0,0.0690,0.0873,0.0260,1,3,18,0,0.144,709,1102,1297,776,7.11
+sherpa-canary-180m-flash-int8,greedy search,en-general,16,16,0,0.0163,0.0167,0.0066,0,0,0,0,0.142,538,990,1297,390,7.29
+sherpa-canary-180m-flash-int8,greedy search,en-technical,8,8,0,0.4595,0.6790,0.1911,1,1,6,0,0.153,860,1029,,394,6.74
+sherpa-canary-180m-flash-int8,greedy search,fr-administrative,7,7,0,0.0270,0.0302,0.0051,0,0,0,0,0.146,901,1044,1566,731,6.76
+sherpa-canary-180m-flash-int8,greedy search,fr-general,24,24,0,0.0146,0.0150,0.0094,0,0,0,0,0.137,634,773,,732,7.32
+sherpa-canary-180m-flash-int8,greedy search,fr-with-english-terms,20,20,0,0.0750,0.0743,0.0203,0,0,9,0,0.156,759,980,,767,7.00
+sherpa-canary-180m-flash-int8,greedy search,fr-legal,7,7,0,0.0000,0.0000,0.0000,0,0,0,0,0.132,728,821,,767,7.13
+sherpa-canary-180m-flash-int8,greedy search,fr-medical,10,10,0,0.0270,0.0277,0.0087,0,2,3,0,0.149,841,1254,,776,6.58
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,ALL,92,92,0,0.0269,0.0275,0.0078,0,3,6,0,0.139,674,904,2090,1561,8.46
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,en-general,16,16,0,0.0244,0.0230,0.0091,0,0,0,0,0.139,550,829,2439,782,9.29
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,en-technical,8,8,0,0.0541,0.0626,0.0118,0,1,1,0,0.140,732,843,,787,8.06
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-administrative,7,7,0,0.0270,0.0253,0.0046,0,0,0,0,0.142,806,962,2090,1515,7.45
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-general,24,24,0,0.0293,0.0303,0.0108,0,0,0,0,0.137,638,795,,1517,8.69
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-with-english-terms,20,20,0,0.0250,0.0241,0.0046,0,0,3,0,0.139,692,828,,1552,8.42
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-legal,7,7,0,0.0147,0.0159,0.0089,0,0,0,0,0.142,741,982,,1553,8.38
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-medical,10,10,0,0.0180,0.0168,0.0032,0,2,2,0,0.127,729,935,,1561,7.87
+whisper-cpp-tiny,beam search (5 beams),ALL,92,92,0,0.1708,0.1694,0.0630,0,12,35,0,0.167,820,1026,109,193,3.72
+whisper-cpp-tiny,beam search (5 beams),en-general,16,16,0,0.0244,0.0257,0.0089,0,1,1,0,0.193,794,1076,113,192,3.63
+whisper-cpp-tiny,beam search (5 beams),en-technical,8,8,0,0.1757,0.2074,0.0616,0,1,3,0,0.145,773,997,109,192,3.72
+whisper-cpp-tiny,beam search (5 beams),fr-administrative,7,7,0,0.2027,0.2018,0.0735,0,3,3,0,0.165,877,993,109,192,3.72
+whisper-cpp-tiny,beam search (5 beams),fr-general,24,24,0,0.1610,0.1594,0.0596,0,0,0,0,0.170,774,858,105,193,3.69
+whisper-cpp-tiny,beam search (5 beams),fr-with-english-terms,20,20,0,0.2450,0.2517,0.0943,0,2,15,0,0.167,836,1011,107,193,3.74
+whisper-cpp-tiny,beam search (5 beams),fr-legal,7,7,0,0.1176,0.1159,0.0536,0,1,3,0,0.165,895,1061,124,192,3.66
+whisper-cpp-tiny,beam search (5 beams),fr-medical,10,10,0,0.2252,0.2427,0.0953,0,4,10,0,0.157,959,1028,121,193,3.76
+whisper-cpp-tiny,greedy (beam 1),ALL,92,92,0,0.1988,0.1959,0.0844,1,16,44,0,0.159,751,903,121,164,3.54
+whisper-cpp-tiny,greedy (beam 1),en-general,16,16,0,0.0163,0.0167,0.0069,0,0,0,0,0.179,714,903,119,163,3.52
+whisper-cpp-tiny,greedy (beam 1),en-technical,8,8,0,0.1622,0.1960,0.0543,0,1,3,0,0.132,717,747,118,163,3.52
+whisper-cpp-tiny,greedy (beam 1),fr-administrative,7,7,0,0.2703,0.2647,0.1020,0,3,4,0,0.146,783,1007,120,164,3.55
+whisper-cpp-tiny,greedy (beam 1),fr-general,24,24,0,0.2000,0.2081,0.0875,0,4,5,0,0.160,724,779,119,163,3.54
+whisper-cpp-tiny,greedy (beam 1),fr-with-english-terms,20,20,0,0.2350,0.2361,0.1184,0,2,16,0,0.166,779,872,127,163,3.54
+whisper-cpp-tiny,greedy (beam 1),fr-legal,7,7,0,0.1618,0.1521,0.0647,0,1,3,0,0.150,767,839,127,163,3.54
+whisper-cpp-tiny,greedy (beam 1),fr-medical,10,10,0,0.3333,0.3550,0.1591,1,5,13,0,0.153,882,960,128,164,3.56
+whisper-cpp-base-q5_1,beam search (5 beams),ALL,92,92,0,0.0912,0.0927,0.0324,0,9,24,0,0.356,1711,1933,93,215,3.86
+whisper-cpp-base-q5_1,beam search (5 beams),en-general,16,16,0,0.0488,0.0513,0.0185,0,1,1,0,0.398,1614,2111,95,214,3.84
+whisper-cpp-base-q5_1,beam search (5 beams),en-technical,8,8,0,0.0676,0.0835,0.0234,0,1,1,0,0.299,1635,1743,90,215,3.86
+whisper-cpp-base-q5_1,beam search (5 beams),fr-administrative,7,7,0,0.0946,0.1031,0.0235,0,2,2,0,0.325,1712,1775,91,212,3.84
+whisper-cpp-base-q5_1,beam search (5 beams),fr-general,24,24,0,0.0732,0.0717,0.0290,0,1,1,0,0.375,1674,1933,95,214,3.85
+whisper-cpp-base-q5_1,beam search (5 beams),fr-with-english-terms,20,20,0,0.1250,0.1325,0.0526,0,0,10,0,0.356,1753,1943,95,214,3.85
+whisper-cpp-base-q5_1,beam search (5 beams),fr-legal,7,7,0,0.0147,0.0143,0.0048,0,0,0,0,0.325,1696,1849,92,215,3.91
+whisper-cpp-base-q5_1,beam search (5 beams),fr-medical,10,10,0,0.1712,0.1846,0.0549,0,4,9,0,0.280,1716,1881,91,215,3.89
+whisper-cpp-base-q5_1,greedy (beam 1),ALL,92,92,0,0.1205,0.1206,0.0429,0,12,32,0,0.300,1440,1525,90,167,3.77
+whisper-cpp-base-q5_1,greedy (beam 1),en-general,16,16,0,0.0488,0.0513,0.0185,0,1,1,0,0.349,1403,1612,90,167,3.76
+whisper-cpp-base-q5_1,greedy (beam 1),en-technical,8,8,0,0.1486,0.1657,0.0433,0,2,4,0,0.267,1447,1525,91,167,3.75
+whisper-cpp-base-q5_1,greedy (beam 1),fr-administrative,7,7,0,0.0946,0.1031,0.0291,0,2,2,0,0.270,1458,1470,90,167,3.76
+whisper-cpp-base-q5_1,greedy (beam 1),fr-general,24,24,0,0.0976,0.0925,0.0367,0,1,1,0,0.314,1436,1542,90,167,3.76
+whisper-cpp-base-q5_1,greedy (beam 1),fr-with-english-terms,20,20,0,0.1550,0.1631,0.0656,0,1,13,0,0.300,1444,1484,89,167,3.76
+whisper-cpp-base-q5_1,greedy (beam 1),fr-legal,7,7,0,0.1029,0.0937,0.0303,0,0,1,0,0.268,1440,1484,91,167,3.78
+whisper-cpp-base-q5_1,greedy (beam 1),fr-medical,10,10,0,0.1892,0.2091,0.0694,0,5,10,0,0.249,1464,1571,90,167,3.77
+whisper-cpp-small-q5_1,beam search (5 beams),ALL,92,92,0,0.0409,0.0407,0.0155,0,5,13,0,1.347,6477,7099,216,481,3.86
+whisper-cpp-small-q5_1,beam search (5 beams),en-general,16,16,0,0.0163,0.0179,0.0035,0,1,1,0,1.456,5883,6779,206,480,3.87
+whisper-cpp-small-q5_1,beam search (5 beams),en-technical,8,8,0,0.0541,0.0626,0.0260,0,1,1,0,1.196,6730,7099,217,479,3.84
+whisper-cpp-small-q5_1,beam search (5 beams),fr-administrative,7,7,0,0.0135,0.0110,0.0023,0,0,0,0,1.211,6185,6933,211,480,3.87
+whisper-cpp-small-q5_1,beam search (5 beams),fr-general,24,24,0,0.0341,0.0317,0.0140,0,1,1,0,1.446,6429,7050,216,481,3.86
+whisper-cpp-small-q5_1,beam search (5 beams),fr-with-english-terms,20,20,0,0.0700,0.0711,0.0300,0,0,6,0,1.358,6632,7222,221,481,3.86
+whisper-cpp-small-q5_1,beam search (5 beams),fr-legal,7,7,0,0.0000,0.0000,0.0000,0,0,0,0,1.243,6666,7020,218,480,3.87
+whisper-cpp-small-q5_1,beam search (5 beams),fr-medical,10,10,0,0.0631,0.0699,0.0206,0,2,4,0,1.151,6988,7490,216,479,3.86
+whisper-cpp-small-q5_1,greedy (beam 1),ALL,92,92,0,0.0480,0.0472,0.0195,0,5,15,0,1.249,6059,6399,219,361,3.84
+whisper-cpp-small-q5_1,greedy (beam 1),en-general,16,16,0,0.0244,0.0257,0.0086,0,1,1,0,1.504,5987,6485,218,360,3.85
+whisper-cpp-small-q5_1,greedy (beam 1),en-technical,8,8,0,0.0541,0.0626,0.0260,0,1,1,0,1.128,5996,6603,220,360,3.82
+whisper-cpp-small-q5_1,greedy (beam 1),fr-administrative,7,7,0,0.0135,0.0110,0.0023,0,0,0,0,1.115,6140,6523,215,361,3.83
+whisper-cpp-small-q5_1,greedy (beam 1),fr-general,24,24,0,0.0390,0.0355,0.0148,0,1,1,0,1.309,6004,6399,218,360,3.84
+whisper-cpp-small-q5_1,greedy (beam 1),fr-with-english-terms,20,20,0,0.0850,0.0867,0.0439,0,0,7,0,1.249,6145,6376,223,360,3.83
+whisper-cpp-small-q5_1,greedy (beam 1),fr-legal,7,7,0,0.0000,0.0000,0.0000,0,0,0,0,1.124,6086,6367,216,360,3.86
+whisper-cpp-small-q5_1,greedy (beam 1),fr-medical,10,10,0,0.0721,0.0771,0.0203,0,2,5,0,0.998,6052,6358,217,361,3.85

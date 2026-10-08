@@ -19,6 +19,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{Deserialize, Serialize};
 use sysinfo::System;
 
+use super::chunking::{self, ChunkConfig};
 use super::critical::{self, CriticalFlag};
 use super::dataset::{Dataset, Sample};
 use super::error::SpeechError;
@@ -27,6 +28,7 @@ use super::models::ModelManager;
 use super::provider::{CancelToken, SpeechToTextProvider};
 use super::sherpa::SherpaOnnxProvider;
 use super::types::TranscribeRequest;
+use super::vad;
 use super::wav;
 use super::whisper_cpp::WhisperCppProvider;
 
@@ -251,6 +253,14 @@ fn scoring_v1() -> u32 {
     1
 }
 
+fn chunking_off() -> String {
+    "off".into()
+}
+
+fn one_segment() -> u32 {
+    1
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RunSpec {
@@ -266,6 +276,10 @@ pub struct RunOptions {
     pub categories: Vec<String>,
     pub limit: Option<usize>,
     pub include_private: bool,
+    /// Cut clips longer than one segment at silences (Silero VAD) before the engine (D-035).
+    pub chunking: bool,
+    /// Longest segment in seconds when chunking (None = the default of `ChunkConfig`, 25 s).
+    pub chunk_max_s: Option<f32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -289,9 +303,19 @@ pub struct RunRecord {
     pub repetition: u32,
     pub cold_start: bool,
     pub load_ms: u64,
+    /// Sum over the segments when chunking was used; chunking itself is in `chunking_ms`.
     pub inference_ms: u64,
     pub audio_ms: u64,
     pub rtf: Option<f64>,
+    /// "off" (whole clip) or "vad" (cut at silences when longer than one segment).
+    #[serde(default = "chunking_off")]
+    pub chunking: String,
+    /// Number of pieces sent to the engine; 1 for the whole clip.
+    #[serde(default = "one_segment")]
+    pub segments: u32,
+    /// Speech detection, planning and writing the pieces; not part of `inference_ms`.
+    #[serde(default)]
+    pub chunking_ms: u64,
     pub threads: u32,
     pub peak_memory_mb: Option<f64>,
     pub cpu_ms: Option<u64>,
@@ -400,6 +424,11 @@ pub fn run_spec(
     on_record: &mut dyn FnMut(&RunRecord),
 ) -> Result<Vec<RunRecord>, SpeechError> {
     let (provider, provider_id, decoding) = build_provider(models, spec)?;
+    let vad_model = if opts.chunking { Some(models.vad_model_path()?) } else { None };
+    let chunk_cfg = ChunkConfig {
+        max_segment_s: opts.chunk_max_s.unwrap_or(ChunkConfig::default().max_segment_s),
+        ..ChunkConfig::default()
+    };
     let samples = select_samples(ds, opts);
     let reps = opts.repetitions.max(1);
     let mut out = Vec::new();
@@ -435,6 +464,9 @@ pub fn run_spec(
                 inference_ms: 0,
                 audio_ms: sample.duration_ms.unwrap_or(0),
                 rtf: None,
+                chunking: if opts.chunking { "vad".into() } else { chunking_off() },
+                segments: 1,
+                chunking_ms: 0,
                 threads: 0,
                 peak_memory_mb: None,
                 cpu_ms: None,
@@ -451,8 +483,18 @@ pub fn run_spec(
                 has_critical: false,
                 error: None,
             };
-            match provider.transcribe(&request, cancel) {
-                Ok(r) => {
+            let outcome = match &vad_model {
+                Some(model) => {
+                    let detect = |samples: &[f32]| vad::silero_speech_spans(model, samples);
+                    chunking::transcribe_chunked(provider.as_ref(), &request, cancel, &detect, &chunk_cfg)
+                        .map(|(r, report)| (r, report.segments as u32, report.chunking_ms))
+                }
+                None => provider.transcribe(&request, cancel).map(|r| (r, 1, 0)),
+            };
+            match outcome {
+                Ok((r, segments, chunking_ms)) => {
+                    rec.segments = segments;
+                    rec.chunking_ms = chunking_ms;
                     let cmp = metrics::compare_texts(&sample.reference, &r.text);
                     let report = critical::analyze(&sample.reference, &r.text, &sample.key_terms);
                     rec.cold_start = r.cold_start;
@@ -706,6 +748,12 @@ pub fn summary_markdown(system: &SystemInfo, rows: &[SummaryRow], records: &[Run
         "Machine: {} ({} logical cores), {} GB RAM, {} {}, build {}, {}.\n\n",
         system.cpu, system.logical_cores, system.total_ram_gb, system.os, system.arch, system.rust_build, system.accelerator
     ));
+    if records.iter().any(|r| r.chunking != "off") {
+        md.push_str("Chunking: clips longer than 25 s were cut at silences (Silero VAD) and the texts joined; shorter clips were passed whole. ");
+        md.push_str("Inference time is the sum over the segments; speech detection is extra (`chunkingMs` in runs.jsonl).
+
+");
+    }
     md.push_str("Accuracy uses repetition 1 only. WER micro = total errors / total reference words; ");
     md.push_str("macro = mean of per-sample WER. Critical = samples with at least one critical flag ");
     md.push_str("(changed number, unit, negation, weekday/month, missing key term). ");
@@ -811,7 +859,7 @@ mod tests {
             run_id: "t".into(), scoring_version: SCORING_VERSION, timestamp_ms: 0, model_id: model.into(), provider: "p".into(), decoding: "greedy search".into(),
             sample_id: sample.into(), speaker_id: "s".into(), category: cat.into(), language: "fr".into(), domain: "general".into(),
             utterance_type: "statement".into(), private: false, repetition: rep, cold_start: rep == 1, load_ms: 100, inference_ms: infer,
-            audio_ms: 1000, rtf: Some(infer as f64 / 1000.0), threads: 4, peak_memory_mb: Some(200.0 + infer as f64), cpu_ms: Some(infer * 2),
+            audio_ms: 1000, rtf: Some(infer as f64 / 1000.0), chunking: "off".into(), segments: 1, chunking_ms: 0, threads: 4, peak_memory_mb: Some(200.0 + infer as f64), cpu_ms: Some(infer * 2),
             avg_cores: Some(2.0), reference: "r".into(), text: text.into(), wer: Some(wer), cer: Some(wer / 2.0), substitutions: errs.0,
             deletions: errs.1, insertions: errs.2, reference_words: words, critical: vec![], has_critical: false, error: None,
         }

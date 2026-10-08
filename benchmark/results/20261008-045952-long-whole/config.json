@@ -1,0 +1,40 @@
+{
+  "beams": [
+    5,
+    1
+  ],
+  "categories": [
+    "fr-dictation",
+    "en-dictation"
+  ],
+  "chunking": "off",
+  "forcedDespitePreflight": false,
+  "includePrivate": false,
+  "isolatedProcesses": true,
+  "limit": null,
+  "models": [
+    "sherpa-whisper-tiny",
+    "sherpa-canary-180m-flash-int8",
+    "sherpa-parakeet-tdt-0.6b-v3-int8",
+    "whisper-cpp-tiny",
+    "whisper-cpp-base-q5_1",
+    "whisper-cpp-small-q5_1"
+  ],
+  "preflight": {
+    "idleCpuPercent": 19.214918613433838,
+    "onAcPower": true,
+    "problems": [],
+    "topProcesses": [
+      [
+        "code-editor.exe",
+        1.148182988166809
+      ]
+    ],
+    "windowMs": 8000
+  },
+  "repetitions": 1,
+  "runId": "20261008-045952-long-whole",
+  "samples": 3,
+  "startedAtMs": 1791435592444,
+  "threadsPerEngine": 4
+}

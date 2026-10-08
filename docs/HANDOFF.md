@@ -40,6 +40,7 @@ the chat, write files in English.
 | M5b in-app dataset recorder | done |
 | M5c benchmark runner, full benchmark | done: first run (disturbed) plus clean re-run `20261007-215116-full-owner-reps1-clean` (855/855 transcripts identical; speed figures measured at about 20 % background CPU, D-034). Variance still unmeasured (1 repetition) |
 | M5d timing study (3 repetitions) | done: `20261008-035938-timing-3reps`, 40 short sentences x 9 configurations x 3 repetitions, 0 changing transcripts, within-run spread 1 to 4 % (I-012 partly closed) |
+| M5e long audio, chunking at silences (Silero VAD) | done: D-035; 828/828 short transcripts unchanged with chunking on; helps sherpa Whisper tiny (30 s limit), neutral for Parakeet and whisper.cpp, harmful for Canary (I-041); Whisper loops not fixed |
 | M6 TTS laboratory | not started |
 | M7 Windows/macOS packaging validation | not started (no Mac available: macOS stays NOT VERIFIED, document the steps) |
 | M8 final report, licensing table, recommendation | not started |
@@ -52,6 +53,7 @@ on clean input but once produced garbage, whisper.cpp small is accurate (3.9 %) 
 than real time on this CPU (RTF 1.1 to 1.2), tiny/base Whisper are too inaccurate. Every engine
 misspells drug names. Accuracy is load-independent (clean re-run identical to the disturbed run).
 Timing study: inside one run the same sample varies by 1 to 4 % (median) and never changes its transcript; between two runs the fast models differed by up to 20 %, so quote speed with a 10 to 20 % margin. Details and caveats: last M5c and M5d entries of `docs/PROJECT_LOG.md`, results in `benchmark/results/`.
+Long audio (M5e, 3 reference dictations + 2 private clips, little statistical power): only Parakeet and whisper.cpp had no failure; sherpa Whisper tiny cannot take more than 30 s and loops; Canary drops endings and degrades on 24 s pieces. Speed figures differ by 1 to 48 % between runs (I-042): compare inside one run only.
 Provisional shortlist: D-032 (not final).
 
 ## 4. Repository map
@@ -66,7 +68,8 @@ benchmark/audio/             the WAV recordings (git-ignored)
 benchmark/results/<run>/     benchmark outputs (summary.md, summary.csv, runs.jsonl, system.json, config.json)
 src/                         React UI (components, audio capture, engine-agnostic TypeScript contract)
 src-tauri/src/speech/        Rust: provider traits, sherpa.rs, whisper_cpp.rs, models.rs, download.rs, clips.rs,
-                             dataset.rs, metrics.rs, numbers.rs, critical.rs, probe.rs, benchmark.rs
+                             dataset.rs, metrics.rs, numbers.rs, critical.rs, probe.rs, benchmark.rs,
+                             chunking.rs + vad.rs (long audio cut at silences)
 src-tauri/examples/          CLI tools: transcribe.rs (one file), bench.rs (benchmark)
 src-tauri/models-manifest.json   model inventory (data, no code change to add a model)
 scripts/                     PowerShell/Python helpers (env check, library/CLI builds, comparison, bootstrap CI)
@@ -78,6 +81,7 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 - **Dev server port is 1430**, not 1420: 1420 belongs to the owner's separate AssistantCabinetAI app. Never stop that process.
 - **TLS interception by an antivirus** breaks the sherpa-onnx crate build download (`UnknownIssuer`). Run `scripts/fetch-sherpa-libs.ps1` once; it writes the git-ignored `src-tauri/.cargo/config.toml`. Model downloads work (native certificates). Never disable the antivirus or TLS checks.
 - **whisper.cpp** is built from source by `scripts/build-whisper-cpp.ps1` into `vendor/` (CMake required; LLVM is not).
+- **Support model**: `silero-vad` (MIT, 0.6 MB) is installed with `transcribe install silero-vad`; it is hidden from `list()` and from the engine pickers. `bench run --chunking vad` refuses to start without it.
 - **Models** live in `%APPDATA%\ai.assistantcabinet.speechlab\models` (all installed except whisper turbo). Clips in `...\recordings`.
 - **Benchmarks need a calm machine.** The owner also runs Docker Desktop/WSL, which uses CPU. On this laptop the Windows firewall engine, DNS client and the security software alone keep the background load at 16 to 31 %, so `bench run` refuses to start above **30 %** average CPU or on battery (D-034, relaxed from 15 % by the owner's choice to mimic a client machine). Run `bench preflight` first and quote the recorded load with any speed figure. Never use `--force` for figures you intend to publish. Do not compile, test, record or take screenshots while a benchmark runs.
 - **A running benchmark survives an interrupted session.** Before starting another one, check `tasklist` for `bench.exe`/`whisper-cli.exe` and the log file. Never run two benchmarks at the same time.
@@ -92,7 +96,7 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 ```bash
 pnpm install
 pnpm typecheck && pnpm test && pnpm build          # frontend checks
-cd src-tauri && cargo test --lib                    # Rust unit tests (about 77)
+cd src-tauri && cargo test --lib                    # Rust unit tests (92)
 pnpm tauri dev                                      # the app (port 1430)
 powershell -ExecutionPolicy Bypass -File scripts/check-env.ps1     # machine and tool check
 
@@ -104,12 +108,14 @@ cargo build --release --example bench
 ./target/release/examples/bench.exe check           # dataset and audio checks
 ./target/release/examples/bench.exe preflight       # quiet machine? exit 0 yes, 2 no
 ./target/release/examples/bench.exe run --reps 1 --label <name>
+./target/release/examples/bench.exe run --chunking vad --category fr-dictation,en-dictation --label <name>   # clips over 25 s cut at silences
 ./target/release/examples/bench.exe rescore --dir ../benchmark/results/<run>    # apply newer scoring rules
 ./target/release/examples/bench.exe summarize --dir ../benchmark/results/<run>
 
 python ../scripts/bootstrap_ci.py ../benchmark/results/<run> [--exclude en-it-05-owner]
 python ../scripts/compare_runs.py ../benchmark/results/<old> ../benchmark/results/<new>
 python ../scripts/timing_study.py ../benchmark/results/<run with --reps 3>
+python ../scripts/chunking_study.py runs|same|clips ...      # whole versus chunked, identity check, private clips (counts only)
 ```
 
 ## 7. Backlog (priority order; ready-made prompts in `docs/prompts/`)
@@ -119,8 +125,8 @@ python ../scripts/timing_study.py ../benchmark/results/<run with --reps 3>
 | 1 | ~~Clean re-run of the full benchmark~~ DONE 2026-10-07 (I-039 resolved) | | `docs/prompts/01-clean-benchmark-rerun.md` (kept for reference) |
 | 2 | Owner listens to `en-it-05`, re-record if needed, re-run only that sample | all engines hear "543", script says "443" (I-033) | in next-tasks.md |
 | 3 | ~~Timing study, 3 repetitions~~ DONE 2026-10-08 (I-012 partly closed; between-run offset unexplained) | | next-tasks.md T2 (kept for reference) |
-| 4 | **Next:** long audio, VAD chunking | truncation, loops (I-017, I-018, I-019, I-029) | `docs/prompts/02-long-audio-vad-chunking.md` |
-| 5 | Drug-name handling (hotwords, prompts, dictionary correction) | every engine misspells drug names | next-tasks.md T4 |
+| 4 | ~~Long audio, VAD chunking~~ DONE 2026-10-08 (D-035; open follow-ups: per-engine segment limit and output guard, I-041, I-035) | | `docs/prompts/02-long-audio-vad-chunking.md` (kept for reference) |
+| 5 | **Next:** drug-name handling (hotwords, prompts, dictionary correction) | every engine misspells drug names | `docs/prompts/03-drug-name-handling.md` |
 | 6 | Private accent clips (Swiss-Romande, Maghreb) as long private samples | accents are in the plan | next-tasks.md T5 |
 | 7 | Detector false alarms for times ("10.30", "9h00"), sherpa-onnx thread usage | I-034, I-036 | small fixes |
 | 8 | M6 TTS laboratory | plan section 5C | next-tasks.md T6 |

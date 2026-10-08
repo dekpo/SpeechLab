@@ -12,7 +12,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M5a benchmark dataset format, 95 reading scripts, spoken-number folding and critical-error detector: done (see `benchmark/README.md`).
 - M5b in-app dataset recorder (read a sentence, record, save with its reference): done.
 - M5c reproducible benchmark runner, first full benchmark of 9 configurations on 95 recorded sentences: done (results in `benchmark/results/`, analysis in [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md)). A clean re-run (`20261007-215116-full-owner-reps1-clean`, about 20 % background CPU) reproduced all 855 transcripts identically and replaced the speed figures of the first, disturbed run; a 3-repetition timing study (`20261008-035938-timing-3reps`, M5d) then showed that the speed of the same sample varies by only 1 to 4 % within a run and that no transcript changes between repetitions.
-- Next: owner checks one suspect sample (I-033), then long-audio chunking, drug-name correction, accent clips.
+- M5e long audio: engine-independent chunking at silences with the Silero VAD (`bench run --chunking vad`, default off). Short audio is provably unchanged; chunking helps only sherpa-onnx Whisper tiny (its 30 s limit) and hurts Canary; Whisper loops remain (D-035, project log).
+- Next: owner checks one suspect sample (I-033), then drug-name correction, accent clips.
 
 ## Read first
 
@@ -66,6 +67,8 @@ cd src-tauri
 cargo run --example transcribe -- list
 cargo run --example transcribe -- install sherpa-canary-180m-flash-int8
 cargo run --example transcribe -- run sherpa-canary-180m-flash-int8 fr ../wav/sample.wav 3
+cargo run --example transcribe -- install silero-vad                      # support model for chunking (0.6 MB, MIT)
+cargo run --example transcribe -- run sherpa-parakeet-tdt-0.6b-v3-int8 fr ../wav/long.wav 1 --chunking vad
 ```
 
 Other commands:
@@ -85,8 +88,10 @@ cd src-tauri
 cargo run --release --example bench -- check                       # dataset and audio checks
 cargo run --release --example bench -- run --reps 1 --label mine   # every installed model, both whisper.cpp decodings
 cargo run --release --example bench -- run --models sherpa-parakeet-tdt-0.6b-v3-int8 --category fr-general --reps 3
+cargo run --release --example bench -- run --category fr-dictation,en-dictation --chunking vad --label long-vad   # cut clips over 25 s at silences
 cargo run --release --example bench -- rescore --dir ../benchmark/results/<folder>   # apply improved scoring rules
 python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
+python ../scripts/chunking_study.py runs ../benchmark/results/<whole> ../benchmark/results/<chunked>   # whole clip versus chunked
 ```
 
 Results go to `benchmark/results/<UTC stamp>-<label>/` (`summary.md`, `summary.csv`, `runs.jsonl`, `system.json`, `config.json`). Always use `--release` for speed figures and avoid heavy work on the machine during a run. `bench run` refuses to start above 30 % average background CPU or on battery (D-034); quote the recorded load (`config.json`, `preflight.idleCpuPercent`) with any speed figure. See `benchmark/README.md` for the dataset format.

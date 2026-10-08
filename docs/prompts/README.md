@@ -14,8 +14,9 @@ How to continue the project in a fresh chat tab without losing context:
 | File | Use it for |
 |---|---|
 | `01-clean-benchmark-rerun.md` | done (kept for reference): re-run the full benchmark on a quiet machine |
-| `02-long-audio-vad-chunking.md` | the immediate next task: cut long audio at silences (VAD) and compare with whole-clip decoding |
-| `next-tasks.md` | drug-name handling, private accent clips, TTS, packaging, final report (the timing study T2 and the re-run are done) |
+| `02-long-audio-vad-chunking.md` | done (kept for reference): cut long audio at silences (VAD) and compare with whole-clip decoding |
+| `03-drug-name-handling.md` | the immediate next task: drug names and key terms (hotwords, prompts, dictionary correction) |
+| `next-tasks.md` | private accent clips, TTS, packaging, final report (the timing study T2, the re-run and the chunking T3 are done; T4 drug names now has its own file) |
 
 Two sessions must never work on the same files at the same time, and never two benchmarks at once:
 tell each session which branch you are on, and finish or commit one task before starting the next.

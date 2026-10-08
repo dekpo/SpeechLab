@@ -90,6 +90,12 @@ impl SherpaOnnxProvider {
                     def.id
                 )))
             }
+            ModelFamily::SileroVad => {
+                return Err(SpeechError::InvalidRequest(format!(
+                    "model {} is a voice-activity detector, not a speech-to-text model",
+                    def.id
+                )))
+            }
         }
         Ok(config)
     }

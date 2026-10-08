@@ -24,7 +24,23 @@ pub enum ModelFamily {
     Canary,
     NemoTransducer,
     GgmlWhisper,
+    /// Silero voice-activity detector (a support model, run through the sherpa-onnx VAD API).
+    SileroVad,
 }
+
+/// What a manifest entry is for. Support models (for example the voice-activity detector) are
+/// downloadable and checksum-verified like engines, but they are not speech-to-text engines:
+/// `list()` leaves them out so the UI engine pickers and the benchmark never see them.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
+pub enum ModelRole {
+    #[default]
+    Stt,
+    Support,
+}
+
+/// Manifest id of the voice-activity detector used by the chunker.
+pub const VAD_MODEL_ID: &str = "silero-vad";
 
 /// How the model is distributed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
@@ -72,6 +88,8 @@ pub struct ModelDef {
     pub display_name: String,
     pub provider: String,
     pub family: ModelFamily,
+    #[serde(default)]
+    pub role: ModelRole,
     #[serde(default)]
     pub packaging: Packaging,
     pub languages: Vec<String>,
@@ -129,9 +147,29 @@ impl ModelManager {
             && required.iter().all(|name| dir.join(name).is_file())
     }
 
+    /// Speech-to-text models only; support models are reached through `support_models`.
     pub fn list(&self) -> Vec<ModelInfo> {
+        self.info_for(ModelRole::Stt)
+    }
+
+    /// Support models (voice-activity detector), kept out of `list()` on purpose.
+    pub fn support_models(&self) -> Vec<ModelInfo> {
+        self.info_for(ModelRole::Support)
+    }
+
+    /// Path of the installed voice-activity-detector model file.
+    pub fn vad_model_path(&self) -> Result<PathBuf, SpeechError> {
+        let def = self.def(VAD_MODEL_ID)?;
+        if !self.is_installed(def) {
+            return Err(SpeechError::ModelNotInstalled(def.id.clone()));
+        }
+        Ok(self.model_dir(def).join(def.files.get(&def.files.model, "model")?))
+    }
+
+    fn info_for(&self, role: ModelRole) -> Vec<ModelInfo> {
         self.defs
             .iter()
+            .filter(|d| d.role == role)
             .map(|d| {
                 let installed = self.is_installed(d);
                 ModelInfo {
@@ -262,10 +300,23 @@ mod tests {
         for d in &m.defs {
             assert!(!d.files.required().is_empty(), "{} has no files", d.id);
             assert!(d.provider == "sherpa-onnx" || d.provider == "whisper-cpp", "{}", d.id);
+            assert!(d.sha256.is_some(), "{} must pin a SHA-256", d.id);
             if d.packaging == Packaging::File {
                 assert!(d.files.model.is_some(), "{} needs files.model", d.id);
             }
         }
+    }
+
+    #[test]
+    fn support_models_are_kept_out_of_the_engine_list() {
+        let m = ModelManager::new(std::env::temp_dir().join("speechlab_models_test")).unwrap();
+        assert!(m.list().iter().all(|i| i.id != VAD_MODEL_ID), "the VAD must not appear in list()");
+        assert!(m.support_models().iter().any(|i| i.id == VAD_MODEL_ID));
+        let def = m.def(VAD_MODEL_ID).unwrap();
+        assert_eq!(def.role, ModelRole::Support);
+        assert_eq!(def.family, ModelFamily::SileroVad);
+        assert!(def.license.starts_with("MIT"));
+        assert!(matches!(m.vad_model_path(), Err(SpeechError::ModelNotInstalled(_))));
     }
 
     #[test]

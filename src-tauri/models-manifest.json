@@ -205,5 +205,35 @@
       "macos-x64"
     ],
     "expectedMemoryMb": null
+  },
+  {
+    "id": "silero-vad",
+    "displayName": "Silero VAD (voice-activity detector, ONNX)",
+    "provider": "sherpa-onnx",
+    "family": "silero-vad",
+    "role": "support",
+    "packaging": "file",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "architecture": "Silero VAD (small recurrent network on 16 kHz audio)",
+    "quantization": "fp32",
+    "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx",
+    "archiveBytes": 643854,
+    "sha256": "9e2449e1087496d8d4caba907f23e0bd3f78d91fa552479bb9c23ac09cbb1fd6",
+    "dirName": "silero-vad",
+    "files": {
+      "model": "silero_vad.onnx"
+    },
+    "license": "MIT (Silero Team)",
+    "sourceUrl": "https://github.com/snakers4/silero-vad",
+    "runtime": "sherpa-onnx VAD API (ONNX Runtime, CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
   }
 ]

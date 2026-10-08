@@ -19,24 +19,26 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-013 | Open | engine | sherpa-onnx prints resampler/debug lines to the console |
 | I-014 | Open | data | No verified-license French test audio yet; `fr.wav` license unstated (test use only) |
 | I-015 | Mitigated | audio input | Non-WAV files with a `.wav` extension (MP4/M4A, Ogg) now get a clear error; decoding them is still unsupported (planned M4) |
-| I-017 | Open | engine | Canary logs "first generated token is <|endoftext|> ... (issue #3919)" on a 45.8 s recording; output was still produced |
+| I-017 | Open (chunking tested, see update) | engine | Canary logs "first generated token is <|endoftext|> ... (issue #3919)" on a 45.8 s recording; output was still produced |
 | I-016 | Explained (partly) | evaluation | Owner-reported: Whisper tiny transcribed the owner's recording very badly. Cause for sherpa-onnx's Whisper tiny: repetition loop on a 45.8 s file (see I-018); not a verdict on whisper.cpp |
-| I-018 | Open | engine | sherpa-onnx Whisper tiny (greedy) falls into a repetition loop on a recording longer than 30 s |
-| I-019 | Confirmed | evaluation | Canary int8 dropped the final spoken sentence of the 45.8 s owner recording (owner listened: it is spoken) |
+| I-018 | Open (chunking recovers the ending, not the loops) | engine | sherpa-onnx Whisper tiny (greedy) falls into a repetition loop on a recording longer than 30 s |
+| I-019 | Confirmed, not fixed by chunking | evaluation | Canary int8 dropped the final spoken sentence of the 45.8 s owner recording (owner listened: it is spoken) |
 | I-020 | Open | design | whisper.cpp as external process = cold start on every run |
 | I-021 | Open | packaging | `whisper-cli` is located in `vendor/` in dev only; must become a bundled sidecar (M7) |
 | I-022 | Mitigated | environment | `vswhere.exe` missing: Visual Studio CMake generator unusable; NMake used instead |
 | I-028 | Mitigated | audio input | Owner's microphone input seems to saturate (recording quality mediocre); a level/clipping indicator was added, cause not confirmed |
-| I-029 | Open | engines | Long audio (45 s private clip, 1969 speech MP3): Canary truncates, Whisper tiny (both runtimes) repeats near the end; chunking/VAD needed (see I-018, I-019) |
+| I-029 | Partly measured (M5e) | engines | Long audio (45 s private clip, 1969 speech MP3): Canary truncates, Whisper tiny (both runtimes) repeats near the end; chunking/VAD needed (see I-018, I-019) |
 | I-031 | Mitigated | git hosting | GitHub returned HTTP 500 when creating any new branch pointing at the M4 commit; creating the branch from main in the web UI worked |
 | I-032 | Open | ui | The dataset recorder shows the benchmark path with a ".." segment (cosmetic) |
 | I-039 | Resolved | benchmark | First full run was disturbed by a heavy task; clean re-run done (855/855 transcripts identical, new speed figures at about 20 % background CPU) |
 | I-033 | Open | dataset | Suspect sample en-it-05: all engines hear 543, the script says 443 (listen, maybe re-record) |
 | I-034 | Open | scoring | Detector false alarms on times written "10.30", "3.30", "9h00" (about 15 % of reviewed flags) |
-| I-035 | Open | engines | Canary int8 emitted runaway garbage on one slow recording; product needs an output guard |
+| I-035 | Open (reproduced with chunking on one private clip) | engines | Canary int8 emitted runaway garbage on one slow recording; product needs an output guard |
 | I-036 | Open | performance | sherpa-onnx uses 7 to 9 busy cores with 4 threads configured |
 | I-037 | Open | performance | whisper.cpp small is slower than real time on this CPU (RTF 1.6 to 1.9) |
 | I-038 | Info | benchmark | One speaker, 95 sentences, 1 repetition, CPU only; sampling interval via bootstrap |
+| I-041 | Open | engines | Canary int8 degrades on pieces of about 24 s: a whole sentence dropped on `en-dict-01` chunked at 25 s, half the words and 63 s of runtime on a 45.8 s private clip |
+| I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
 | I-025 | Open | audio input | Recordings are about 1.5 % (~0.1 s on 6 s) shorter than the time held; cause not isolated |
@@ -215,3 +217,16 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-040 — Timing helper reports load 0 for sherpa-onnx
 - `scripts/timing_study.py` prints the median `loadMs` per repetition, which is 0 for sherpa-onnx because the load is recorded on the first sample only. The cold load is the first record's `loadMs` (quoted by hand in the project log). Fixed the same day: the script now prints the median of the records that have a load and the maximum.
+
+### Long-audio update (2026-10-08, M5e; D-035; run folders `20261008-*` in `benchmark/results/`)
+- I-017 / I-019: chunking at 25 s does NOT cure Canary. On a 45.8 s private clip the closing word is still missing in both modes; chunked, Canary also returned half the words in 63 s (see I-041). Parakeet and every whisper.cpp model kept the ending, whole or chunked. Canary handled the three reference dictations (26 to 36 s) well as whole clips (1.5 % WER).
+- I-018: sherpa-onnx Whisper cannot take more than 30 s (the library says so and discards the rest: measured on a 35.9 s dictation, last sentence lost). Chunking recovers the ending, but the repetition loops stay (private clip A: a 3-word group repeated 35 times whole, 28 times chunked; 15 s pieces produced one more loop on a dictation). The loop is a decoding defect of this runtime, not a length problem.
+- I-029: measured now. Maximum clip length without chunking on this CPU and these clips: sherpa Whisper tiny 30 s (hard), Canary about 30 s to 36 s without loss on reference dictations but unreliable at 45 s, Parakeet and whisper.cpp no limit seen up to 45.8 s (3 reference dictations and 2 private clips only). Chunking at 25 s helps sherpa Whisper tiny (ending), is neutral for Parakeet and whisper.cpp, and hurts Canary. The planned comparison for the dataset is done; the private 1969 recording was not used.
+- I-035: a second runaway of Canary (private clip, chunked). An output guard is still needed in any product: reject outputs whose length is far from the audio duration, or that took longer than a multiple of the audio length.
+
+### I-041 — Canary int8 degrades on pieces of about 24 s
+- Seen twice: (1) `en-dict-01` chunked at 25 s, first piece 0.3 to 24.3 s: one sentence dropped and one non-word, WER 3.7 % whole versus 22.2 % chunked; with 15 s or 10 s pieces the WER returns to 1.5 and 2.0 %. (2) private clip A (45.8 s), pieces 0 to 23.9 s and 23.9 to 45.8 s: 52 words instead of 104 and 63 s instead of 18 s. Not isolated (which piece, which tokens); a 20 s limit and a per-piece output guard are the obvious next experiments if Canary stays on the shortlist. Do not use `--chunk-max-s` 25 with Canary in a product.
+
+### I-042 — Between-run speed offset larger than expected
+- Clips of 25 s or less take the same path with or without chunking, yet the median inference time of `20261008-050621-short-vad` was 1 % (whisper.cpp base greedy) to 48 % (sherpa Whisper tiny) above the clean full run, although the measured background load before the run was lower (14.4 % versus 19.4 %). The preflight reading is a single 8 s average and varies by more than 10 points between calls. Speed figures from different runs must not be compared; compare inside one run only. Related: I-012.
+
