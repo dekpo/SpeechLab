@@ -587,3 +587,32 @@ Run-to-run variation of the SAME sample inside this run (3 consecutive repetitio
 **Next**: private accent clips (backlog item 6, prompt `docs/prompts/04-private-accent-clips.md`). Owner decision needed: which technique, if any, to keep for the product (D-036 gives a recommendation, not a decision).
 
 **Identity check (end of entry)**: the editor name that `bench preflight` stores in `config.json` was replaced by `code-editor.exe` in the nine new result folders. No private content was written (the study uses the owner's public-dataset recordings only; private clips were not used).
+
+---
+
+## 2026-10-08 — T5 (part 1) — Import tool for private clips; the evaluation itself waits for the owner's clips
+
+**Done**
+- Read-only checks: clean working tree on `milestone/t4-drug-name-handling` (HEAD `8b40ca4`, the T4 work is committed), no `bench.exe` or `whisper-cli.exe` running, `benchmark/samples-private/` empty, no private result folder yet. Read how private samples work (`dataset.rs`: `samples-private/`, the `private` flag set by the loader, `third-party-private` forced into the private folder; `bench run --include-private` writes to `results/private/`; `.gitignore` covers `benchmark/audio/`, `benchmark/samples-private/`, `benchmark/results/private/`).
+- New library function `dataset::import_sample` (with `ImportRequest`, `private_voice_license`, `clean_reference`) and new subcommand `bench import`. It takes an existing PCM WAV and the owner's typed reference file, converts the audio to 16 kHz mono 16-bit (stereo averaged, other rates resampled by the existing linear-interpolation function of `chunking.rs`), writes `benchmark/audio/<id>.wav` and the metadata JSON (`samples-private/` for `--private`), then runs the normal dataset validation on that sample and rolls everything back if a check fails. No code change is needed per clip afterwards.
+  - Privacy by construction: the reference file is read and never printed (the command prints only the id, duration, word count, category and destination; error messages never contain the reference, unit-tested). `--private` requires `--consent yes|unknown`; `--consent no` refuses the import. Public or licensed material needs `--source-kind`, `--license` and, for `public-domain`/`licensed`, a `--url`. An existing id is refused unless `--replace` is given. The id must already be in lower-case `[a-z0-9_-]` form.
+  - Default category of an imported clip is `<language>-accent-private` (or `-accent` for public material), so `bench run --include-private --category fr-accent-private` selects exactly the imported clips and no other sample.
+- Usage (documented in `benchmark/README.md`, `README.md` and the `bench` header): `bench import --wav <file> --id <id> --reference-file <txt> --speaker <id> --accent <text> [--gender <text>] --private --consent yes`.
+- `cargo test --lib`: 123 passed (118 before; 5 new: conversion to 16 kHz mono and private placement, duplicate refusal and `--replace`, bad input leaves nothing behind and never echoes the reference, public material with a source, consent statement).
+
+**Verified (observed here)**
+- End to end with the release build on a synthetic tone (22.05 kHz mono, 30 s, written in a scratch folder through `SPEECHLAB_BENCH_DIR`, NOT the real dataset): the import produced a 30.0 s file and a JSON in `samples-private/` with `source.kind` = `third-party-private`, `committable` = false and the consent statement in `source.license`; `bench check` then reported 1 sample (1 private), 0 validation issues; a second import of the same id and an import with `--consent no` were both refused with a clear message; the 30 s clip printed the hint to use `--chunking vad`.
+- The real dataset was not modified: `git status` shows only source and documentation files; `benchmark/samples-private/` is still empty.
+
+**Failed or surprises**
+- `bench check` warns "unusual reading speed: 0.1 words/s" on the synthetic tone with a 4-word reference: expected (a tone is not speech), and a useful sanity check that the warning logic still works on imported samples.
+- The first attempt to append these documents with one long inline shell script was rejected by the agent shell (apostrophes, see the trap in HANDOFF section 5); nothing was written by that attempt, the text was then written through files.
+- A trap found while reading the code, not fixed (I-047): `summary.md` of any run contains a "suspect samples" section that prints the reference and the best output of the hardest samples. For a private run it is written to `benchmark/results/private/<run>/summary.md` (git-ignored, so safe on disk), but it must never be copied into a document. `runs.jsonl` also holds every reference and transcript.
+
+**Not verified**
+- The evaluation itself (backlog item 6): no clip was imported, no private run was made, no accent figure exists. It needs from the owner, per clip: the file path, a general description of the speaker (accent, language, gender only if the owner states it), whether the speaker consented, and the verbatim reference typed by the owner. Nothing was invented, listened to or transcribed.
+- Import of non-WAV files (m4a, mp3, Ogg): refused with the existing clear error; the owner converts them first (Audacity or VLC). Resampling quality of non-16 kHz clips (linear interpolation, never compared with a better resampler; I-046).
+
+**Next**: the owner provides the clips and references, then a new session follows `docs/prompts/04-private-accent-clips.md` from its step 2 (the import tool of its step 3 already exists). M6 (text-to-speech laboratory, prompt `docs/prompts/05-tts-laboratory.md`) does not depend on the clips and can run first.
+
+**Identity check (end of entry)**: no AI or vendor name was written; no private content exists in the repository (no clip was imported; the only test audio is a synthetic tone in a scratch folder outside the repository).

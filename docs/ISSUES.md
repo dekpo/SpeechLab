@@ -41,6 +41,8 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-043 | Open | engines | Parakeet hotwords need a surrogate SentencePiece vocabulary (the download has none); score 1.5 loses the elision ("d amoxicilline"), score 3.0 inserts vocabulary words into unrelated sentences |
 | I-044 | Open | engines | whisper.cpp initial prompt: 25 to 40 % slower, slightly worse on sentences without key terms, harmful for tiny, no reliable gain on drug names |
 | I-045 | Open | scoring / safety | Dictionary post-correction can silently replace a correct rare word; false-correction rate on free text unknown (measured only on 95 sentences) |
+| I-046 | Open | dataset import | `bench import` resamples non-16 kHz clips by linear interpolation, never compared with a better resampler; only PCM WAV input is accepted (m4a/mp3/Ogg must be converted first) |
+| I-047 | Open | privacy | Private runs: `summary.md` prints the reference and best output of the hardest samples and `runs.jsonl` holds every text; the folder is git-ignored but nothing from it may be quoted in a document |
 | I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
@@ -246,3 +248,13 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 - Mechanism: near-miss matching cannot tell a misspelling from a real word. Unit test `known_hazard_a_correct_look_alike_drug_name_is_replaced` shows "prednisolone" replaced by "prednisone" under the MEDIUM preset. The LOOSE preset turned "matin"/"mais" into "main" 63 times on the clean run.
 - Mitigations in the code: strict default, minimum length, same first letter, plural guard, protected numbers/units/negations/dates, ambiguity left alone, every change returned. Not mitigated: a rare real word one edit from a vocabulary term under STRICT; any text outside the 95 sentences.
 - Status: open until measured on free text and more speakers; the option stays OFF.
+
+### I-046 — Import resampling and input formats
+- `bench import` converts any PCM WAV to 16 kHz mono 16-bit. Clips at another rate go through the linear-interpolation resampler of `chunking.rs` (adequate for speech recognition input, not compared with a higher-quality resampler; the 11.025 kHz private clip of M5e was handled the same way). Compressed files (m4a, mp3, Ogg, FLAC) are refused with the existing explicit error. Workaround: convert to WAV first (Audacity or VLC).
+- Status: open, low priority. To close: compare WER on one clip resampled both ways.
+
+### I-047 — Private results contain the private texts
+- Symptom: the "suspect samples" section of `summary.md` (benchmark.rs) quotes the reference and the best transcript of the hardest samples; `runs.jsonl` stores `reference` and `text` of every run. For `bench run --include-private` these files live in `benchmark/results/private/<run>/` (git-ignored).
+- Risk: copying a figure table is fine; copying that section or any line of `runs.jsonl` into a document, a chat or a commit would leak a third party's words. Also, `bench run --include-private` without `--category` mixes private and public samples in one folder.
+- Workaround: always pass `--category <private category>`; report counts and WER only. Possible fix (not done): omit the texts of private samples from `summary.md`, which needs a `private` flag on the run record.
+- Status: open.

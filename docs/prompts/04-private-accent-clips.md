@@ -5,6 +5,10 @@ Paste everything below the line into a new chat session. Prerequisite: the drug-
 and their typed reference texts): the agent must ask for them and must NOT invent or guess any
 reference text. No download is needed unless the owner agrees to one.
 
+STATUS (2026-10-08): step 3 is ALREADY DONE (D-037: `bench import`, tested on synthetic audio). Do
+not rebuild it; start at step 2 and use `bench import` (see `benchmark/README.md`, section "Importing
+an existing recording"). No clip has been imported yet.
+
 ---
 
 You are continuing the project in this repository (AssistantCabinetAI-SpeechLab). The owner speaks

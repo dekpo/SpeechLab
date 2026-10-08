@@ -3,6 +3,11 @@
 //!   cargo run --release --example bench -- check
 //!   cargo run --release --example bench -- preflight     (is the machine quiet enough? exit 0 or 2)
 //!   cargo run --release --example bench -- run [options]
+//!   cargo run --release --example bench -- import --wav F --id ID --reference-file TXT --speaker S
+//!        (--private --consent yes|unknown | --source-kind K --license L [--url U]) [--accent A] [--gender G]
+//!        [--profile P] [--language fr|en] [--domain D] [--type dictation|statement|question] [--category C] [--replace]
+//!        converts to 16 kHz mono WAV, writes audio/ID.wav and the metadata (samples-private/ with --private);
+//!        the reference file is read, never printed
 //!   cargo run --release --example bench -- summarize --dir <results folder>
 //!   cargo run --release --example bench -- rescore --dir <results folder>
 //!   cargo run --release --example bench -- termstudy --dir <baseline> [--against <variant>] [--category a,b] [--out file.md]
@@ -41,7 +46,9 @@ use speechlab_lib::speech::benchmark::{
     analyze_audio, now_ms, run_spec, select_samples, summary_markdown, system_info, utc_stamp, write_results,
     preflight, rescore, summarize, summary_csv, RunOptions, RunRecord, RunSpec, SystemInfo,
 };
-use speechlab_lib::speech::dataset::{default_root, Dataset};
+use speechlab_lib::speech::dataset::{
+    default_root, import_sample, private_voice_license, Dataset, ImportRequest, SourceInfo, Speaker,
+};
 use speechlab_lib::speech::models::ModelManager;
 use speechlab_lib::speech::postcorrect::{self, PostCorrectConfig};
 use speechlab_lib::speech::provider::CancelToken;
@@ -453,6 +460,60 @@ fn postcorrect_cmd(args: &Args) {
     println!("post-correction ({preset}): {changed} of {} transcripts changed; results in {}", records.len(), out_dir.display());
 }
 
+/// Adds an existing audio file and its typed reference to the dataset (T5, private accent clips).
+/// The reference file is read and never printed; only counts and the destination are shown.
+fn import_cmd(args: &Args) {
+    let need = |k: &str| args.get(k).unwrap_or_else(|| panic!("import needs --{k}")).to_string();
+    let private = args.flag("private");
+    let language = args.get("language").unwrap_or("fr").to_string();
+    let reference_path = PathBuf::from(need("reference-file"));
+    let reference = std::fs::read_to_string(&reference_path)
+        .unwrap_or_else(|e| panic!("cannot read the reference file {}: {e}", reference_path.display()));
+    let accent = args.get("accent").map(str::to_string);
+    let gender = args.get("gender").map(str::to_string);
+    let profile = args.get("profile").map(str::to_string).unwrap_or_else(|| {
+        let parts: Vec<String> = gender.iter().chain(accent.iter()).cloned().collect();
+        assert!(!parts.is_empty(), "import needs --profile, or --accent / --gender to describe the speaker");
+        format!("one speaker only ({})", parts.join(", "))
+    });
+    let source = if private {
+        SourceInfo {
+            kind: "third-party-private".into(),
+            url: None,
+            license: private_voice_license(&need("consent")).unwrap_or_else(|e| panic!("{e}")),
+        }
+    } else {
+        SourceInfo { kind: need("source-kind"), url: args.get("url").map(str::to_string), license: need("license") }
+    };
+    let req = ImportRequest {
+        id: need("id"),
+        wav_path: PathBuf::from(need("wav")),
+        reference,
+        category: args.get("category").map(str::to_string).unwrap_or_else(|| format!("{language}-accent{}", if private { "-private" } else { "" })),
+        language,
+        domain: args.get("domain").unwrap_or("general").to_string(),
+        utterance_type: args.get("type").unwrap_or("dictation").to_string(),
+        speaker: Speaker { id: need("speaker"), profile, gender, accent },
+        source,
+        private,
+        replace: args.flag("replace"),
+        notes: args.get("notes").unwrap_or("").to_string(),
+    };
+    let s = import_sample(&default_root(), &req).unwrap_or_else(|e| panic!("import failed: {e}"));
+    let seconds = s.duration_ms.unwrap_or(0) as f64 / 1000.0;
+    println!(
+        "imported {} ({:.1} s, {} reference words, category {}) into {}",
+        s.id,
+        seconds,
+        s.reference.split_whitespace().count(),
+        s.category,
+        if s.private { "samples-private/ (git-ignored)" } else { "samples/" }
+    );
+    if seconds > 25.0 {
+        println!("note: longer than 25 s; run with --chunking vad for the engines that need it (D-035)");
+    }
+}
+
 fn main() {
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let args = Args::parse(raw.get(1..).unwrap_or(&[]));
@@ -477,6 +538,7 @@ fn main() {
         Some("rescore") => rescore_dir(&args),
         Some("termstudy") => termstudy_cmd(&args),
         Some("postcorrect") => postcorrect_cmd(&args),
-        _ => eprintln!("usage: bench check | bench run [--models a,b] [--beams 5,1] [--reps N] [--category c] [--limit N] [--label x] [--chunking vad] [--include-private] [--no-isolate]"),
+        Some("import") => import_cmd(&args),
+        _ => eprintln!("usage: bench check | bench import |bench run [--models a,b] [--beams 5,1] [--reps N] [--category c] [--limit N] [--label x] [--chunking vad] [--include-private] [--no-isolate]"),
     }
 }

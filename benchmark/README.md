@@ -86,6 +86,28 @@ Values: language `fr|en`; domain `general|medical|administrative|legal|it`; utte
   local (`samples-private/`).
 - No real patient data, ever.
 
+## Importing an existing recording (private clips, accents)
+
+`bench import` adds an audio file you already have, with the reference text you typed yourself:
+
+```
+bench import --wav clip.wav --id acc-01 --reference-file acc-01.txt --speaker spk-a \
+             --accent "Swiss-Romande" --gender female --private --consent yes
+```
+
+- Audio: any PCM WAV; it is converted to 16 kHz mono 16-bit and written to `audio/<id>.wav`. m4a, mp3
+  or Ogg files must be converted to WAV first.
+- Metadata goes to `samples-private/<id>.json` with `source.kind` = `third-party-private`; `--consent`
+  must be `yes` or `unknown` (written into the licence field); `no` refuses the import.
+  Without `--private`, give `--source-kind`, `--license` and (public domain or licensed) `--url`.
+- The reference file is read and never printed. It is the ground truth: nobody corrects it.
+- Describe the speaker with `--profile` or `--accent` / `--gender`. It describes this one speaker; it
+  is not an accent label. Default category: `fr-accent-private` (`--category` to change it).
+- An existing id is refused unless `--replace`. After an import, `bench check` lists the clip.
+- Run the clips with `bench run --include-private --category fr-accent-private --label <name>`; results
+  go to `results/private/`. Those files contain the texts of the clips: never copy them into a document;
+  report only counts and error rates and say "this speaker".
+
 ## Recording guidelines
 
 - One sentence per clip, natural pace, quiet room, same microphone distance.

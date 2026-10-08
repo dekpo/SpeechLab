@@ -248,6 +248,145 @@ pub fn create_sample(
     Ok(sample)
 }
 
+/// Everything needed to turn an existing audio file and a typed reference into a dataset sample.
+#[derive(Debug, Clone)]
+pub struct ImportRequest {
+    /// Sample id, already in the `sanitize_id` form (it names the files).
+    pub id: String,
+    pub wav_path: PathBuf,
+    /// The owner's verbatim text. Never printed or logged by the import.
+    pub reference: String,
+    pub language: String,
+    pub domain: String,
+    pub utterance_type: String,
+    pub category: String,
+    pub speaker: Speaker,
+    pub source: SourceInfo,
+    pub private: bool,
+    /// Overwrite a sample with the same id instead of refusing.
+    pub replace: bool,
+    pub notes: String,
+}
+
+/// Licence statement stored with a private third-party clip. A refusal ("no") is an error: such a
+/// clip must not enter the dataset; "unknown" is allowed but written down as such.
+pub fn private_voice_license(consent: &str) -> Result<String, SpeechError> {
+    match consent.trim().to_lowercase().as_str() {
+        "yes" | "oui" => Ok("private voice, no redistribution, speaker consent: yes".into()),
+        "unknown" | "inconnu" => Ok("private voice, no redistribution, speaker consent: unknown".into()),
+        "no" | "non" => Err(SpeechError::InvalidRequest("the speaker did not consent: the clip must not be imported".into())),
+        other => Err(SpeechError::InvalidRequest(format!("consent must be yes, no or unknown, got '{other}'"))),
+    }
+}
+
+/// Reference text as typed in a file: BOM and line breaks removed, runs of spaces collapsed.
+pub fn clean_reference(raw: &str) -> String {
+    raw.trim_start_matches('\u{feff}').split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+/// Imports an existing audio file (any PCM WAV; stereo is mixed down, other rates are resampled to
+/// 16 kHz by linear interpolation) with its reference text. Writes `audio/<id>.wav` (16 kHz mono
+/// 16-bit) and the metadata JSON (`samples-private/` for private or third-party material), then
+/// validates the result with the normal dataset checks and rolls back if any check fails. Error
+/// messages never contain the reference text.
+pub fn import_sample(root: &Path, req: &ImportRequest) -> Result<Sample, SpeechError> {
+    let bad = |m: String| SpeechError::InvalidRequest(m);
+    let id = sanitize_id(&req.id);
+    if id.is_empty() || id != req.id {
+        return Err(bad(format!("sample id must be lower-case letters, digits, '-' or '_' (got '{}')", req.id)));
+    }
+    let speaker_id = sanitize_id(&req.speaker.id);
+    if speaker_id.is_empty() {
+        return Err(bad("speaker id is empty".into()));
+    }
+    if req.speaker.profile.trim().is_empty() {
+        return Err(bad("a speaker description is required (for example 'one speaker, accent as described by the owner')".into()));
+    }
+    if req.source.license.trim().is_empty() {
+        return Err(bad("a licence or consent statement is required".into()));
+    }
+    let reference = clean_reference(&req.reference);
+    if reference.is_empty() {
+        return Err(bad("the reference text is empty".into()));
+    }
+    let private = req.private || req.source.kind == "third-party-private";
+    if !private
+        && matches!(req.source.kind.as_str(), "public-domain" | "licensed")
+        && req.source.url.as_deref().map_or(true, |u| u.trim().is_empty())
+    {
+        return Err(bad("public or licensed material needs a source URL".into()));
+    }
+    let mut issues = Vec::new();
+    check_choice(&mut issues, &id, "language", &req.language, LANGUAGES);
+    check_choice(&mut issues, &id, "domain", &req.domain, DOMAINS);
+    check_choice(&mut issues, &id, "utteranceType", &req.utterance_type, UTTERANCE_TYPES);
+    check_choice(&mut issues, &id, "source.kind", &req.source.kind, SOURCE_KINDS);
+    if let Some(i) = issues.first() {
+        return Err(bad(i.message.clone()));
+    }
+
+    let audio_path = root.join("audio").join(format!("{id}.wav"));
+    let json_paths = [root.join("samples").join(format!("{id}.json")), root.join("samples-private").join(format!("{id}.json"))];
+    if !req.replace && (audio_path.exists() || json_paths.iter().any(|p| p.exists())) {
+        return Err(bad(format!("sample '{id}' already exists (use replace to overwrite it)")));
+    }
+
+    // Decode and convert in memory first, so that a bad file leaves nothing behind.
+    let decoded = wav::read_wav_mono(&req.wav_path)?;
+    let samples = super::chunking::to_chunk_rate(&decoded.samples, decoded.sample_rate);
+    let spec = hound::WavSpec {
+        channels: 1,
+        sample_rate: super::chunking::CHUNK_RATE,
+        bits_per_sample: 16,
+        sample_format: hound::SampleFormat::Int,
+    };
+    let audio_err = |e: hound::Error| SpeechError::Audio(format!("cannot write {}: {e}", audio_path.display()));
+    fs::create_dir_all(root.join("audio")).map_err(|e| SpeechError::Audio(e.to_string()))?;
+    let mut w = hound::WavWriter::create(&audio_path, spec).map_err(audio_err)?;
+    for s in &samples {
+        w.write_sample((s.clamp(-1.0, 1.0) * 32767.0).round() as i16).map_err(audio_err)?;
+    }
+    w.finalize().map_err(audio_err)?;
+
+    let sample = Sample {
+        id: id.clone(),
+        language: req.language.clone(),
+        domain: req.domain.clone(),
+        utterance_type: req.utterance_type.clone(),
+        category: req.category.clone(),
+        speaker: Speaker { id: speaker_id, ..req.speaker.clone() },
+        audio_file: format!("{id}.wav"),
+        duration_ms: Some(samples.len() as u64 * 1000 / super::chunking::CHUNK_RATE as u64),
+        reference,
+        key_terms: Vec::new(),
+        source: req.source.clone(),
+        committable: false,
+        notes: req.notes.clone(),
+        private,
+    };
+    let (dir, other) = if private { (1, 0) } else { (0, 1) };
+    let write_meta = || -> Result<(), SpeechError> {
+        let folder = json_paths[dir].parent().expect("parent");
+        fs::create_dir_all(folder).map_err(|e| SpeechError::Audio(e.to_string()))?;
+        let json = serde_json::to_string_pretty(&sample).map_err(|e| SpeechError::Engine(e.to_string()))?;
+        fs::write(&json_paths[dir], json + "\n").map_err(|e| SpeechError::Audio(e.to_string()))?;
+        let _ = fs::remove_file(&json_paths[other]);
+        Ok(())
+    };
+    write_meta()?;
+
+    // Normal dataset checks; undo everything if this sample does not pass.
+    let problems: Vec<String> = match Dataset::load(root) {
+        Ok(ds) => ds.issues.iter().filter(|i| i.sample_id == id).map(|i| i.message.clone()).collect(),
+        Err(e) => vec![e.to_string()],
+    };
+    if !problems.is_empty() {
+        let _ = delete_sample(root, &id);
+        return Err(bad(format!("imported sample '{id}' failed validation: {}", problems.join("; "))));
+    }
+    Ok(sample)
+}
+
 /// Removes a sample's metadata (both folders) and its audio.
 pub fn delete_sample(root: &Path, sample_id: &str) -> Result<(), SpeechError> {
     let id = sanitize_id(sample_id);
@@ -557,6 +696,127 @@ mod tests {
         assert!(!d.join("samples/fr-med-01-owner.json").exists());
         assert!(delete_sample(&d, "fr-med-01-owner").is_err(), "second delete reports not found");
         let _ = fs::remove_dir_all(d);
+    }
+
+    /// Synthetic stereo tone at an arbitrary rate (no voice involved).
+    fn write_tone(path: &Path, channels: u16, rate: u32, seconds: u32) {
+        let spec = hound::WavSpec { channels, sample_rate: rate, bits_per_sample: 16, sample_format: hound::SampleFormat::Int };
+        let mut w = hound::WavWriter::create(path, spec).unwrap();
+        for i in 0..rate * seconds {
+            let v = ((i as f32 * 0.05).sin() * 8000.0) as i16;
+            for _ in 0..channels {
+                w.write_sample(v).unwrap();
+            }
+        }
+        w.finalize().unwrap();
+    }
+
+    fn import_request(src: &Path, id: &str) -> ImportRequest {
+        ImportRequest {
+            id: id.into(),
+            wav_path: src.to_path_buf(),
+            reference: "\u{feff}Premier mot  deuxième mot\r\nsuite du texte.\n".into(),
+            language: "fr".into(),
+            domain: "general".into(),
+            utterance_type: "dictation".into(),
+            category: "fr-accent-private".into(),
+            speaker: Speaker { id: "Spk A".into(), profile: "one speaker, accent as described by the owner".into(), gender: None, accent: Some("test".into()) },
+            source: SourceInfo { kind: "third-party-private".into(), url: None, license: private_voice_license("yes").unwrap() },
+            private: true,
+            replace: false,
+            notes: String::new(),
+        }
+    }
+
+    #[test]
+    fn import_converts_audio_to_16k_mono_and_stores_it_as_private() {
+        let d = tmp("import");
+        let src = d.join("input-8k-stereo.wav");
+        write_tone(&src, 2, 8000, 3);
+        let s = import_sample(&d, &import_request(&src, "acc-01")).unwrap();
+        assert!(s.private && !s.committable);
+        assert_eq!(s.speaker.id, "spk-a");
+        assert_eq!(s.reference, "Premier mot deuxième mot suite du texte.", "BOM and line breaks are cleaned");
+        assert!(d.join("samples-private/acc-01.json").is_file());
+        assert!(!d.join("samples/acc-01.json").exists());
+        let out = hound::WavReader::open(d.join("audio/acc-01.wav")).unwrap().spec();
+        assert_eq!((out.channels, out.sample_rate, out.bits_per_sample), (1, 16000, 16));
+        let ds = Dataset::load(&d).unwrap();
+        assert!(ds.issues.is_empty(), "{:?}", ds.issues);
+        assert_eq!(ds.samples[0].duration_ms, Some(3000));
+        assert!(ds.samples[0].private);
+        assert_eq!(ds.runnable().len(), 1);
+        let _ = fs::remove_dir_all(d);
+    }
+
+    #[test]
+    fn import_refuses_an_existing_id_unless_replace_is_set() {
+        let d = tmp("import_dup");
+        let src = d.join("in.wav");
+        write_tone(&src, 1, 16000, 1);
+        import_sample(&d, &import_request(&src, "acc-01")).unwrap();
+        assert!(import_sample(&d, &import_request(&src, "acc-01")).is_err());
+        let mut again = import_request(&src, "acc-01");
+        again.replace = true;
+        import_sample(&d, &again).unwrap();
+        assert_eq!(Dataset::load(&d).unwrap().samples.len(), 1);
+        let _ = fs::remove_dir_all(d);
+    }
+
+    #[test]
+    fn import_rejects_bad_input_leaves_nothing_behind_and_never_echoes_the_reference() {
+        let d = tmp("import_bad");
+        let good = d.join("in.wav");
+        write_tone(&good, 1, 16000, 1);
+        let secret = "texte confidentiel unique";
+
+        let mut r = import_request(&good, "Bad Id");
+        assert!(import_sample(&d, &r).is_err(), "id must already be sanitised");
+        r = import_request(&good, "acc-02");
+        r.reference = "  \n ".into();
+        assert!(import_sample(&d, &r).is_err());
+        r = import_request(&good, "acc-02");
+        r.speaker.profile = " ".into();
+        assert!(import_sample(&d, &r).is_err());
+        r = import_request(&good, "acc-02");
+        r.language = "de".into();
+        assert!(import_sample(&d, &r).is_err());
+        r = import_request(&good, "acc-02");
+        r.private = false;
+        r.source = SourceInfo { kind: "licensed".into(), url: None, license: "CC-BY-4.0".into() };
+        assert!(import_sample(&d, &r).is_err(), "public material needs a URL");
+
+        let fake = d.join("fake.wav");
+        fs::write(&fake, b"not a wav at all, definitely").unwrap();
+        r = import_request(&fake, "acc-03");
+        r.reference = secret.into();
+        let err = import_sample(&d, &r).err().unwrap().to_string();
+        assert!(!err.contains(secret), "{err}");
+        assert!(!d.join("audio/acc-03.wav").exists());
+        assert!(!d.join("samples-private/acc-03.json").exists());
+        let _ = fs::remove_dir_all(d);
+    }
+
+    #[test]
+    fn import_of_public_material_goes_to_the_committed_folder_with_its_source() {
+        let d = tmp("import_public");
+        let src = d.join("in.wav");
+        write_tone(&src, 1, 16000, 1);
+        let mut r = import_request(&src, "pub-01");
+        r.private = false;
+        r.source = SourceInfo { kind: "public-domain".into(), url: Some("https://example.org/clip".into()), license: "public domain".into() };
+        let s = import_sample(&d, &r).unwrap();
+        assert!(!s.private);
+        assert!(d.join("samples/pub-01.json").is_file());
+        let _ = fs::remove_dir_all(d);
+    }
+
+    #[test]
+    fn consent_statement_is_explicit_and_a_refusal_blocks_the_import() {
+        assert!(private_voice_license("yes").unwrap().contains("consent: yes"));
+        assert!(private_voice_license("Unknown").unwrap().contains("consent: unknown"));
+        assert!(private_voice_license("no").is_err());
+        assert!(private_voice_license("maybe").is_err());
     }
 
     #[test]

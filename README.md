@@ -95,6 +95,7 @@ cargo run --release --example bench -- run --vocab-dir ../benchmark/vocab --mode
 cargo run --release --example bench -- run --vocab-dir ../benchmark/vocab --hotwords-score 1.5 --models sherpa-parakeet-tdt-0.6b-v3-int8 --label hotwords   # Parakeet hotwords
 cargo run --release --example bench -- postcorrect --dir ../benchmark/results/<folder> --vocab-dir ../benchmark/vocab --preset strict --label pc   # dictionary correction of stored transcripts
 cargo run --release --example bench -- termstudy --dir ../benchmark/results/<baseline> --against ../benchmark/results/<variant>   # key terms found, fixed versus broken words
+cargo run --release --example bench -- import --wav <file.wav> --id <id> --reference-file <ref.txt> --speaker <id> --accent <text> --private --consent yes   # add a private clip (git-ignored); then: run --include-private --category fr-accent-private
 python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
 python ../scripts/chunking_study.py runs ../benchmark/results/<whole> ../benchmark/results/<chunked>   # whole clip versus chunked
 ```

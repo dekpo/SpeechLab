@@ -25,7 +25,7 @@ the chat, write files in English.
 3. **Write down everything in `docs/`**: successes, failures, dead ends, surprises, in the log. Mark each claim VERIFIED (observed here, with evidence) or NOT VERIFIED (with the steps to verify).
 4. **Free and open-source first**; reject non-commercial or copyleft models/libraries without the owner's approval (known flag: espeak-ng is GPL-3.0, see D-012).
 5. **Do not install software or change the system without the owner's approval.** Propose the command.
-6. **No private content in the repository or in documents**: voices of third parties, the owner's voice notes, the first name of the addressee of a private message, personal data. Only aggregate numbers.
+6. **No private content in the repository or in documents**: voices of third parties, the owner's voice notes, the first name of the addressee of a private message, personal data. Only aggregate numbers. Trap (I-047): `summary.md` and `runs.jsonl` of a private run (`benchmark/results/private/`) contain the clips' references and transcripts; never paste from them, always pass `--category` with `--include-private`.
 
 ## 3. Where things stand
 
@@ -42,7 +42,8 @@ the chat, write files in English.
 | M5d timing study (3 repetitions) | done: `20261008-035938-timing-3reps`, 40 short sentences x 9 configurations x 3 repetitions, 0 changing transcripts, within-run spread 1 to 4 % (I-012 partly closed) |
 | M5e long audio, chunking at silences (Silero VAD) | done: D-035; 828/828 short transcripts unchanged with chunking on; helps sherpa Whisper tiny (30 s limit), neutral for Parakeet and whisper.cpp, harmful for Canary (I-041); Whisper loops not fixed |
 | T4 drug names / key terms (D-036) | done: strict post-correction 0 broken words and fixes 2 of 6 drug names for the best engines; whisper.cpp prompt helps small/base but costs speed; Parakeet hotwords need a surrogate vocabulary and over-boost at score 3.0; all OFF by default; upper bound (vocabulary taken from the test sentences) |
-| M6 TTS laboratory | not started |
+| T5 private accent clips (D-037) | PARTLY done: `bench import` (WAV + typed reference -> private sample, consent rule, rollback on failed validation) is built and tested on synthetic audio; NO clip has been imported and NO accent figure exists, the evaluation waits for the owner's clips, speaker descriptions, consent and typed references |
+| M6 TTS laboratory | not started (prompt `docs/prompts/05-tts-laboratory.md`; does not depend on T5) |
 | M7 Windows/macOS packaging validation | not started (no Mac available: macOS stays NOT VERIFIED, document the steps) |
 | M8 final report, licensing table, recommendation | not started |
 
@@ -73,7 +74,7 @@ src-tauri/src/speech/        Rust: provider traits, sherpa.rs, whisper_cpp.rs, m
                              dataset.rs, metrics.rs, numbers.rs, critical.rs, probe.rs, benchmark.rs,
                              chunking.rs + vad.rs (long audio cut at silences),
                              postcorrect.rs (dictionary correction, OFF), termstudy.rs (key-term study)
-src-tauri/examples/          CLI tools: transcribe.rs (one file), bench.rs (benchmark), hotwords_probe.rs (T4 experiment)
+src-tauri/examples/          CLI tools: transcribe.rs (one file), bench.rs (benchmark; `bench import` adds private clips), hotwords_probe.rs (T4 experiment)
 benchmark/vocab/             fr.txt, en.txt: vocabulary files for the drug-name study (committed)
 src-tauri/models-manifest.json   model inventory (data, no code change to add a model)
 scripts/                     PowerShell/Python helpers (env check, library/CLI builds, comparison, bootstrap CI)
@@ -100,7 +101,7 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 ```bash
 pnpm install
 pnpm typecheck && pnpm test && pnpm build          # frontend checks
-cd src-tauri && cargo test --lib                    # Rust unit tests (118)
+cd src-tauri && cargo test --lib                    # Rust unit tests (123)
 pnpm tauri dev                                      # the app (port 1430)
 powershell -ExecutionPolicy Bypass -File scripts/check-env.ps1     # machine and tool check
 
@@ -110,6 +111,8 @@ cargo run -q --example transcribe -- run <model-id> <fr|en> <file.wav> [repeat]
 
 cargo build --release --example bench
 ./target/release/examples/bench.exe check           # dataset and audio checks
+./target/release/examples/bench.exe import --wav <f.wav> --id <id> --reference-file <ref.txt> --speaker <id> --accent <text> --private --consent yes   # private clip (T5); reference never printed
+./target/release/examples/bench.exe run --include-private --category fr-accent-private --label <name>    # results in benchmark/results/private/
 ./target/release/examples/bench.exe preflight       # quiet machine? exit 0 yes, 2 no
 ./target/release/examples/bench.exe run --reps 1 --label <name>
 ./target/release/examples/bench.exe run --chunking vad --category fr-dictation,en-dictation --label <name>   # clips over 25 s cut at silences
@@ -136,9 +139,9 @@ python ../scripts/chunking_study.py runs|same|clips ...      # whole versus chun
 | 3 | ~~Timing study, 3 repetitions~~ DONE 2026-10-08 (I-012 partly closed; between-run offset unexplained) | | next-tasks.md T2 (kept for reference) |
 | 4 | ~~Long audio, VAD chunking~~ DONE 2026-10-08 (D-035; open follow-ups: per-engine segment limit and output guard, I-041, I-035) | | `docs/prompts/02-long-audio-vad-chunking.md` (kept for reference) |
 | 5 | ~~Drug-name handling~~ DONE 2026-10-08 (D-036, I-043, I-044, I-045; open: real SentencePiece vocabulary, free-text false-correction rate, owner's choice of technique) | | `docs/prompts/03-drug-name-handling.md` (kept for reference) |
-| 6 | **Next:** private accent clips (Swiss-Romande, Maghreb) as long private samples | accents are in the plan | `docs/prompts/04-private-accent-clips.md` |
+| 6 | **Waiting for the owner:** private accent clips (Swiss-Romande, Maghreb). Import tool DONE (D-037); remaining: the owner's clips, speaker descriptions, consent and typed references, then the runs and aggregate-only report (resume at step 2 of the prompt) | accents are in the plan | `docs/prompts/04-private-accent-clips.md` |
 | 7 | Detector false alarms for times ("10.30", "9h00"), sherpa-onnx thread usage | I-034, I-036 | small fixes |
-| 8 | M6 TTS laboratory | plan section 5C | next-tasks.md T6 |
+| 8 | **Next without waiting:** M6 TTS laboratory | plan section 5C | `docs/prompts/05-tts-laboratory.md` (next-tasks.md T6) |
 | 9 | M7 packaging validation | plan section 9 | next-tasks.md T7 |
 | 10 | M8 final report and licensing table | main deliverable | next-tasks.md T8 |
 
