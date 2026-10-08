@@ -79,6 +79,38 @@ pub struct SynthesizeRequest {
     pub text: String,
     /// 1.0 = normal speed. Providers that do not support it must report so in `Capabilities`.
     pub speed: f32,
+    /// Rewrite digits, dates, units and abbreviations into words before synthesis. `None` = the voice
+    /// package's own default (manifest flag `normalizeText`); `Some(false)` forces it off.
+    #[serde(default)]
+    pub normalise: Option<bool>,
+}
+
+/// One sentence of a request: the original span, and the text actually sent to the voice.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SentencePlan {
+    /// The sentence as written.
+    pub text: String,
+    /// What the voice receives (equal to `text` when normalisation is off).
+    pub spoken: String,
+    /// Start offset in the original text, in UTF-16 code units (JavaScript string indices).
+    pub start: usize,
+    /// End offset (exclusive), in UTF-16 code units.
+    pub end: usize,
+    /// A blank line follows: the pause after this sentence is longer.
+    pub paragraph_end: bool,
+}
+
+/// Where one sentence sits in the generated audio. Offsets refer to the ORIGINAL text.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Segment {
+    pub start: usize,
+    pub end: usize,
+    /// Start of the sentence's speech in the WAV, in ms.
+    pub start_ms: u64,
+    /// End of the sentence's speech in the WAV (before the pause that follows), in ms.
+    pub end_ms: u64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -104,6 +136,12 @@ pub struct SynthesizeResult {
     /// Peak resident memory seen while synthesising (sampled, a lower bound), in MB.
     #[serde(default)]
     pub peak_memory_mb: Option<f64>,
+    /// One entry per sentence, in order (for the read-along highlight). Empty = not available.
+    #[serde(default)]
+    pub segments: Vec<Segment>,
+    /// True when the text was rewritten into words before synthesis.
+    #[serde(default)]
+    pub normalised: bool,
     pub is_mock: bool,
 }
 
@@ -128,6 +166,9 @@ pub struct VoiceInfo {
     /// Number of speakers the package contains (the list may show only some of them).
     #[serde(default)]
     pub speaker_count: i32,
+    /// The package needs its text rewritten into words (character-based voices): default of the toggle.
+    #[serde(default)]
+    pub normalize_text: bool,
 }
 
 // --- Model inventory ---

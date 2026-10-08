@@ -21,9 +21,11 @@ use sherpa_onnx::{
 use super::error::SpeechError;
 use super::models::{ModelDef, ModelFamily, ModelRole, ModelManager};
 use super::probe::SelfSampler;
+use super::normalise::normalise_for;
 use super::provider::{CancelToken, TextToSpeechProvider};
+use super::sentences::split_sentences;
 use super::types::{
-    Capabilities, ProviderInfo, ProviderKind, SynthesizeRequest, SynthesizeResult, VoiceInfo,
+    Capabilities, ProviderInfo, ProviderKind, Segment, SentencePlan, SynthesizeRequest, SynthesizeResult, VoiceInfo,
 };
 
 pub const SHERPA_TTS_ID: &str = "sherpa-onnx-tts";
@@ -34,6 +36,45 @@ pub const MIN_SPEED: f32 = 0.5;
 pub const MAX_SPEED: f32 = 2.0;
 /// A package with hundreds of speakers is listed with this many; any speaker number still works.
 const MAX_LISTED_SPEAKERS: i32 = 12;
+/// Silence inserted after a sentence, and after the last sentence of a paragraph (D-042). Both are divided
+/// by the speed factor so that a fast reading also has shorter pauses.
+pub const SENTENCE_PAUSE_MS: u64 = 250;
+pub const PARAGRAPH_PAUSE_MS: u64 = 600;
+
+/// How a request is turned into audio.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Mode {
+    /// One library call per sentence, joined with silences; gives the segments (the normal path).
+    PerSentence,
+    /// One library call for the whole text, no segments. Only for measuring the per-sentence overhead.
+    WholeText,
+}
+
+/// Splits a text into sentences and prepares what the voice will receive for each one. The read-along
+/// view, the "text sent to the voice" preview and the synthesis all use this one function.
+pub fn plan_sentences(text: &str, language: &str, normalise: bool) -> Vec<SentencePlan> {
+    split_sentences(text)
+        .into_iter()
+        .map(|s| {
+            let spoken = if normalise { normalise_for(&s.text, language) } else { s.text.clone() };
+            SentencePlan { text: s.text, spoken, start: s.start, end: s.end, paragraph_end: s.paragraph_end }
+        })
+        .collect()
+}
+
+fn pause_samples(sample_rate: u32, paragraph_end: bool, speed: f32) -> usize {
+    let base = if paragraph_end { PARAGRAPH_PAUSE_MS } else { SENTENCE_PAUSE_MS };
+    (sample_rate as f64 * base as f64 / 1000.0 / speed.max(0.1) as f64) as usize
+}
+
+fn write_wav(path: &Path, samples: &[f32], sample_rate: u32) -> Result<(), SpeechError> {
+    let spec = hound::WavSpec { channels: 1, sample_rate, bits_per_sample: 16, sample_format: hound::SampleFormat::Int };
+    let mut w = hound::WavWriter::create(path, spec).map_err(|e| SpeechError::Audio(e.to_string()))?;
+    for s in samples {
+        w.write_sample((s.clamp(-1.0, 1.0) * i16::MAX as f32) as i16).map_err(|e| SpeechError::Audio(e.to_string()))?;
+    }
+    w.finalize().map_err(|e| SpeechError::Audio(e.to_string()))
+}
 
 /// Speaker order of the Kokoro multi-language v1.0 package (from the package's own
 /// `voices.bin` generator script). The first letter is the language, the second the gender
@@ -204,6 +245,7 @@ impl SherpaTtsProvider {
 
     fn voices_of(&self, def: &ModelDef) -> Vec<VoiceInfo> {
         let dir = self.models.model_dir(def);
+        let normalize_text = def.normalize_text;
         let mk = |sid: i32, name: String, language: &str, gender: &str, count: i32| VoiceInfo {
             id: format!("{}:{sid}", def.id),
             display_name: name,
@@ -214,6 +256,7 @@ impl SherpaTtsProvider {
             model_id: def.id.clone(),
             speaker_id: sid,
             speaker_count: count,
+            normalize_text,
         };
         match def.family {
             ModelFamily::Kokoro => KOKORO_V1_0_VOICES
@@ -279,6 +322,18 @@ impl TextToSpeechProvider for SherpaTtsProvider {
     }
 
     fn synthesize(&self, request: &SynthesizeRequest, cancel: &CancelToken) -> Result<SynthesizeResult, SpeechError> {
+        self.run(request, cancel, Mode::PerSentence)
+    }
+}
+
+impl SherpaTtsProvider {
+    /// Measurement only: the whole text in one library call (the behaviour before sentence timings
+    /// existed), so the per-sentence overhead can be measured in the same run. No segments.
+    pub fn synthesize_whole_text(&self, request: &SynthesizeRequest, cancel: &CancelToken) -> Result<SynthesizeResult, SpeechError> {
+        self.run(request, cancel, Mode::WholeText)
+    }
+
+    fn run(&self, request: &SynthesizeRequest, cancel: &CancelToken, mode: Mode) -> Result<SynthesizeResult, SpeechError> {
         let (model_id, sid) = parse_voice_id(&request.voice_id)?;
         let def = self.tts_def(model_id)?;
         if !self.models.is_installed(def) {
@@ -304,15 +359,20 @@ impl TextToSpeechProvider for SherpaTtsProvider {
                 voice.display_name, voice.language, request.language
             )));
         }
-        let text = request.text.trim();
-        if text.is_empty() {
+        if request.text.trim().is_empty() {
             return Err(SpeechError::InvalidRequest("the text is empty".into()));
         }
-        if text.chars().count() > MAX_TEXT_CHARS {
+        if request.text.trim().chars().count() > MAX_TEXT_CHARS {
             return Err(SpeechError::InvalidRequest(format!("the text is longer than {MAX_TEXT_CHARS} characters")));
         }
         if !(MIN_SPEED..=MAX_SPEED).contains(&request.speed) {
             return Err(SpeechError::InvalidRequest(format!("speed must be between {MIN_SPEED} and {MAX_SPEED}")));
+        }
+        let normalised = request.normalise.unwrap_or(def.normalize_text);
+        let plan = plan_sentences(&request.text, &request.language, normalised);
+        let readable = |p: &&SentencePlan| p.spoken.chars().any(|c| c.is_alphanumeric());
+        if plan.iter().filter(readable).count() == 0 {
+            return Err(SpeechError::InvalidRequest("the text has nothing to read".into()));
         }
         if cancel.is_cancelled() {
             return Err(SpeechError::Cancelled);
@@ -325,28 +385,48 @@ impl TextToSpeechProvider for SherpaTtsProvider {
             return Err(SpeechError::Cancelled);
         }
         let config = GenerationConfig { speed: request.speed, sid, ..Default::default() };
-        let stop = cancel.clone();
-        let start = Instant::now();
-        let audio = engine.generate_with_config(text, &config, Some(move |_samples: &[f32], _progress: f32| !stop.is_cancelled()));
-        let generation_ms = start.elapsed().as_millis() as u64;
+
+        // The pieces to speak: every sentence, or the whole text as one piece.
+        let pieces: Vec<(String, Option<&SentencePlan>)> = match mode {
+            Mode::PerSentence => plan.iter().filter(readable).map(|p| (p.spoken.clone(), Some(p))).collect(),
+            Mode::WholeText => vec![(plan.iter().map(|p| p.spoken.as_str()).collect::<Vec<_>>().join(" "), None)],
+        };
+        let mut samples: Vec<f32> = Vec::new();
+        let mut sample_rate = 0u32;
+        let mut segments: Vec<Segment> = Vec::new();
+        let mut generation_ms = 0u64;
+        for (i, (spoken, sentence)) in pieces.iter().enumerate() {
+            let stop = cancel.clone();
+            let start = Instant::now();
+            let audio = engine.generate_with_config(spoken, &config, Some(move |_samples: &[f32], _progress: f32| !stop.is_cancelled()));
+            generation_ms += start.elapsed().as_millis() as u64;
+            if cancel.is_cancelled() {
+                let _ = sampler.finish();
+                return Err(SpeechError::Cancelled);
+            }
+            let audio = audio.ok_or_else(|| SpeechError::Engine("sherpa-onnx produced no audio".into()))?;
+            let rate = audio.sample_rate().max(0) as u32;
+            if audio.samples().is_empty() || rate == 0 {
+                return Err(SpeechError::Engine("sherpa-onnx produced empty audio".into()));
+            }
+            sample_rate = rate;
+            let start_ms = samples.len() as u64 * 1000 / rate as u64;
+            samples.extend_from_slice(audio.samples());
+            if let Some(s) = sentence {
+                let end_ms = samples.len() as u64 * 1000 / rate as u64;
+                segments.push(Segment { start: s.start, end: s.end, start_ms, end_ms });
+                if i + 1 < pieces.len() {
+                    samples.extend(std::iter::repeat(0.0f32).take(pause_samples(rate, s.paragraph_end, request.speed)));
+                }
+            }
+        }
         let (peak_memory_mb, _) = sampler.finish();
-        if cancel.is_cancelled() {
-            return Err(SpeechError::Cancelled);
-        }
-        let audio = audio.ok_or_else(|| SpeechError::Engine("sherpa-onnx produced no audio".into()))?;
-        let sample_rate = audio.sample_rate().max(0) as u32;
-        let frames = audio.samples().len() as u64;
-        if frames == 0 || sample_rate == 0 {
-            return Err(SpeechError::Engine("sherpa-onnx produced empty audio".into()));
-        }
-        let audio_ms = frames * 1000 / sample_rate as u64;
+        let audio_ms = samples.len() as u64 * 1000 / sample_rate as u64;
 
         fs::create_dir_all(&self.out_dir).map_err(|e| SpeechError::Audio(e.to_string()))?;
         let stamp = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis()).unwrap_or(0);
         let file = self.out_dir.join(format!("{}-{sid}-{stamp}.wav", def.id));
-        if !audio.save(&file.to_string_lossy()) {
-            return Err(SpeechError::Audio(format!("cannot write {}", file.display())));
-        }
+        write_wav(&file, &samples, sample_rate)?;
         Ok(SynthesizeResult {
             provider_id: SHERPA_TTS_ID.into(),
             voice_id: request.voice_id.clone(),
@@ -359,6 +439,8 @@ impl TextToSpeechProvider for SherpaTtsProvider {
             rtf: (audio_ms > 0).then(|| generation_ms as f64 / audio_ms as f64),
             speed: request.speed,
             peak_memory_mb,
+            segments,
+            normalised,
             is_mock: false,
         })
     }
@@ -432,7 +514,7 @@ mod tests {
     }
 
     fn req(voice: &str, text: &str, speed: f32) -> SynthesizeRequest {
-        SynthesizeRequest { provider_id: SHERPA_TTS_ID.into(), voice_id: voice.into(), language: "fr".into(), text: text.into(), speed }
+        SynthesizeRequest { provider_id: SHERPA_TTS_ID.into(), voice_id: voice.into(), language: "fr".into(), text: text.into(), speed, normalise: None }
     }
 
     #[test]
@@ -475,6 +557,75 @@ mod tests {
     }
 
     #[test]
+    fn the_plan_keeps_original_spans_and_rewrites_only_the_spoken_text() {
+        let text = "Prendre 500 mg le 12 mars. Fin.";
+        let off = plan_sentences(text, "fr", false);
+        assert_eq!(off.iter().map(|p| p.spoken.as_str()).collect::<Vec<_>>(), ["Prendre 500 mg le 12 mars.", "Fin."]);
+        let on = plan_sentences(text, "fr", true);
+        assert_eq!(on[0].spoken, "Prendre cinq cents milligrammes le douze mars.");
+        assert_eq!(on[0].text, "Prendre 500 mg le 12 mars.", "the displayed text is never rewritten");
+        assert_eq!((on[0].start, on[0].end, on[1].start, on[1].end), (0, 26, 27, 31));
+        assert!(on[1].paragraph_end && !on[0].paragraph_end);
+        // An unsupported language leaves the text alone.
+        assert_eq!(plan_sentences("Il a 3 ans.", "de", true)[0].spoken, "Il a 3 ans.");
+    }
+
+    #[test]
+    fn pauses_are_longer_after_a_paragraph_and_shrink_with_speed() {
+        let normal = pause_samples(22050, false, 1.0);
+        assert_eq!(normal, 22050 * SENTENCE_PAUSE_MS as usize / 1000);
+        assert!(pause_samples(22050, true, 1.0) > normal * 2);
+        assert!(pause_samples(22050, false, 2.0) < normal && pause_samples(22050, false, 0.5) > normal);
+    }
+
+    #[test]
+    fn a_joined_wav_round_trips_through_the_writer() {
+        let path = std::env::temp_dir().join("speechlab_tts_write_test.wav");
+        let samples: Vec<f32> = (0..2205).map(|i| ((i as f32) / 100.0).sin() * 0.5).collect();
+        write_wav(&path, &samples, 22050).unwrap();
+        let back = crate::speech::wav::read_wav_mono(&path).unwrap();
+        assert_eq!(back.duration_ms(), 100);
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn real_voice_returns_ordered_segments_that_match_the_wav() {
+        const VOICE: &str = "tts-vits-piper-fr_FR-siwis-medium";
+        let Some(p) = installed_provider(VOICE) else {
+            eprintln!("skipped: {VOICE} is not installed");
+            return;
+        };
+        let id = format!("{VOICE}:0");
+        let text = "Bonjour monsieur Martin. Votre rendez-vous est confirmé.\n\nMerci de votre confiance.";
+        let r = p.synthesize(&req(&id, text, 1.0), &CancelToken::new()).unwrap();
+        assert_eq!(r.segments.len(), 3);
+        let units: Vec<u16> = text.encode_utf16().collect();
+        let spoken: Vec<String> = r.segments.iter().map(|s| String::from_utf16(&units[s.start..s.end]).unwrap()).collect();
+        assert_eq!(spoken, ["Bonjour monsieur Martin.", "Votre rendez-vous est confirmé.", "Merci de votre confiance."]);
+        for w in r.segments.windows(2) {
+            assert!(w[0].start_ms < w[0].end_ms && w[0].end_ms <= w[1].start_ms, "{:?}", r.segments);
+        }
+        let gap1 = r.segments[1].start_ms - r.segments[0].end_ms;
+        let gap2 = r.segments[2].start_ms - r.segments[1].end_ms;
+        assert!((gap1 as i64 - SENTENCE_PAUSE_MS as i64).abs() <= 2, "sentence pause {gap1} ms");
+        assert!((gap2 as i64 - PARAGRAPH_PAUSE_MS as i64).abs() <= 2, "paragraph pause {gap2} ms");
+        assert_eq!(r.segments[2].end_ms, r.audio_ms, "no pause after the last sentence");
+        let wav = crate::speech::wav::read_wav_mono(Path::new(&r.wav_path)).unwrap();
+        assert!((wav.duration_ms() as i64 - r.audio_ms as i64).abs() <= 1, "wav {} ms, reported {} ms", wav.duration_ms(), r.audio_ms);
+        // Fast reading: shorter pauses.
+        let fast = p.synthesize(&req(&id, text, 2.0), &CancelToken::new()).unwrap();
+        assert!(fast.segments[1].start_ms - fast.segments[0].end_ms < gap1);
+        // One sentence behaves like before: one segment covering the text.
+        let one = p.synthesize(&req(&id, "Bonjour.", 1.0), &CancelToken::new()).unwrap();
+        assert_eq!(one.segments.len(), 1);
+        assert_eq!((one.segments[0].start, one.segments[0].end, one.segments[0].start_ms), (0, 8, 0));
+        // The measurement-only whole-text path gives no segments.
+        let whole = p.synthesize_whole_text(&req(&id, text, 1.0), &CancelToken::new()).unwrap();
+        assert!(whole.segments.is_empty() && whole.audio_ms > 1000);
+        let _ = fs::remove_dir_all(std::env::temp_dir().join("speechlab_tts_real_out"));
+    }
+
+    #[test]
     fn requests_are_validated_before_any_model_is_touched() {
         let p = provider();
         let cancel = CancelToken::new();
@@ -484,6 +635,7 @@ mod tests {
             language: "fr".into(),
             text: "Bonjour.".into(),
             speed: 1.0,
+            normalise: None,
         };
         assert!(matches!(p.synthesize(&base, &cancel), Err(SpeechError::ModelNotInstalled(_))));
         let mut r = base.clone();

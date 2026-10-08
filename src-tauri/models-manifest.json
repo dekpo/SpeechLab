@@ -427,7 +427,76 @@
     "licenseTier": "attribution",
     "licenseNotes": "Model BSD-3-Clause (copyright notice must travel with it), trained on CSS10 French (LibriVox recordings, public domain; the CSS10 repository itself is Apache-2.0). Character-based: no phonemizer, so no GPL component (config.json: use_phonemes false). The model card does not say whether it started from another checkpoint. The release publishes no digest: the SHA-256 was computed at the first download and pinned (trust on first use, D-015).",
     "phonemizer": "none (character-based model)",
+    "normalizeText": true,
     "sourceUrl": "https://huggingface.co/neongeckocom/tts-vits-css10-fr",
+    "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "tts-vits-piper-en_US-kristin-medium",
+    "displayName": "Piper en_US kristin (medium)",
+    "provider": "sherpa-onnx",
+    "family": "piper-vits",
+    "role": "tts",
+    "languages": [
+      "en"
+    ],
+    "architecture": "VITS (Piper), medium quality, 1 speaker",
+    "quantization": "fp32",
+    "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_US-kristin-medium.tar.bz2",
+    "archiveBytes": 67259230,
+    "sha256": "c2206f572df2956c50b1ae3367eebce3853c663e890cba8048cd62b1e4dbe6c7",
+    "dirName": "vits-piper-en_US-kristin-medium",
+    "files": {
+      "model": "en_US-kristin-medium.onnx",
+      "tokens": "tokens.txt",
+      "dataDir": "espeak-ng-data"
+    },
+    "license": "Public domain (LibriVox recordings)",
+    "licenseTier": "clear",
+    "licenseNotes": "Data is public domain (LibriVox recordings) and the card says the voice was trained from scratch for 2000 epochs on a dataset assembled by the voice's author; the only constraint left is the espeak-ng phonemizer (GPL-3.0) of the runtime.",
+    "phonemizer": "espeak-ng (GPL-3.0)",
+    "sourceUrl": "https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US/kristin/medium",
+    "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "tts-vits-piper-fr_FR-mls-medium",
+    "displayName": "Piper fr_FR mls (medium, 125 speakers, converted locally)",
+    "provider": "sherpa-onnx",
+    "family": "piper-vits",
+    "role": "tts",
+    "packaging": "local",
+    "languages": [
+      "fr"
+    ],
+    "architecture": "VITS (Piper), medium quality, 125 speakers (Multilingual LibriSpeech)",
+    "quantization": "fp32",
+    "archiveUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/mls/medium/fr_FR-mls-medium.onnx",
+    "archiveBytes": 76733750,
+    "sha256": "0ed223f78466917f2bae05ee90096ce69ab1fdeb251f55590d0e7422d234e162",
+    "dirName": "vits-piper-fr_FR-mls-medium",
+    "files": {
+      "model": "fr_FR-mls-medium.onnx",
+      "tokens": "tokens.txt",
+      "dataDir": "espeak-ng-data"
+    },
+    "license": "CC BY 4.0 (Multilingual LibriSpeech, OpenSLR 94, via the Piper voice card)",
+    "licenseTier": "attribution",
+    "licenseNotes": "Voice card (read 2026-10-08): dataset Multilingual LibriSpeech (LibriVox audiobooks) under CC BY 4.0, 'Trained from scratch', so no research-licence parent. The only constraints are the credit and the espeak-ng phonemizer (GPL-3.0) of the runtime. The SHA-256 below is the one of the SOURCE .onnx downloaded from the Piper repository; the installed file is that file plus sherpa-onnx metadata added by scripts/convert_piper_voice.py (the procedure was checked against two official packages). Speaker quality varies a lot between the 125 speakers.",
+    "phonemizer": "espeak-ng (GPL-3.0)",
+    "normalizeText": false,
+    "sourceUrl": "https://huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/mls/medium",
     "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
     "platforms": [
       "windows-x64",

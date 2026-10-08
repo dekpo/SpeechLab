@@ -53,6 +53,7 @@ pub fn run() {
             commands::list_tts_voices,
             commands::synthesize,
             commands::cancel_synthesis,
+            commands::preview_spoken_text,
             commands::read_tts_audio,
             commands::clear_tts_audio,
         ])

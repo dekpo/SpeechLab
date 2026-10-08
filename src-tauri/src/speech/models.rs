@@ -59,6 +59,9 @@ pub enum Packaging {
     Archive,
     /// A single file saved as `dirName/<files.model>`.
     File,
+    /// Built on this machine by a conversion script (no download path): `install` explains how.
+    /// `archiveUrl` and `sha256` then describe the SOURCE file, for provenance.
+    Local,
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -125,6 +128,9 @@ pub struct ModelDef {
     pub license_notes: String,
     #[serde(default)]
     pub phonemizer: String,
+    /// Voices: rewrite digits, dates and units into words before synthesis (character-based voices).
+    #[serde(default)]
+    pub normalize_text: bool,
     pub source_url: String,
     pub runtime: String,
     pub platforms: Vec<String>,
@@ -252,6 +258,11 @@ impl ModelManager {
         if def.files.required().is_empty() {
             return Err(SpeechError::Engine(format!("manifest for {id} lists no files")));
         }
+        if def.packaging == Packaging::Local {
+            return Err(SpeechError::Engine(format!(
+                "{id} is converted on this machine, it cannot be downloaded: run scripts/convert_piper_voice.py (steps in docs/TTS_LICENSES.md)"
+            )));
+        }
         let model_id = def.id.clone();
         let mut emit = |phase: DownloadPhase, done: u64, total: u64| {
             on_progress(DownloadProgress {
@@ -303,6 +314,8 @@ impl ModelManager {
                     .map_err(|e| SpeechError::Download(e.to_string()))?;
                 sha
             }
+            // Rejected at the top, before anything is touched (the folder holds the converted voice).
+            Packaging::Local => return Err(SpeechError::Engine(format!("{id} cannot be downloaded"))),
         };
 
         // Prove the layout matches the manifest before declaring the model installed.
@@ -386,7 +399,26 @@ mod tests {
             assert!(LICENSE_TIERS.contains(&d.license_tier.as_str()) && d.license_tier != "unrated", "{} needs a licence tier", d.id);
             assert!(d.license_notes.trim().len() > 20, "{} needs licence notes", d.id);
             assert!(!d.phonemizer.trim().is_empty(), "{} must state its phonemizer", d.id);
+            // Text normalisation is for voices that read characters (no phonemizer); phonemizer voices speak digits.
+            assert_eq!(d.normalize_text, d.phonemizer.starts_with("none"), "{}: normalizeText must match the phonemizer", d.id);
         }
+    }
+
+    #[test]
+    fn a_locally_converted_voice_is_never_downloaded_or_deleted_by_install() {
+        let dir = std::env::temp_dir().join("speechlab_local_pkg_test");
+        let _ = fs::remove_dir_all(&dir);
+        let m = ModelManager::new(dir.clone()).unwrap();
+        let def = m.def("tts-vits-piper-fr_FR-mls-medium").unwrap().clone();
+        assert_eq!(def.packaging, Packaging::Local);
+        let folder = m.model_dir(&def);
+        fs::create_dir_all(&folder).unwrap();
+        fs::write(folder.join("keep.txt"), b"converted voice").unwrap();
+        let mut progress = |_p: DownloadProgress| {};
+        let err = m.install(&def.id, &CancelToken::new(), &mut progress).unwrap_err();
+        assert!(err.to_string().contains("convert_piper_voice.py"), "{err}");
+        assert!(folder.join("keep.txt").is_file(), "install must not touch the folder");
+        let _ = fs::remove_dir_all(&dir);
     }
 
     #[test]

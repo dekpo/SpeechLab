@@ -12,7 +12,7 @@ use crate::speech::provider::CancelToken;
 use crate::speech::registry::ProviderRegistry;
 use crate::speech::tts;
 use crate::speech::types::{
-    ModelInfo, ProviderInfo, SynthesizeRequest, SynthesizeResult, TranscribeRequest, TranscribeResult, VoiceInfo,
+    ModelInfo, ProviderInfo, SentencePlan, SynthesizeRequest, SynthesizeResult, TranscribeRequest, TranscribeResult, VoiceInfo,
 };
 
 pub struct AppState {
@@ -246,6 +246,13 @@ pub async fn synthesize(state: State<'_, AppState>, request: SynthesizeRequest) 
     })
     .await
     .map_err(|e| format!("worker failed: {e}"))?
+}
+
+/// The sentences of a text with what the voice would receive for each (after the optional rewriting of
+/// digits and units into words). Pure and fast: lets the interface show the text sent to the voice.
+#[tauri::command]
+pub fn preview_spoken_text(text: String, language: String, normalise: bool) -> Vec<SentencePlan> {
+    tts::plan_sentences(&text, &language, normalise)
 }
 
 #[tauri::command]
