@@ -1,7 +1,7 @@
 # Ready-to-paste prompts for the next tasks
 
 Every prompt below starts with the same preamble (P0). Paste P0 first, then the task block (T1 to
-T8). Prompt `01-clean-benchmark-rerun.md` is separate because it is the immediate next task.
+T8). Prompts `01-...` (done) and `02-long-audio-vad-chunking.md` (T3, next) are separate files.
 
 ## P0 — Common preamble (paste before any task)
 
@@ -21,7 +21,7 @@ running them; summarise in French what is done, verified, not verified, limits a
 
 ## T1 — (done by prompt 01) clean benchmark re-run
 
-## T2 — Timing study with repetitions (I-012)
+## T2 — (done 2026-10-08, run `20261008-035938-timing-3reps`) Timing study with repetitions (I-012)
 
 Goal: measure run-to-run variance and warm versus cold behaviour on a quiet machine.
 Steps: run `bench preflight`; then, from `src-tauri`,

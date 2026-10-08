@@ -201,3 +201,17 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-037 update (2026-10-07)
 - Smaller than first measured but still true: whisper.cpp small q5_1 RTF 1.12 (greedy) and 1.24 (5 beams), median 5.4 to 5.9 s and p95 6.1 to 6.8 s for a sentence of about 5 s, at about 20 % background CPU. Still slower than real time on this CPU.
+
+
+### I-012 update (2026-10-08) — measured, partly closed
+- 3-repetition study `20261008-035938-timing-3reps` (40 short sentences, 9 configurations, 1080 runs, about 20 % background CPU): inside one run the spread of the same sample is small (median CV 0.7 to 1.4 % for whisper.cpp, 2.4 to 3.5 % for sherpa-onnx; per-repetition medians within 5 %), transcripts never change (0 unstable samples), and there is no cold-versus-warm inference difference for sherpa-onnx (the cost is the model load only).
+- Still open: the BETWEEN-run difference (same samples, same settings, two different runs) reached 20 % for the fast models (Canary 463 -> 417 ms, Parakeet 517 -> 433 ms) and 0 % for whisper.cpp small, cause unknown; the background load was not logged continuously. Quote speed with a margin of about 10 to 20 % for fast models. A continuous load log in `bench` and a second independent run would narrow it down.
+
+### I-036 update (2026-10-08)
+- Reproduced in the timing study: busy cores 7.4 (Canary), 7.5 (Whisper tiny), 10.4 (Parakeet) with 4 threads configured; whisper.cpp 3.5 to 3.9. Still no cause.
+
+### I-037 update (2026-10-08)
+- Reproduced with variance: whisper.cpp small q5_1 RTF 1.26 (greedy) and 1.32 (5 beams); the whole min-max range of 40 sentences (5.0 to 6.7 s) lies above the sentence duration (about 4.4 s). Slower than real time is a stable property on this CPU, not noise.
+
+### I-040 — Timing helper reports load 0 for sherpa-onnx
+- `scripts/timing_study.py` prints the median `loadMs` per repetition, which is 0 for sherpa-onnx because the load is recorded on the first sample only. The cold load is the first record's `loadMs` (quoted by hand in the project log). Fixed the same day: the script now prints the median of the records that have a load and the maximum.

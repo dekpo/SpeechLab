@@ -39,6 +39,7 @@ the chat, write files in English.
 | M5a dataset format, 95 reading scripts, number folding, critical-error detector | done, pushed |
 | M5b in-app dataset recorder | done |
 | M5c benchmark runner, full benchmark | done: first run (disturbed) plus clean re-run `20261007-215116-full-owner-reps1-clean` (855/855 transcripts identical; speed figures measured at about 20 % background CPU, D-034). Variance still unmeasured (1 repetition) |
+| M5d timing study (3 repetitions) | done: `20261008-035938-timing-3reps`, 40 short sentences x 9 configurations x 3 repetitions, 0 changing transcripts, within-run spread 1 to 4 % (I-012 partly closed) |
 | M6 TTS laboratory | not started |
 | M7 Windows/macOS packaging validation | not started (no Mac available: macOS stays NOT VERIFIED, document the steps) |
 | M8 final report, licensing table, recommendation | not started |
@@ -50,7 +51,7 @@ sherpa-onnx Parakeet TDT v3 int8 has the lowest WER (2.3 %) at RTF 0.11, Canary 
 on clean input but once produced garbage, whisper.cpp small is accurate (3.9 %) but still slower
 than real time on this CPU (RTF 1.1 to 1.2), tiny/base Whisper are too inaccurate. Every engine
 misspells drug names. Accuracy is load-independent (clean re-run identical to the disturbed run).
-Details and caveats: last M5c entries of `docs/PROJECT_LOG.md`, results in `benchmark/results/`.
+Timing study: inside one run the same sample varies by 1 to 4 % (median) and never changes its transcript; between two runs the fast models differed by up to 20 %, so quote speed with a 10 to 20 % margin. Details and caveats: last M5c and M5d entries of `docs/PROJECT_LOG.md`, results in `benchmark/results/`.
 Provisional shortlist: D-032 (not final).
 
 ## 4. Repository map
@@ -108,6 +109,7 @@ cargo build --release --example bench
 
 python ../scripts/bootstrap_ci.py ../benchmark/results/<run> [--exclude en-it-05-owner]
 python ../scripts/compare_runs.py ../benchmark/results/<old> ../benchmark/results/<new>
+python ../scripts/timing_study.py ../benchmark/results/<run with --reps 3>
 ```
 
 ## 7. Backlog (priority order; ready-made prompts in `docs/prompts/`)
@@ -116,8 +118,8 @@ python ../scripts/compare_runs.py ../benchmark/results/<old> ../benchmark/result
 |---|---|---|---|
 | 1 | ~~Clean re-run of the full benchmark~~ DONE 2026-10-07 (I-039 resolved) | | `docs/prompts/01-clean-benchmark-rerun.md` (kept for reference) |
 | 2 | Owner listens to `en-it-05`, re-record if needed, re-run only that sample | all engines hear "543", script says "443" (I-033) | in next-tasks.md |
-| 3 | **Next:** timing study, 3 repetitions on a subset, background CPU logged before and after | variance (I-012) | next-tasks.md T2 |
-| 4 | Long audio: VAD chunking | truncation, loops (I-017, I-018, I-019, I-029) | next-tasks.md T3 |
+| 3 | ~~Timing study, 3 repetitions~~ DONE 2026-10-08 (I-012 partly closed; between-run offset unexplained) | | next-tasks.md T2 (kept for reference) |
+| 4 | **Next:** long audio, VAD chunking | truncation, loops (I-017, I-018, I-019, I-029) | `docs/prompts/02-long-audio-vad-chunking.md` |
 | 5 | Drug-name handling (hotwords, prompts, dictionary correction) | every engine misspells drug names | next-tasks.md T4 |
 | 6 | Private accent clips (Swiss-Romande, Maghreb) as long private samples | accents are in the plan | next-tasks.md T5 |
 | 7 | Detector false alarms for times ("10.30", "9h00"), sherpa-onnx thread usage | I-034, I-036 | small fixes |

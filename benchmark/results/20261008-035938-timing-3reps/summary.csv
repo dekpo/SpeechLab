@@ -1,0 +1,28 @@
+model,decoding,group,samples,runs,failures,wer_micro,wer_macro,cer_macro,runaway_outputs,samples_with_critical,critical_flags,unstable_samples,rtf_median,inference_ms_median,inference_ms_p95,load_ms_cold_median,peak_memory_mb_max,avg_cores_median
+sherpa-whisper-tiny,greedy search,ALL,40,120,0,0.2591,0.2601,0.1870,3,5,6,0,0.059,266,399,440,682,7.54
+sherpa-whisper-tiny,greedy search,en-general,16,48,0,0.3659,0.3565,0.3467,3,2,2,0,0.057,225,439,440,362,7.58
+sherpa-whisper-tiny,greedy search,fr-general,24,72,0,0.1951,0.1958,0.0805,0,3,4,0,0.061,281,369,545,682,7.50
+sherpa-canary-180m-flash-int8,greedy search,ALL,40,120,0,0.0152,0.0157,0.0083,0,0,0,0,0.095,414,528,1017,802,7.42
+sherpa-canary-180m-flash-int8,greedy search,en-general,16,48,0,0.0163,0.0167,0.0066,0,0,0,0,0.098,394,642,1049,418,7.41
+sherpa-canary-180m-flash-int8,greedy search,fr-general,24,72,0,0.0146,0.0150,0.0094,0,0,0,0,0.093,420,528,1017,802,7.42
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,ALL,40,120,0,0.0274,0.0274,0.0101,0,0,0,0,0.099,440,557,1776,1585,10.37
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,en-general,16,48,0,0.0244,0.0230,0.0091,0,0,0,0,0.099,409,543,1776,809,10.48
+sherpa-parakeet-tdt-0.6b-v3-int8,greedy search,fr-general,24,72,0,0.0293,0.0303,0.0108,0,0,0,0,0.099,454,584,1912,1585,10.28
+whisper-cpp-tiny,beam search (5 beams),ALL,40,120,0,0.1098,0.1059,0.0393,0,1,1,0,0.143,608,696,86,193,3.66
+whisper-cpp-tiny,beam search (5 beams),en-general,16,48,0,0.0244,0.0257,0.0089,0,1,1,0,0.147,572,632,85,193,3.65
+whisper-cpp-tiny,beam search (5 beams),fr-general,24,72,0,0.1610,0.1594,0.0596,0,0,0,0,0.139,633,706,87,193,3.66
+whisper-cpp-tiny,greedy (beam 1),ALL,40,120,0,0.1311,0.1315,0.0553,0,4,5,0,0.120,517,549,87,164,3.53
+whisper-cpp-tiny,greedy (beam 1),en-general,16,48,0,0.0163,0.0167,0.0069,0,0,0,0,0.125,505,534,85,163,3.53
+whisper-cpp-tiny,greedy (beam 1),fr-general,24,72,0,0.2000,0.2081,0.0875,0,4,5,0,0.117,528,552,87,164,3.53
+whisper-cpp-base-q5_1,beam search (5 beams),ALL,40,120,0,0.0640,0.0635,0.0248,0,2,2,0,0.313,1356,1497,75,215,3.83
+whisper-cpp-base-q5_1,beam search (5 beams),en-general,16,48,0,0.0488,0.0513,0.0185,0,1,1,0,0.331,1297,1443,75,215,3.82
+whisper-cpp-base-q5_1,beam search (5 beams),fr-general,24,72,0,0.0732,0.0717,0.0290,0,1,1,0,0.306,1380,1527,76,215,3.85
+whisper-cpp-base-q5_1,greedy (beam 1),ALL,40,120,0,0.0793,0.0760,0.0294,0,2,2,0,0.293,1272,1373,79,167,3.78
+whisper-cpp-base-q5_1,greedy (beam 1),en-general,16,48,0,0.0488,0.0513,0.0185,0,1,1,0,0.314,1238,1388,78,167,3.78
+whisper-cpp-base-q5_1,greedy (beam 1),fr-general,24,72,0,0.0976,0.0925,0.0367,0,1,1,0,0.284,1278,1334,79,167,3.78
+whisper-cpp-small-q5_1,beam search (5 beams),ALL,40,120,0,0.0274,0.0262,0.0098,0,2,2,0,1.318,5696,6329,198,481,3.88
+whisper-cpp-small-q5_1,beam search (5 beams),en-general,16,48,0,0.0163,0.0179,0.0035,0,1,1,0,1.334,5355,5696,193,480,3.88
+whisper-cpp-small-q5_1,beam search (5 beams),fr-general,24,72,0,0.0341,0.0317,0.0140,0,1,1,0,1.298,5803,6429,200,481,3.88
+whisper-cpp-small-q5_1,greedy (beam 1),ALL,40,120,0,0.0335,0.0316,0.0123,0,2,2,0,1.256,5373,5943,200,361,3.86
+whisper-cpp-small-q5_1,greedy (beam 1),en-general,16,48,0,0.0244,0.0257,0.0086,0,1,1,0,1.379,5420,5957,203,361,3.86
+whisper-cpp-small-q5_1,greedy (beam 1),fr-general,24,72,0,0.0390,0.0355,0.0148,0,1,1,0,1.212,5354,5879,200,361,3.86

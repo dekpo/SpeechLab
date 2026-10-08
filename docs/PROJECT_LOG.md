@@ -466,3 +466,49 @@ What changed and what did not:
 **Next**: timing study with 3 repetitions on a subset (backlog item 3, `docs/prompts/next-tasks.md` T2) under the same D-034 conditions, logging the background CPU load before and after.
 
 **Identity check (end of entry)**: a search for AI and vendor names found one editor name in the earlier "blocked" entry above and one in the `topProcesses` field of the clean run's `config.json`; both were replaced by a neutral label ("code editor", `code-editor.exe`) in the working copy. The earlier wording is still in the already committed history. The remaining matches are licence attributions of the Whisper model weights (`models-manifest.json`, `docs/M0_FEASIBILITY.md`), which are factual licence data, not self-references. Private audio and transcripts of the owner's recordings are not quoted anywhere in this entry; `summary.md` contains only the printed scripts (the reference sentences), not the audio.
+
+
+---
+
+## 2026-10-08 — M5d — Timing study with 3 repetitions (I-012)
+
+**Done**
+- Run `20261008-035938-timing-3reps`: 9 configurations (all 6 installed models, both whisper.cpp decodings), categories `fr-general` and `en-general` (40 sentences, 2.9 minutes of audio), 3 repetitions each = 1080 runs, 0 failures, release build, 4 threads per engine, isolated child process per configuration. Launched with `bench.exe run --reps 3 --category fr-general,en-general --label timing-3reps`; nothing else ran on the machine (light log reads only). Duration about 45 minutes.
+- New helper `scripts/timing_study.py`: per configuration the inference median, p95, min, max, the coefficient of variation (CV = standard deviation / mean) across the 3 repetitions of the same sample, the median per repetition, changing transcripts, memory and busy cores.
+- The preflight line of `config.json` listed the code editor by its executable name; replaced by the neutral label `code-editor.exe` in the working copy (same rule as before).
+
+**Conditions (VERIFIED, `config.json`, `system.json`)**: `forcedDespitePreflight` = false; background CPU **19.9 %** over 8 s before the run and **21.5 %** over 8 s right after it (two readings, NOT a continuous log); AC power; Windows power plan "Utilisation normale" (balanced); no Docker/WSL. Same D-034 conditions as the clean full run. One speaker, CPU only, short sentences (about 4.4 s on average).
+
+**Results (VERIFIED)**
+
+Run-to-run variation of the SAME sample inside this run (3 consecutive repetitions):
+
+| Configuration | WER (rep 1) | Inference median ms | p95 ms | min - max ms | RTF median | CV median % | CV worst sample % | Median per repetition (rep 1 / 2 / 3, ms) | Peak mem MB (median) | Busy cores |
+|---|---|---|---|---|---|---|---|---|---|---|
+| sherpa-onnx Canary 180M flash int8 | 1.5 % | 414 | 528 | 307 - 654 | 0.095 | 2.4 | 9.0 | 416 / 417 / 410 | 761 | 7.4 |
+| sherpa-onnx Parakeet TDT v3 int8 | 2.7 % | 440 | 558 | 322 - 620 | 0.099 | 3.5 | 19.1 | 432 / 450 / 439 | 1578 | 10.4 |
+| sherpa-onnx Whisper tiny, greedy | 25.9 % | 268 | 400 | 192 - 460 | 0.059 | 2.4 | 16.1 | 268 / 260 / 270 | 669 | 7.5 |
+| whisper.cpp small q5_1, 5 beams | 2.7 % | 5697 | 6332 | 5001 - 6724 | 1.318 | 0.7 | 6.4 | 5677 / 5736 / 5686 | 478 | 3.9 |
+| whisper.cpp small q5_1, greedy | 3.4 % | 5374 | 5944 | 5184 - 6344 | 1.261 | 1.4 | 7.1 | 5357 / 5374 / 5406 | 360 | 3.9 |
+| whisper.cpp base q5_1, 5 beams | 6.4 % | 1356 | 1497 | 1239 - 1585 | 0.313 | 1.2 | 5.9 | 1364 / 1352 / 1350 | 212 | 3.8 |
+| whisper.cpp base q5_1, greedy | 7.9 % | 1272 | 1373 | 1188 - 1409 | 0.293 | 0.7 | 6.4 | 1270 / 1279 / 1264 | 167 | 3.8 |
+| whisper.cpp tiny, 5 beams | 11.0 % | 608 | 696 | 546 - 748 | 0.143 | 1.2 | 6.6 | 604 / 606 / 618 | 190 | 3.7 |
+| whisper.cpp tiny, greedy | 13.1 % | 517 | 549 | 485 - 636 | 0.121 | 0.9 | 7.8 | 516 / 522 / 517 | 163 | 3.5 |
+
+- **Transcripts are stable across repetitions**: 0 samples with a changing transcript in all 9 configurations (`unstableSamples` = 0), and the 40 first-repetition transcripts of every configuration are identical to the same 40 samples in the clean full run (360 of 360). Third confirmation that accuracy is deterministic.
+- **Within-run spread is small**: the median CV is 0.7 to 1.4 % for whisper.cpp and 2.4 to 3.5 % for sherpa-onnx; the worst single sample reaches 6 to 8 % (whisper.cpp) and 9 to 19 % (sherpa-onnx, whose sentences take only 200 to 650 ms, so a few tens of milliseconds weigh more). The per-repetition medians differ by less than 5 % (sherpa-onnx) and less than 1.5 % (whisper.cpp).
+- **No cold-versus-warm effect on inference (VERIFIED)**: for sherpa-onnx the model stays loaded between repetitions; repetition 1 is not slower than repetitions 2 and 3 (Canary 416 / 417 / 410 ms). The first inference after loading (first sample) was not slower either (221 to 383 ms, below the medians). The cold cost is the model LOAD only (first record: Canary 1049 ms, Parakeet 1912 ms, Whisper tiny 545 ms; whisper.cpp reloads in every process: 75 to 87 ms for tiny/base, about 200 ms for small, since the file is in the operating system cache).
+- **Between-run difference is larger than within-run spread**: on the same 40 samples, the median inference of the clean full run (repetition 1) versus this run was Canary 463 -> 417 ms, Parakeet 517 -> 433 ms, Whisper tiny 325 -> 268 ms, whisper.cpp base 1565 -> 1364 ms (5 beams) and 1431 -> 1270 ms (greedy), tiny 716 -> 605 and 613 -> 516 ms, small 5745 -> 5677 and 5364 -> 5357 ms. That is up to 20 % faster in this run for the short models and nothing for whisper.cpp small. The cause was NOT determined (the background load differed between runs but was not logged continuously; CPU frequency behaviour is a candidate). So a single run cannot give a precision better than about 10 to 20 % for the speed of the small, fast models; the figures of the clean full run should be read with that margin. The CONCLUSIONS (ranking, order of magnitude of the RTF) are unchanged.
+- **Speed picture unchanged**: Canary and Parakeet run at RTF 0.10 (about 10 times faster than real time) on these sentences, Whisper tiny on sherpa-onnx at 0.06, whisper.cpp base at 0.29 to 0.31, tiny at 0.12 to 0.14, and whisper.cpp small stays SLOWER than real time (RTF 1.26 greedy, 1.32 with 5 beams, median 5.4 to 5.7 s per sentence of about 4.4 s) even with the variance accounted for: its whole min-max range (5.0 to 6.7 s) lies above the sentence duration. Memory and busy cores agree with the full run; peak memory is lower here only because this table shows the median over short sentences while the full summary shows the maximum over samples.
+- **Accuracy on this subset (short sentences only)**: Canary 1.5 % [0.3, 2.8], Parakeet 2.7 %, whisper.cpp small 2.7 % (5 beams) and 3.4 % (greedy); Canary, Parakeet and small with 5 beams are not distinguishable (bootstrap, 40 samples, seed 7); small greedy is clearly worse than Canary here (+1.8 points [+0.3, +3.7]). The full-set picture (Parakeet first, Canary hurt by one garbage output on a long clip) is not contradicted: Canary's failure was on long audio, which this subset does not contain.
+
+**Failed or surprises**
+- `loadMs` is recorded on the first sample only for sherpa-onnx, so the per-repetition median load printed by the helper script reads 0; the cold load figures above are the first records' `loadMs`, quoted by hand (I-040, then fixed in the script: it now prints the maximum load).
+- The run was NOT quiet in the strict sense (about 20 % background CPU from system services, D-034). It does not show behaviour under heavy load, or thermal throttling over a long session: the repetitions of a sample are consecutive, and the three repetition medians show no drift, but a slow drift across the whole 45-minute run was not tested.
+
+**Not verified**
+- Cause of the run-to-run offset (up to 20 % for fast models, none for whisper.cpp small).
+- Speed under heavier load, on battery, on another machine, with long audio (this subset has no clip over about 10 s), with another speaker or microphone, or with GPU builds.
+- Why sherpa-onnx uses 7 to 10 busy cores for 4 requested threads (I-036).
+
+**Next**: long-audio chunking with a voice-activity detector (backlog item 4; prompt `docs/prompts/02-long-audio-vad-chunking.md`). The owner's check of the suspect sample `en-it-05-owner` (I-033) is still pending.
