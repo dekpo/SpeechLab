@@ -1,0 +1,167 @@
+[
+  {
+    "name": "no sentence is shaded before the first play",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "audio is not playing after Generate (no auto-play)",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "6 sentence spans, in order",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "abbreviation 'Dr.' did not split a sentence",
+    "ok": true,
+    "detail": "Dr. Smith takes 500 mg twice a day."
+  },
+  {
+    "name": "seeking to the middle of each sentence shades exactly that sentence",
+    "ok": true,
+    "detail": "0->0 1->1 2->2 3->3 4->4 5->5"
+  },
+  {
+    "name": "a sentence stays shaded during the pause after it",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "the next sentence is shaded from its first millisecond",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "during real playback the shading moves through several sentences",
+    "ok": true,
+    "detail": "0,1"
+  },
+  {
+    "name": "pause keeps the shading",
+    "ok": true,
+    "detail": "at 1"
+  },
+  {
+    "name": "Stop clears the shading and rewinds",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "seeking after Stop shades the target sentence again",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "aria-current is set on the shaded sentence only",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "light theme: shaded text contrast >= 7",
+    "ok": true,
+    "detail": "12.7 {\"boxBg\":\"rgb(255, 255, 255)\",\"boxFg\":\"rgb(28, 28, 28)\",\"curBg\":\"rgb(212, 212, 212)\",\"curFg\":\"rgb(17, 17, 17)\",\"plainBg\":\"rgba(0, 0, 0, 0)\"}"
+  },
+  {
+    "name": "light theme: the shading differs from the box background",
+    "ok": true,
+    "detail": "contrast 1.48"
+  },
+  {
+    "name": "dark theme: shaded text contrast >= 7",
+    "ok": true,
+    "detail": "8.5 {\"boxBg\":\"rgb(30, 30, 30)\",\"boxFg\":\"rgb(230, 230, 230)\",\"curBg\":\"rgb(77, 77, 77)\",\"curFg\":\"rgb(255, 255, 255)\",\"plainBg\":\"rgba(0, 0, 0, 0)\"}"
+  },
+  {
+    "name": "dark theme: plain text contrast >= 7",
+    "ok": true,
+    "detail": "13.4"
+  },
+  {
+    "name": "dark theme: the shading differs from the box background",
+    "ok": true,
+    "detail": "contrast 1.97"
+  },
+  {
+    "name": "'Edit text' brings back the text box and removes the view",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "a changed text shows the 'generate again' hint",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "long text: the container is scrollable",
+    "ok": true,
+    "detail": "{\"top\":0,\"max\":506,\"visible\":false}"
+  },
+  {
+    "name": "long text: first sentence shaded at scroll position 0",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "long text: a sentence already on screen does not move the container",
+    "ok": true,
+    "detail": "{\"top\":0,\"max\":506,\"visible\":true}"
+  },
+  {
+    "name": "long text: the container scrolls down and keeps the shaded sentence visible",
+    "ok": true,
+    "detail": "20:top=273 30:top=463 39:top=506"
+  },
+  {
+    "name": "long text: seeking back scrolls back up",
+    "ok": true,
+    "detail": "top=0"
+  },
+  {
+    "name": "after a manual scroll, automatic scrolling is suspended",
+    "ok": true,
+    "detail": "0 -> 0"
+  },
+  {
+    "name": "automatic scrolling resumes after the pause",
+    "ok": true,
+    "detail": "top=506"
+  },
+  {
+    "name": "with 'Follow reading' off, the container does not move",
+    "ok": true,
+    "detail": "top=506"
+  },
+  {
+    "name": "Coqui voice: the rewriting box is checked by default",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "preview shows the rewritten sentences",
+    "ok": true,
+    "detail": "[\"Prendre cinq cents milligrammes trois fois par jour.\",\"Rendez-vous le douze mars à neuf heures.\"]"
+  },
+  {
+    "name": "unchecking shows the original text",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "the displayed text keeps the digits",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "the result line says the text was rewritten",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "phonemizer voice: the rewriting box is unchecked by default",
+    "ok": true,
+    "detail": ""
+  }
+]

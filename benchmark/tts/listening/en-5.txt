@@ -1,0 +1,1 @@
+Meeting notes for Thursday. The team reviewed the database migration. The backup server is stable, but the restore procedure has not been tested yet.

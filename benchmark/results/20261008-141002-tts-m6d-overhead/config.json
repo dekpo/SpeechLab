@@ -1,0 +1,20 @@
+{
+  "runId": "20261008-141002-tts-m6d-overhead",
+  "tool": "tts measure --compare 1 (examples/tts.rs), one process per voice and text file, release build",
+  "texts": "benchmark/tts/paragraphs-en.txt and paragraphs-fr.txt (5 and 10 sentences, written for this project) and sentences-en.txt / sentences-fr.txt (short sentences and one 3-sentence paragraph)",
+  "modes": "per-sentence (one library call per sentence, silences added, what the app does) and whole-text (one library call, the behaviour before sentence timings), interleaved inside each repetition",
+  "repetitions": 5,
+  "speed": 1.0,
+  "threadsPerEngine": 4,
+  "pauses": "250 ms after a sentence, 600 ms after a paragraph, divided by the speed factor",
+  "preflightBefore": "preflight-before.json (about 10.5 % CPU, quiet)",
+  "preflightAfter": "preflight-after.json (about 21.8 % CPU, quiet)",
+  "forcedDespitePreflight": false,
+  "note": "no speechlab.exe window was open (the owner closed theirs; the app started for the UI test was stopped before). Generated WAV files were deleted after each repetition; only timings are kept. The first (cold) run of each voice is excluded from the medians.",
+  "voices": {
+    "tts-vits-piper-en_US-ljspeech-medium:0": "clear",
+    "tts-vits-piper-en_US-libritts_r-medium:0": "attribution",
+    "tts-vits-piper-en_US-kristin-medium:0": "clear",
+    "tts-vits-coqui-fr-css10:0": "attribution (text normaliser on, the voice's default)"
+  }
+}

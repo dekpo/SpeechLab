@@ -1,0 +1,13 @@
+{
+  "idleCpuPercent": 21.759845972061157,
+  "windowMs": 8000,
+  "topProcesses": [
+    [
+      "code-editor.exe",
+      1.1894573
+    ]
+  ],
+  "onAcPower": true,
+  "problems": []
+}
+QUIET: the machine is suitable for a benchmark.

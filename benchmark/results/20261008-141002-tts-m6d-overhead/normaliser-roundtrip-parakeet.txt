@@ -1,0 +1,52 @@
+
+Prendre 500 mg trois fois par jour.
+  normaliser off #1: 0/2 keys (none)  heard: prendre ma trois fois par jour.
+  normaliser off #2: 0/2 keys (none)  heard: Pendre trois fois par jour.
+  normaliser off #3: 0/2 keys (none)  heard: Prendre trois fois par jour.
+  normaliser on  #1: 2/2 keys (500, mg)  heard: 500 mg trois fois par jour.
+  normaliser on  #2: 2/2 keys (500, mg)  heard: prendre 500 milligrammes trois fois par jour.
+  normaliser on  #3: 2/2 keys (500, mg)  heard: prendre 500 mg trois fois par jour.
+
+Rendez-vous le 12 mars à 9h00.
+  normaliser off #1: 0/2 keys (none)  heard: Ah.
+  normaliser off #2: 0/2 keys (none)  heard: Ah.
+  normaliser off #3: 0/2 keys (none)  heard: Rendez-vous le mal.
+  normaliser on  #1: 2/2 keys (12, 9h)  heard: Rendez-vous le 12 mars à 9 heures.
+  normaliser on  #2: 2/2 keys (12, 9h)  heard: Rendez-vous les douze morts à 9 heures.
+  normaliser on  #3: 1/2 keys (9h)  heard: D'y vous le doucement à 9 heures.
+
+La facture numéro 2045 est payable sous 30 jours.
+  normaliser off #1: 0/2 keys (none)  heard: La facture numéro est payable sous jour.
+  normaliser off #2: 0/2 keys (none)  heard: La facture numéro est payable sous jour.
+  normaliser off #3: 0/2 keys (none)  heard: La facture numéro est payable sous jour.
+  normaliser on  #1: 2/2 keys (2045, 30)  heard: La facture numéro 2045 est payable sous 30 jours.
+  normaliser on  #2: 2/2 keys (2045, 30)  heard: La facture numéro 2045 est payable sous 30 jours.
+  normaliser on  #3: 2/2 keys (2045, 30)  heard: La facture numéro 2045 est payable sous 30 jours.
+
+Le patient pèse 72,5 kg et mesure 1,80 m.
+  normaliser off #1: 0/2 keys (none)  heard: Le patient pèse et mesure.
+  normaliser off #2: 0/2 keys (none)  heard: Le patient pèse que mes yeux.
+  normaliser off #3: 0/2 keys (none)  heard: Le patient pèse et mesure.
+  normaliser on  #1: 2/2 keys (72,5, 1,80)  heard: Le patient pèse soixante-douze virgule cinq kilogrammes et mesure un virgule quatre-vingt mètres.
+  normaliser on  #2: 0/2 keys (none)  heard: Le patient pèse 72 virgule cent kilogrammes et mesure 1,8 mètres.
+  normaliser on  #3: 2/2 keys (72,5, 1,80)  heard: Le patient pèse 72,5 kg et mesure 1,80 mètres.
+
+La tension est de 120/80 mmHg.
+  normaliser off #1: 0/2 keys (none)  heard: La tension est de marre.
+  normaliser off #2: 0/2 keys (none)  heard: La tension est de marme.
+  normaliser off #3: 0/2 keys (none)  heard: La tension est demain.
+  normaliser on  #1: 2/2 keys (120, 80)  heard: La tension est de 120 sur 80 mm de Mercure.
+  normaliser on  #2: 2/2 keys (120, 80)  heard: La tension est de 120 sur 80 mm de Mercure.
+  normaliser on  #3: 2/2 keys (120, 80)  heard: La tension est de 120 sur 80 mm de Mercure.
+
+Appelez le 06 12 34 56 78 avant 17 h.
+  normaliser off #1: 0/2 keys (none)  heard: Apple.
+  normaliser off #2: 0/2 keys (none)  heard: Appelez le là-bas.
+  normaliser off #3: 0/2 keys (none)  heard: Appelez le là-bas.
+  normaliser on  #1: 1/2 keys (06)  heard: Appelez le 06 1234 56 78 avant 10 et 7 heures.
+  normaliser on  #2: 1/2 keys (06)  heard: Appelez le 06 1234 56 78 avant 10 et 7 heures.
+  normaliser on  #3: 1/2 keys (06)  heard: Appelez le 06 1234 56 70 8 avant 10 et 7 heures.
+
+normaliser off: 0/36 key numbers heard (0 %)
+
+normaliser on: 30/36 key numbers heard (83 %)
