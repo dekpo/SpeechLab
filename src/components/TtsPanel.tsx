@@ -21,6 +21,16 @@ import type {
 
 const mb = (bytes: number) => `${Math.round(bytes / 1_000_000)} MB`;
 
+/** What each commercial-use rating means, in plain words (evidence: docs/TTS_LICENSES.md). */
+const TIER_TEXT: Record<string, string> = {
+  clear: "clear: public domain or CC0, trained from scratch",
+  attribution: "attribution: credit required, commercial use allowed",
+  review: "REVIEW: legal reading needed before commercial use",
+  excluded: "EXCLUDED: not usable commercially as it stands",
+  unrated: "not rated",
+};
+const tierText = (tier: string) => TIER_TEXT[tier] ?? tier;
+
 const SAMPLE_TEXT: Record<string, string> = {
   fr: "Le patient prend cinq cents milligrammes d'amoxicilline trois fois par jour pendant sept jours.",
   en: "The patient takes five hundred milligrams of amoxicillin three times a day for seven days.",
@@ -153,7 +163,7 @@ export default function TtsPanel({ onError }: Props) {
 
       <table>
         <thead>
-          <tr><th>Voice package</th><th>Languages</th><th>Size</th><th>License</th><th>Status</th><th /></tr>
+          <tr><th>Voice package</th><th>Languages</th><th>Size</th><th>License</th><th>Commercial use</th><th>Status</th><th /></tr>
         </thead>
         <tbody>
           {models.map((m) => (
@@ -162,6 +172,9 @@ export default function TtsPanel({ onError }: Props) {
               <td>{m.languages.join(", ")}</td>
               <td>{mb(m.sizeBytes)}</td>
               <td>{m.license}</td>
+              <td title={m.licenseNotes}>
+                <span className={`tier tier-${m.licenseTier}`}>{tierText(m.licenseTier)}</span>
+              </td>
               <td>{m.installStatus === "installed" ? "installed" : "not installed"}</td>
               <td>
                 {m.installStatus === "notInstalled" && (
@@ -191,7 +204,7 @@ export default function TtsPanel({ onError }: Props) {
       <select id="tts-voice" value={voiceId} onChange={(e) => setVoiceId(e.target.value)} disabled={languageVoices.length === 0}>
         {languageVoices.map((v) => (
           <option key={v.id} value={v.id}>
-            {v.displayName} · {v.gender}
+            {v.displayName} · {v.gender} · [{v.licenseTier}]
           </option>
         ))}
       </select>
@@ -200,6 +213,12 @@ export default function TtsPanel({ onError }: Props) {
         <p className="hint">
           Package {voice.modelId} · speaker {voice.speakerId} of {voice.speakerCount} · license: {voice.license}
         </p>
+      )}
+      {voice && (voice.licenseTier === "review" || voice.licenseTier === "excluded") && (
+        <div className="mock">
+          Commercial use of this voice: {tierText(voice.licenseTier)}. Hover the rating in the table above for the reason.
+          Fine for evaluation, not a cleared voice.
+        </div>
       )}
 
       <label htmlFor="tts-speed">

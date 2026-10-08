@@ -146,14 +146,21 @@ impl SherpaTtsProvider {
         let f = &def.files;
         let model = f.get(&f.model, "model")?;
         let tokens = f.get(&f.tokens, "tokens")?;
-        let data = f.get(&f.data_dir, "dataDir")?;
         let mut model_config = OfflineTtsModelConfig { num_threads: self.threads, debug: false, provider: Some("cpu".into()), ..Default::default() };
         match def.family {
             ModelFamily::PiperVits => {
                 model_config.vits = OfflineTtsVitsModelConfig {
                     model: Some(path_str(&dir, model)),
                     tokens: Some(path_str(&dir, tokens)),
-                    data_dir: Some(path_str(&dir, data)),
+                    data_dir: Some(path_str(&dir, f.get(&f.data_dir, "dataDir")?)),
+                    ..Default::default()
+                };
+            }
+            ModelFamily::CoquiVits => {
+                // Character-based: no phonemizer data folder.
+                model_config.vits = OfflineTtsVitsModelConfig {
+                    model: Some(path_str(&dir, model)),
+                    tokens: Some(path_str(&dir, tokens)),
                     ..Default::default()
                 };
             }
@@ -163,7 +170,7 @@ impl SherpaTtsProvider {
                     model: Some(path_str(&dir, model)),
                     voices: Some(path_str(&dir, f.get(&f.voices, "voices")?)),
                     tokens: Some(path_str(&dir, tokens)),
-                    data_dir: Some(path_str(&dir, data)),
+                    data_dir: Some(path_str(&dir, f.get(&f.data_dir, "dataDir")?)),
                     dict_dir: Some(path_str(&dir, "dict")),
                     lexicon,
                     // English text is handled by the lexicon; other languages go through espeak-ng.
@@ -203,6 +210,7 @@ impl SherpaTtsProvider {
             language: language.to_string(),
             gender: gender.to_string(),
             license: def.license.clone(),
+            license_tier: def.license_tier.clone(),
             model_id: def.id.clone(),
             speaker_id: sid,
             speaker_count: count,
@@ -231,6 +239,10 @@ impl SherpaTtsProvider {
                         mk(sid, name, &lang, "unknown", count)
                     })
                     .collect()
+            }
+            ModelFamily::CoquiVits => {
+                let lang = def.languages.first().cloned().unwrap_or_default();
+                vec![mk(0, def.display_name.clone(), &lang, "unknown", 1)]
             }
             _ => Vec::new(),
         }

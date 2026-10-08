@@ -30,6 +30,8 @@ pub enum ModelFamily {
     PiperVits,
     /// Kokoro multi-voice model run through the sherpa-onnx text-to-speech API.
     Kokoro,
+    /// Coqui VITS voice with character input (no phonemizer, no phonemizer data folder).
+    CoquiVits,
 }
 
 /// What a manifest entry is for. Support models (for example the voice-activity detector) are
@@ -116,11 +118,30 @@ pub struct ModelDef {
     pub dir_name: String,
     pub files: ModelFiles,
     pub license: String,
+    /// "clear", "attribution", "review", "excluded" (voices) or "unrated" (default).
+    #[serde(default = "unrated")]
+    pub license_tier: String,
+    #[serde(default)]
+    pub license_notes: String,
+    #[serde(default)]
+    pub phonemizer: String,
     pub source_url: String,
     pub runtime: String,
     pub platforms: Vec<String>,
     pub expected_memory_mb: Option<u32>,
 }
+
+fn unrated() -> String {
+    "unrated".into()
+}
+
+/// Meaning of the ratings (the evidence is in `docs/TTS_LICENSES.md`):
+/// - clear: data public domain or CC0, voice trained from scratch, permissive model licence;
+/// - attribution: as above but CC-BY (credit required, commercial use allowed);
+/// - review: commercial use plausible but a point needs a legal reading (lineage of the weights,
+///   share-alike, provenance of training audio, unread licence);
+/// - excluded: non-commercial, copyleft data or an unclear lineage the owner has not accepted.
+pub const LICENSE_TIERS: &[&str] = &["clear", "attribution", "review", "excluded", "unrated"];
 
 pub struct ModelManager {
     models_dir: PathBuf,
@@ -201,6 +222,9 @@ impl ModelManager {
                     quantization: d.quantization.clone(),
                     size_bytes: d.archive_bytes,
                     license: d.license.clone(),
+                    license_tier: d.license_tier.clone(),
+                    license_notes: d.license_notes.clone(),
+                    phonemizer: d.phonemizer.clone(),
                     source_url: d.source_url.clone(),
                     runtime: d.runtime.clone(),
                     platforms: d.platforms.clone(),
@@ -351,9 +375,17 @@ mod tests {
         assert!(tts.len() >= 3, "expected the M6 voices in the manifest");
         assert!(tts.iter().all(|i| m.list().iter().all(|s| s.id != i.id)));
         for d in m.defs.iter().filter(|d| d.role == ModelRole::Tts) {
-            assert!(matches!(d.family, ModelFamily::PiperVits | ModelFamily::Kokoro), "{}", d.id);
-            assert!(d.files.data_dir.is_some(), "{} needs the phonemizer data folder", d.id);
+            assert!(matches!(d.family, ModelFamily::PiperVits | ModelFamily::Kokoro | ModelFamily::CoquiVits), "{}", d.id);
+            if d.phonemizer.contains("espeak") {
+                assert!(d.files.data_dir.is_some(), "{} needs the phonemizer data folder", d.id);
+            } else {
+                assert!(d.files.data_dir.is_none(), "{} states no phonemizer but lists a data folder", d.id);
+            }
             assert!(!d.license.trim().is_empty());
+            // Every voice must carry an explicit commercial-use rating with its reason (owner's rule).
+            assert!(LICENSE_TIERS.contains(&d.license_tier.as_str()) && d.license_tier != "unrated", "{} needs a licence tier", d.id);
+            assert!(d.license_notes.trim().len() > 20, "{} needs licence notes", d.id);
+            assert!(!d.phonemizer.trim().is_empty(), "{} must state its phonemizer", d.id);
         }
     }
 

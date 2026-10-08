@@ -65,6 +65,11 @@ export interface ModelInfo {
   quantization: string;
   sizeBytes: number;
   license: string;
+  /** Commercial-use rating: clear, attribution, review, excluded or unrated (see docs/TTS_LICENSES.md). */
+  licenseTier: string;
+  licenseNotes: string;
+  /** Phonemizer needed at synthesis time (empty = none known). */
+  phonemizer: string;
   sourceUrl: string;
   runtime: string;
   platforms: string[];
@@ -178,6 +183,8 @@ export interface VoiceInfo {
   /** "female", "male" or "unknown": only what the voice's documentation states. */
   gender: string;
   license: string;
+  /** Commercial-use rating of the voice package. */
+  licenseTier: string;
   modelId: string;
   speakerId: number;
   speakerCount: number;

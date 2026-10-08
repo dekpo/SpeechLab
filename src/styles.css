@@ -31,3 +31,7 @@ input[type="radio"] { width: auto; }
 .sentence { border-left: 4px solid #2056a0; padding: 4px 12px; margin: 12px 0; background: #f4f8fd; }
 .sentence .big { font-size: 1.35rem; line-height: 1.5; margin: 6px 0; }
 code { background: #f1f1f1; padding: 0 4px; border-radius: 3px; font-size: .85em; }
+.tier { font-size: .85rem; padding: 1px 6px; border-radius: 4px; border: 1px solid #bbb; white-space: nowrap; }
+.tier-clear, .tier-attribution { background: #e6f4ea; border-color: #8fc79f; }
+.tier-review { background: #fff4d6; border-color: #e0b84d; }
+.tier-excluded { background: #fde7e7; border-color: #e08a8a; }

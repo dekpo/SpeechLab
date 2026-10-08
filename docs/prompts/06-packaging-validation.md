@@ -18,8 +18,8 @@ English. Work autonomously, but follow the project rules to the letter.
    the repository; document everything in English in `docs/`; do not install software or change the
    system without the owner's approval).
 2. `docs/HANDOFF.md` (state of the project, traps, commands).
-3. The last entries of `docs/PROJECT_LOG.md` (M6, T5 part 1), `docs/DECISIONS.md` D-004, D-012, D-017,
-   D-034, D-038, `docs/ISSUES.md` (I-009, I-010, I-024, I-026, I-051), `Plan.md` (packaging and
+3. The last entries of `docs/PROJECT_LOG.md` (M6, M6b, T5 part 1), `docs/DECISIONS.md` D-004, D-012, D-017,
+   D-034, D-038, D-039, `docs/TTS_LICENSES.md`, `docs/ISSUES.md` (I-009, I-010, I-024, I-026, I-051), `Plan.md` (packaging and
    compatibility sections) and `docs/prompts/next-tasks.md` section T7.
 
 ## Context
@@ -35,8 +35,12 @@ Everything so far was run from `pnpm tauri dev` and from `cargo` examples. Nothi
   generated speech in `...\tts-output`; clips in `...\recordings`. Models must NOT be bundled.
 - The Content Security Policy is `null` (development setting) and the microphone permission was only
   seen in the development WebView origin (I-024).
-- The espeak-ng phonemizer (GPL-3.0) is linked in whenever TTS is present (D-012, I-051): the installer
-  of a build that contains it carries that licence obligation. Do not decide it; document it.
+- The espeak-ng phonemizer (GPL-3.0) is linked in whenever TTS is present (D-012, I-051, I-054): the
+  installer of a build that contains it carries that licence obligation. Do not decide it; document it.
+- Voices are rated for commercial use (D-039, `docs/TTS_LICENSES.md`). No voice rated `review` or
+  `excluded` may be a default of the packaged app, models are downloaded not bundled, and the credits
+  required by `attribution` voices (CC BY 4.0, BSD-3-Clause) need a place in the app (an About/credits
+  view) and in the installer. Check what the packaged app shows.
 - An antivirus intercepts TLS on this machine (I-009); it may also flag a new unsigned executable.
 
 ## Task

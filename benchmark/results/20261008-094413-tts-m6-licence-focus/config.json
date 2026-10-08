@@ -1,0 +1,35 @@
+{
+  "runId": "20261008-094413-tts-m6-licence-focus",
+  "tool": "tts measure (examples/tts.rs), one process per voice, release build",
+  "sentences": "benchmark/tts/sentences-fr.txt and sentences-en.txt (public dataset scripts)",
+  "repetitions": 3,
+  "speed": 1.0,
+  "threadsPerEngine": 4,
+  "preflightBefore": {
+    "idleCpuPercent": 23.0,
+    "windowMs": 8000,
+    "onAcPower": true,
+    "topProcesses": [
+      [
+        "code-editor.exe",
+        1.0
+      ]
+    ],
+    "problems": []
+  },
+  "preflightAfter": {
+    "idleCpuPercent": 23.0
+  },
+  "forcedDespitePreflight": false,
+  "note": "a speechlab.exe window not started by the agent was open during the run; its effect is unknown. Generated WAV files were deleted after each repetition; only timings are kept. Voice ratings: docs/TTS_LICENSES.md",
+  "voices": {
+    "tts-vits-coqui-fr-css10:0": "attribution",
+    "tts-vits-piper-fr_FR-siwis-medium:0": "review",
+    "tts-vits-piper-fr_FR-gilles-low:0": "excluded",
+    "tts-kokoro-int8-multi-lang-v1_0:30": "review",
+    "tts-vits-piper-en_US-ljspeech-medium:0": "clear",
+    "tts-vits-piper-en_US-libritts_r-medium:0": "attribution",
+    "tts-kokoro-int8-multi-lang-v1_0:3": "review",
+    "tts-kokoro-int8-multi-lang-v1_0:11": "review"
+  }
+}

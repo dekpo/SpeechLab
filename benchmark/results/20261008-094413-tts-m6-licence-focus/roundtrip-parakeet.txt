@@ -1,0 +1,26 @@
+en-kokoro-af_heart       en-1-speed1.0.wav      WER   6.7 %  heard: The patient takes five hundred milligrams of amicacillin three times a day for seven days.
+en-kokoro-af_heart       en-2-speed1.0.wav      WER  14.3 %  heard: Your appointment is on Thursday, March 12 at 2 30 pm. Please bring your insurance card and the ibuprofen prescription.
+en-kokoro-af_heart       en-3-speed1.0.wav      WER  14.3 %  heard: The treatment combines paracetamol, prednisolone, and ohmprzole.
+en-kokoro-am_adam        en-1-speed1.0.wav      WER  20.0 %  heard: The patient takes 500 milligrams of amicacillin three times a day for seven days.
+en-kokoro-am_adam        en-2-speed1.0.wav      WER  19.0 %  heard: Your appointment is on Thursday, March 12th at 230 pm. Please bring your insurance card and the ibuprofen prescription.
+en-kokoro-am_adam        en-3-speed1.0.wav      WER  14.3 %  heard: The treatment combines paracetamol, prednisolone and ohmprozole.
+en-piper-libritts_r-spk0 en-1-speed1.0.wav      WER  13.3 %  heard: Patient takes five hundred milligrams of amaxicillin three times a day for seven days.
+en-piper-libritts_r-spk0 en-2-speed1.0.wav      WER  33.3 %  heard: Your appointment is on Thursday, march twelfth, at two thirty PM please bring your insurance card and the IB proven prescription.
+en-piper-libritts_r-spk0 en-3-speed1.0.wav      WER  28.6 %  heard: The treatment combines paracetamol, prudenceilin and oprisole.
+en-piper-ljspeech        en-1-speed1.0.wav      WER   6.7 %  heard: The patient takes five hundred milligrams of axicillin three times a day for seven days.
+en-piper-ljspeech        en-2-speed1.0.wav      WER  38.1 %  heard: Your appointment is on Thursday, march twelfth at two thirty PM, please bring your insurance card and the IBU Prof and prescription.
+en-piper-ljspeech        en-3-speed1.0.wav      WER  14.3 %  heard: The treatment combines paracetamol, prednisolone, and omprisole.
+fr-coqui-css10           fr-1-speed1.0.wav      WER  14.3 %  heard: Le patient prend cinq cents mg d'amocyciline trois fois par jour pendant sept jours.
+fr-coqui-css10           fr-2-speed1.0.wav      WER  58.8 %  heard: Rendez-vous le jeudi, Mar avait apporté votre carte vitale et l'ordonnance des buts profanes.
+fr-coqui-css10           fr-3-speed1.0.wav      WER  18.2 %  heard: Le traitement associé du paracétamol, de la prednisolone et de l'homéprazole.
+fr-kokoro-ff_siwis       fr-1-speed1.0.wav      WER  21.4 %  heard: Le patient prend 500 mg d'amoxicilline trois fois par jour pendant sept jours.
+fr-kokoro-ff_siwis       fr-2-speed1.0.wav      WER  17.6 %  heard: Rendez-vous le jeudi 12 mars à 14h30. Apportez votre carte vitale et l'ordonnance d'ibuprofène.
+fr-kokoro-ff_siwis       fr-3-speed1.0.wav      WER   0.0 %  heard: Le traitement associe du paracétamol, de la prednisolone et de l'oméprazole.
+fr-piper-gilles-low      fr-1-speed1.0.wav      WER  28.6 %  heard: Le patient prend 500 mg d'amoxicyline trois fois par jour pendant sept jours.
+fr-piper-gilles-low      fr-2-speed1.0.wav      WER  23.5 %  heard: Rendez-vous le jeudi 12 mars à 14 HCV. Apportez votre carte vitale et l'ordonnance Dibus Profane.
+fr-piper-gilles-low      fr-3-speed1.0.wav      WER  27.3 %  heard: Le traitement associé du paracétamol, de la panicolone et de l'ométrazole.
+fr-piper-siwis           fr-1-speed1.0.wav      WER  28.6 %  heard: Le patient prend 500 mg d'oxycyline trois fois par jour pendant sept jours.
+fr-piper-siwis           fr-2-speed1.0.wav      WER  17.6 %  heard: Rendez-vous le jeudi 12 mars à 14h30. Apportez votre carte vitale et l'ordonnance d'ibuprofène.
+fr-piper-siwis           fr-3-speed1.0.wav      WER   9.1 %  heard: Le traitement associe du paracétamol, de la prédnisolone et de l'oméprazole.
+
+micro WER over 340 reference words: 21.5 %

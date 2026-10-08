@@ -116,6 +116,9 @@ pub struct VoiceInfo {
     /// "female", "male" or "unknown" - never guessed.
     pub gender: String,
     pub license: String,
+    /// Commercial-use rating of the package (see `ModelInfo::license_tier`).
+    #[serde(default)]
+    pub license_tier: String,
     /// Manifest id of the voice package that provides it.
     #[serde(default)]
     pub model_id: String,
@@ -148,6 +151,13 @@ pub struct ModelInfo {
     /// Size of the download archive in bytes.
     pub size_bytes: u64,
     pub license: String,
+    /// Commercial-use rating (voices): "clear", "attribution", "review", "excluded" or "unrated".
+    /// See `docs/TTS_LICENSES.md` for the meaning and the evidence behind each rating.
+    pub license_tier: String,
+    /// Why the rating is what it is (lineage, provenance, open questions), one sentence.
+    pub license_notes: String,
+    /// Phonemizer the package needs at synthesis time (empty = none known / not applicable).
+    pub phonemizer: String,
     pub source_url: String,
     pub runtime: String,
     pub platforms: Vec<String>,
