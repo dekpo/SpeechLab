@@ -411,10 +411,58 @@ Re-scoring the same transcripts lowered every WER (for example Parakeet 3.6 % to
 
 **Diagnosis (VERIFIED by observation)**
 - Docker Desktop and the WSL virtual machine are NOT the cause this time: `wsl -l -v` shows `docker-desktop` Stopped, there is no `vmmemWSL` and no Docker process.
-- Visible user processes (Cursor, shell) add up to about 2 % of the CPU.
+- Visible user processes (code editor, shell) add up to about 2 % of the CPU.
 - The per-process performance counters show a Windows service host running the Windows Firewall and Base Filtering Engine (`BFE`, `mpssvc`) at 86 to 96 % of one core (about 8 % of the 12 logical cores) in every sample, plus the Avast Firewall service (`afwServ`, 0 to 24 %) and the Avast service (`AvastSvc`, up to 38 %). Windows reports 29 to 36 % privileged (kernel) time, which fits network-filter activity. Cause of the firewall load (rule churn, a firewall conflict, a scan) is NOT determined; admin rights would be needed to look further.
 - Nothing was stopped, killed or changed: these are system and security services of the owner.
 
 **Not done**: the clean benchmark was NOT started (no `--force`, by rule). The first run's speed figures are therefore still unreliable (I-039 stays open).
 
 **Next**: the owner decides how to bring the machine under 15 % CPU (see the message in the chat), then `bench preflight` is repeated until exit code 0 and prompt `docs/prompts/01-clean-benchmark-rerun.md` is continued from step 4.
+
+---
+
+## 2026-10-07 — M5c — Clean re-run of the full benchmark (realistic background load)
+
+**Done**
+- Quiet-machine limit relaxed from 15 % to 30 % background CPU at the owner's request (D-034): on this laptop the background load never fell below 16 % even with the owner's applications closed, Docker/WSL stopped and the security software's shields switched off (its services kept running). Reason given by the owner: an application on a client machine will also share the CPU with other processes, so a realistic load is the more useful test. Code change: constant `MAX_BACKGROUND_CPU_PERCENT` in `src-tauri/examples/bench.rs`.
+- Run `20261007-215116-full-owner-reps1-clean`: same settings as the first run (all 6 installed models, both whisper.cpp decodings, 9 configurations, 95 samples, 1 repetition, 4 threads per engine, release build, isolated child process per configuration), launched with `bench.exe run --reps 1 --label full-owner-reps1-clean`. Nothing else was run on the machine while it ran (only light log reads). 0 failures.
+- Comparison with the first run (`scripts/compare_runs.py`), confidence intervals (`scripts/bootstrap_ci.py`, with and without `en-it-05-owner`).
+
+**Conditions (VERIFIED, from `config.json` and `system.json`)**: `forcedDespitePreflight` = false; preflight average CPU **19.4 %** over 8 s (the reading just before had been 21.7 to 25 %); AC power; Windows power plan "Utilisation normale" (balanced); no Docker/WSL process. The background load came mostly from the Windows firewall engine, the DNS client, the capability-access service and the security software's services. This is "a realistic background load of about 20 %", NOT an idle machine. The load during the 45-minute run was not logged continuously (NOT VERIFIED beyond the start reading).
+
+**Determinism (VERIFIED)**: 855 of 855 transcripts (9 configurations x 95 samples) are identical between the busy run and this run. Consequently WER, CER, critical flags and every accuracy table of the first run stand unchanged; accuracy does not depend on machine load here (for this engine and thread configuration on this machine). No transcript difference needed investigating.
+
+**NEW speed figures (replace the unreliable ones of the first run; measured at about 20 % background CPU, one speaker, 95 sentences, 1 repetition; "old" = disturbed first run)**
+
+| Configuration | WER | RTF median (old -> new) | Inference median ms (old -> new) | Inference p95 ms (old -> new) | Cold load ms (old -> new) | Peak memory MB (old -> new) | Busy cores (old -> new) |
+|---|---|---|---|---|---|---|---|
+| sherpa-onnx Parakeet TDT v3 int8 | 2.3 % | 0.130 -> 0.114 | 630 -> 551 | 940 -> 785 | 2463 -> 1956 | 1875 -> 1875 | 9.0 -> 9.4 |
+| whisper.cpp small q5_1, 5 beams | 3.9 % | 1.851 -> 1.236 | 8283 -> 5881 | 14556 -> 6837 | 267 -> 199 | 532 -> 533 | 3.8 -> 3.9 |
+| whisper.cpp small q5_1, greedy | 4.5 % | 1.563 -> 1.117 | 7358 -> 5403 | 13245 -> 6070 | 269 -> 199 | 411 -> 410 | 3.8 -> 3.9 |
+| sherpa-onnx Canary 180M flash int8 | 5.9 % | 0.134 -> 0.111 | 659 -> 536 | 1507 -> 903 | 1238 -> 1147 | 1088 -> 1087 | 7.4 -> 7.4 |
+| whisper.cpp base q5_1, 5 beams | 8.4 % | 0.373 -> 0.337 | 1807 -> 1626 | 2380 -> 1910 | 95 -> 88 | 265 -> 265 | 3.8 -> 3.9 |
+| whisper.cpp base q5_1, greedy | 11.4 % | 0.355 -> 0.293 | 1688 -> 1426 | 2319 -> 1626 | 97 -> 88 | 217 -> 216 | 3.8 -> 3.8 |
+| whisper.cpp tiny, 5 beams | 16.1 % | 0.177 -> 0.159 | 857 -> 762 | 1087 -> 915 | 110 -> 104 | 244 -> 242 | 3.7 -> 3.7 |
+| whisper.cpp tiny, greedy | 19.8 % | 0.149 -> 0.129 | 705 -> 625 | 918 -> 674 | 112 -> 103 | 214 -> 213 | 3.5 -> 3.5 |
+| sherpa-onnx Whisper tiny, greedy | 25.4 % | 0.113 -> 0.077 | 566 -> 365 | 863 -> 578 | 523 -> 490 | 894 -> 894 | 7.4 -> 7.4 |
+
+What changed and what did not:
+- Memory and busy cores did not depend on the load (equal to within 1 %); they are properties of the engines. Speed improved by 10 to 35 %, and the tail (p95) shrank most: whisper.cpp small p95 fell from 13.2 to 14.6 s to 6.1 to 6.8 s. The disturbed first run overstated the slowness, mostly in the tail.
+- The ranking and the conclusions about speed hold: the two NeMo models run at RTF 0.11 (about 9 times faster than real time); whisper.cpp small remains SLOWER than real time on this CPU (RTF 1.12 greedy, 1.24 with 5 beams, median 5.4 to 5.9 s for a sentence of about 5 s) even with the first run's disturbance removed; whisper.cpp base runs about 3 times faster than real time but at 8 to 11 % WER.
+- The earlier statement "about 14 times faster than real time" for the NeMo models (RTF 0.13) is superseded by RTF 0.11, about 9 times.
+- sherpa-onnx still uses far more cores than requested (7.4 to 9.4 busy cores with 4 threads configured; whisper.cpp 3.5 to 3.9): I-036 is confirmed, not an artefact of the disturbance.
+- Confidence intervals are unchanged (same transcripts): Parakeet 2.3 % [1.4, 3.4]; against whisper.cpp small with 5 beams the difference is +1.6 points [+0.1, +3.1], borderline; against Canary +3.6 [-0.3, +10.5] with the garbage output and +0.8 [-0.6, +2.3] without it. With `--exclude en-it-05-owner`: Parakeet 2.2 %, Canary 3.0 %, small 3.7 %. Excluding the suspect sample changes no conclusion.
+
+**Failed or surprises**
+- The preflight could not pass at 15 % on this machine (previous entry); at 20 % it still failed (21 %, 25 %, 21 %); 30 % passed. The relaxation is a documented decision (D-034), not a hidden workaround.
+- The preflight reading varies by more than 5 points from one call to the next (16 to 31 %), so the background load during the run was probably not constant; the speed spread is larger than on a quiet machine and one repetition cannot quantify it (I-012).
+- Peak memory in `summary.md` is the maximum over samples, while `compare_runs.py` shows the median; do not mix the two.
+
+**Not verified**
+- Timing variance across repetitions (I-012): only 1 repetition.
+- Speed under other loads or on another machine; any other speaker, accent or microphone; GPU or accelerated builds; whisper.cpp turbo.
+- Whether the security software's real-time shields were fully off during the run (the owner switched them off; its services were still running).
+
+**Next**: timing study with 3 repetitions on a subset (backlog item 3, `docs/prompts/next-tasks.md` T2) under the same D-034 conditions, logging the background CPU load before and after.
+
+**Identity check (end of entry)**: a search for AI and vendor names found one editor name in the earlier "blocked" entry above and one in the `topProcesses` field of the clean run's `config.json`; both were replaced by a neutral label ("code editor", `code-editor.exe`) in the working copy. The earlier wording is still in the already committed history. The remaining matches are licence attributions of the Whisper model weights (`models-manifest.json`, `docs/M0_FEASIBILITY.md`), which are factual licence data, not self-references. Private audio and transcripts of the owner's recordings are not quoted anywhere in this entry; `summary.md` contains only the printed scripts (the reference sentences), not the audio.

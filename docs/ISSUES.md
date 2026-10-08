@@ -30,7 +30,7 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-029 | Open | engines | Long audio (45 s private clip, 1969 speech MP3): Canary truncates, Whisper tiny (both runtimes) repeats near the end; chunking/VAD needed (see I-018, I-019) |
 | I-031 | Mitigated | git hosting | GitHub returned HTTP 500 when creating any new branch pointing at the M4 commit; creating the branch from main in the web UI worked |
 | I-032 | Open | ui | The dataset recorder shows the benchmark path with a ".." segment (cosmetic) |
-| I-039 | Open | benchmark | First full run was disturbed by a heavy task: its speed, memory and core figures are unreliable (accuracy unaffected); clean re-run pending |
+| I-039 | Resolved | benchmark | First full run was disturbed by a heavy task; clean re-run done (855/855 transcripts identical, new speed figures at about 20 % background CPU) |
 | I-033 | Open | dataset | Suspect sample en-it-05: all engines hear 543, the script says 443 (listen, maybe re-record) |
 | I-034 | Open | scoring | Detector false alarms on times written "10.30", "3.30", "9h00" (about 15 % of reviewed flags) |
 | I-035 | Open | engines | Canary int8 emitted runaway garbage on one slow recording; product needs an output guard |
@@ -189,3 +189,15 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 ### I-039 — First full benchmark ran on a busy machine
 - The owner started a heavy task during the run. Accuracy is expected to be unaffected (deterministic engines) but speed, memory and busy-core figures from `20261007-201137-full-owner-reps1` must not be quoted. A quiet-machine preflight now guards `bench run`. The preflight currently fails on this computer (CPU 16 to 52 % with Docker Desktop and the WSL VM active). Close: run the clean re-run, compare accuracy with the first run, replace the speed figures, update the PROJECT_LOG and D-032 (the provisional shortlist) if the speed picture changes.
 - Related: I-012 (timing variance) stays open until a 3-repetition study is done on a quiet machine.
+
+### I-039 update (2026-10-07) — resolved
+- Clean re-run `20261007-215116-full-owner-reps1-clean`: 855 of 855 transcripts identical to the disturbed run, so accuracy is load-independent. Speed improved by 10 to 35 % (p95 of whisper.cpp small roughly halved); memory and busy cores unchanged. New figures are in the project log. Conditions: preflight 19.4 % CPU, AC power, limit relaxed to 30 % by D-034 (the laptop's background load never dropped below 16 %).
+
+### I-012 update (2026-10-07)
+- Still open: only 1 repetition. The preflight reading itself varied from 16 to 31 % between calls, so the load was not constant during the run; a 3-repetition study with the background load logged before and after is needed.
+
+### I-036 update (2026-10-07)
+- Confirmed on the clean run: sherpa-onnx busy cores 7.4 (Whisper tiny, Canary) and 9.4 (Parakeet) with 4 threads configured; whisper.cpp 3.5 to 3.9. Not caused by the disturbance. Cause still unknown.
+
+### I-037 update (2026-10-07)
+- Smaller than first measured but still true: whisper.cpp small q5_1 RTF 1.12 (greedy) and 1.24 (5 beams), median 5.4 to 5.9 s and p95 6.1 to 6.8 s for a sentence of about 5 s, at about 20 % background CPU. Still slower than real time on this CPU.

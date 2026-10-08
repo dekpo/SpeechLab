@@ -11,7 +11,7 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M4 microphone capture, audio import (WAV/MP3/M4A/Ogg), local clip store, engine comparison with WER/CER and diff: done.
 - M5a benchmark dataset format, 95 reading scripts, spoken-number folding and critical-error detector: done (see `benchmark/README.md`).
 - M5b in-app dataset recorder (read a sentence, record, save with its reference): done.
-- M5c reproducible benchmark runner, first full benchmark of 9 configurations on 95 recorded sentences: done (results in `benchmark/results/`, analysis in [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md)).
+- M5c reproducible benchmark runner, first full benchmark of 9 configurations on 95 recorded sentences: done (results in `benchmark/results/`, analysis in [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md)). A clean re-run (`20261007-215116-full-owner-reps1-clean`, about 20 % background CPU) reproduced all 855 transcripts identically and replaced the speed figures of the first, disturbed run; a 3-repetition timing study is the next step.
 - Next: owner checks one suspect sample (I-033), then timing study, long-audio chunking, drug-name correction, accent clips.
 
 ## Read first
@@ -89,7 +89,7 @@ cargo run --release --example bench -- rescore --dir ../benchmark/results/<folde
 python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
 ```
 
-Results go to `benchmark/results/<UTC stamp>-<label>/` (`summary.md`, `summary.csv`, `runs.jsonl`, `system.json`, `config.json`). Always use `--release` for speed figures and avoid heavy work on the machine during a run. See `benchmark/README.md` for the dataset format.
+Results go to `benchmark/results/<UTC stamp>-<label>/` (`summary.md`, `summary.csv`, `runs.jsonl`, `system.json`, `config.json`). Always use `--release` for speed figures and avoid heavy work on the machine during a run. `bench run` refuses to start above 30 % average background CPU or on battery (D-034); quote the recorded load (`config.json`, `preflight.idleCpuPercent`) with any speed figure. See `benchmark/README.md` for the dataset format.
 
 ## Layout
 

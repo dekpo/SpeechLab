@@ -165,9 +165,16 @@ One entry per non-trivial choice. Never delete a superseded decision; mark it `S
 
 ## D-032 — Provisional engine shortlist for AssistantCabinetAI (NOT final; M8 decides)
 - Date: 2026-10-07 · Status: provisional
-- Evidence so far (one speaker, CPU only): sherpa-onnx Parakeet TDT v3 int8 is the most accurate and fast (RTF 0.13), at the cost of 1.9 GB peak memory and 2.5 s cold load; Canary int8 is comparable on clean inputs but showed a runaway failure; whisper.cpp small is accurate but slower than real time here; tiny/base Whisper are too inaccurate for French medical or administrative vocabulary.
+- Evidence so far (one speaker, CPU only; speed from the clean re-run at about 20 % background CPU, updated 2026-10-07, the shortlist itself does not change): sherpa-onnx Parakeet TDT v3 int8 is the most accurate and fast (RTF 0.11, inference median 0.55 s), at the cost of 1.9 GB peak memory and 2.0 s cold load; Canary int8 is comparable on clean inputs (RTF 0.11, 1.1 GB) but showed a runaway failure; whisper.cpp small is accurate (3.9 %) but still slower than real time here (RTF 1.12 to 1.24; the disturbed first run had given 1.56 to 1.85); tiny/base Whisper are too inaccurate for French medical or administrative vocabulary.
 - Not decided: licensing review of NeMo models (CC-BY-4.0, attribution) and of the espeak-ng exposure (D-012) for the sherpa-onnx route; drug-name handling; long-audio chunking; other speakers and accents.
 
 ## D-033 — Benchmarks refuse to run on a busy machine
 - Date: 2026-10-07 · Status: accepted
 - Decision: `bench run` checks CPU use (limit 15 % average over 8 s) and the power source before starting and aborts with the list of busiest processes, unless `--force`. The check result is stored in `config.json` and the power plan/AC state in `system.json`, so every published speed figure carries the conditions it was measured under. Speed numbers from a forced or disturbed run must be labelled as such and never mixed with clean ones.
+
+## D-034 — Quiet-machine limit relaxed from 15 % to 30 % background CPU (realistic load)
+- Date: 2026-10-07 · Status: accepted (owner's decision) · Amends D-033
+- Context: on the development laptop the background load never fell below 16 % even with the owner's applications closed and Docker/WSL stopped (10 preflight runs: 16 to 31 %). The load comes from Windows services (firewall filtering engine, DNS and capability services) and from the security software, which cannot be switched off reliably. A client machine running a desktop application will also carry background load, so a speed figure measured on a perfectly idle machine would be optimistic.
+- Options: (a) keep 15 % and never run; (b) `--force` (rejected: the run would be labelled disturbed); (c) raise the limit and record the actual load; (d) cut the network first.
+- Decision: the limit is 30 % average CPU over 8 s (constant `MAX_BACKGROUND_CPU_PERCENT` in `examples/bench.rs`). Battery is still refused. The measured load is stored in `config.json` (`preflight.idleCpuPercent`) and must be quoted with every speed figure. The run is described as "measured under a realistic background load of about N % CPU", NOT as "idle machine".
+- Consequences: speed figures carry more noise than on an idle machine and are not comparable to figures from another machine or load. The 3-repetition timing study (I-012) is needed to quantify the spread. Accuracy is unaffected (deterministic engines, to be confirmed by the comparison with the first run).

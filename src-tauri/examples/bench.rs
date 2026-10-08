@@ -36,6 +36,10 @@ use speechlab_lib::speech::models::ModelManager;
 use speechlab_lib::speech::provider::CancelToken;
 use speechlab_lib::speech::types::InstallStatus;
 
+// Background CPU load tolerated before a run (D-033, relaxed from 15 % to 30 % by D-034 so that the
+// figures are measured under a realistic client-machine load).
+const MAX_BACKGROUND_CPU_PERCENT: f64 = 30.0;
+
 const RECORD_PREFIX: &str = "RECORD\t";
 
 fn models_dir() -> PathBuf {
@@ -194,7 +198,7 @@ fn run(args: &Args) {
     assert!(n > 0, "no runnable samples (run `bench check`)");
 
     // Quiet-machine check: timing and memory figures are only meaningful on an idle machine.
-    let pre = preflight(8000, 15.0);
+    let pre = preflight(8000, MAX_BACKGROUND_CPU_PERCENT);
     println!(
         "preflight: CPU {:.0} % average over {} s, power {}, busiest: {}",
         pre.idle_cpu_percent,
@@ -321,7 +325,7 @@ fn main() {
         Some("check") => check(),
         Some("preflight") => {
             // Quiet-machine check only: exit code 0 = quiet, 2 = not quiet. Safe to run at any time.
-            let pre = preflight(8000, 15.0);
+            let pre = preflight(8000, MAX_BACKGROUND_CPU_PERCENT);
             println!("{}", serde_json::to_string_pretty(&pre).expect("json"));
             if pre.problems.is_empty() {
                 println!("QUIET: the machine is suitable for a benchmark.");

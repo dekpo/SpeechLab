@@ -38,18 +38,19 @@ the chat, write files in English.
 | M4 microphone, audio import, clip store, engine comparison view, WER/CER | done, committed |
 | M5a dataset format, 95 reading scripts, number folding, critical-error detector | done, pushed |
 | M5b in-app dataset recorder | done |
-| M5c benchmark runner, first full benchmark | built and analysed; **speed figures of the first run are unreliable (disturbed machine); clean re-run is the next task** |
+| M5c benchmark runner, full benchmark | done: first run (disturbed) plus clean re-run `20261007-215116-full-owner-reps1-clean` (855/855 transcripts identical; speed figures measured at about 20 % background CPU, D-034). Variance still unmeasured (1 repetition) |
 | M6 TTS laboratory | not started |
 | M7 Windows/macOS packaging validation | not started (no Mac available: macOS stays NOT VERIFIED, document the steps) |
 | M8 final report, licensing table, recommendation | not started |
 
 Check `git log --oneline -5` and `git status` (read-only) to see what the owner has committed.
 
-**What the first benchmark says (one speaker, CPU, accuracy reliable, speed NOT reliable yet)**:
-sherpa-onnx Parakeet TDT v3 int8 has the lowest WER (2.3 %), Canary int8 is comparable on clean
-input but once produced garbage, whisper.cpp small is accurate (3.9 %) but slower than real time on
-this CPU, tiny/base Whisper are too inaccurate. Every engine misspells drug names. Details and
-caveats: last M5c entries of `docs/PROJECT_LOG.md`, results in `benchmark/results/`.
+**What the benchmark says (one speaker, CPU, 1 repetition, speed at about 20 % background CPU)**:
+sherpa-onnx Parakeet TDT v3 int8 has the lowest WER (2.3 %) at RTF 0.11, Canary int8 is comparable
+on clean input but once produced garbage, whisper.cpp small is accurate (3.9 %) but still slower
+than real time on this CPU (RTF 1.1 to 1.2), tiny/base Whisper are too inaccurate. Every engine
+misspells drug names. Accuracy is load-independent (clean re-run identical to the disturbed run).
+Details and caveats: last M5c entries of `docs/PROJECT_LOG.md`, results in `benchmark/results/`.
 Provisional shortlist: D-032 (not final).
 
 ## 4. Repository map
@@ -77,7 +78,7 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 - **TLS interception by an antivirus** breaks the sherpa-onnx crate build download (`UnknownIssuer`). Run `scripts/fetch-sherpa-libs.ps1` once; it writes the git-ignored `src-tauri/.cargo/config.toml`. Model downloads work (native certificates). Never disable the antivirus or TLS checks.
 - **whisper.cpp** is built from source by `scripts/build-whisper-cpp.ps1` into `vendor/` (CMake required; LLVM is not).
 - **Models** live in `%APPDATA%\ai.assistantcabinet.speechlab\models` (all installed except whisper turbo). Clips in `...\recordings`.
-- **Benchmarks need a quiet machine.** The owner also runs Docker Desktop/WSL, which uses CPU. `bench run` refuses to start above 15 % average CPU or on battery (D-033). Run `bench preflight` first. Never use `--force` for figures you intend to publish. Do not compile, test, record or take screenshots while a benchmark runs.
+- **Benchmarks need a calm machine.** The owner also runs Docker Desktop/WSL, which uses CPU. On this laptop the Windows firewall engine, DNS client and the security software alone keep the background load at 16 to 31 %, so `bench run` refuses to start above **30 %** average CPU or on battery (D-034, relaxed from 15 % by the owner's choice to mimic a client machine). Run `bench preflight` first and quote the recorded load with any speed figure. Never use `--force` for figures you intend to publish. Do not compile, test, record or take screenshots while a benchmark runs.
 - **A running benchmark survives an interrupted session.** Before starting another one, check `tasklist` for `bench.exe`/`whisper-cli.exe` and the log file. Never run two benchmarks at the same time.
 - **Use `--release`** for any speed or memory figure.
 - **GitHub once returned HTTP 500** when creating a new branch from the M4 commit (I-031); creating the branch from `main` in the web UI worked, then a normal push.
@@ -113,9 +114,9 @@ python ../scripts/compare_runs.py ../benchmark/results/<old> ../benchmark/result
 
 | # | Task | Why | Prompt |
 |---|---|---|---|
-| 1 | Clean re-run of the full benchmark on a quiet machine, compare with the first run | speed figures are unreliable, accuracy must be confirmed deterministic (I-039) | `docs/prompts/01-clean-benchmark-rerun.md` |
+| 1 | ~~Clean re-run of the full benchmark~~ DONE 2026-10-07 (I-039 resolved) | | `docs/prompts/01-clean-benchmark-rerun.md` (kept for reference) |
 | 2 | Owner listens to `en-it-05`, re-record if needed, re-run only that sample | all engines hear "543", script says "443" (I-033) | in next-tasks.md |
-| 3 | Timing study, 3 repetitions on a subset | variance (I-012) | next-tasks.md T2 |
+| 3 | **Next:** timing study, 3 repetitions on a subset, background CPU logged before and after | variance (I-012) | next-tasks.md T2 |
 | 4 | Long audio: VAD chunking | truncation, loops (I-017, I-018, I-019, I-029) | next-tasks.md T3 |
 | 5 | Drug-name handling (hotwords, prompts, dictionary correction) | every engine misspells drug names | next-tasks.md T4 |
 | 6 | Private accent clips (Swiss-Romande, Maghreb) as long private samples | accents are in the plan | next-tasks.md T5 |

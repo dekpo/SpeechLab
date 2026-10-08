@@ -14,3 +14,7 @@ machine was not idle, and Docker Desktop / the WSL virtual machine were active a
   unless `--force` is given, which is then recorded in `config.json`).
 
 The folder is kept unchanged for transparency and for the determinism comparison.
+
+## Update (clean re-run)
+
+The re-run is `20261007-215116-full-owner-reps1-clean`. All 855 transcripts are identical to this folder, so the accuracy figures here are confirmed. The speed, memory and busy-core figures of the clean run (measured at about 20 % background CPU, see D-034 and the project log) replace the ones in this folder.
