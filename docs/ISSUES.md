@@ -50,8 +50,14 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-052 | Open | TTS licensing | Fine-tuned Piper voices inherit an unclear licence: siwis (from Lessac, research licence) = review; gilles (from Ryan, CC BY-NC-SA) = excluded |
 | I-053 | Open | TTS licensing | Kokoro training audio includes output of closed TTS services (terms unread): rating review |
 | I-054 | Open | TTS licensing | The GPL phonemizer code stays inside the sherpa-onnx libraries even when a character-based voice never calls it |
-| I-055 | Open | TTS quality | Character-based voices (Coqui css10) do not speak digits: a text normaliser is needed before synthesis |
+| I-055 | Mitigated (M6d) | TTS quality | Character-based voices (Coqui css10) do not speak digits: the text normaliser is built and on by default for that voice (28/36 and 30/36 key numbers heard instead of 0/36); close after the owner's listening |
 | I-056 | Open | TTS measurement | Synthesis is not deterministic: regenerated audio differs, so recogniser round trips need repetitions |
+| I-057 | Open | TTS quality | Audible hiss on all three Kokoro voices (owner's blind listening); cause not isolated, Kokoro deprioritised |
+| I-058 | Open | TTS quality | The Coqui voice stays weak even when it speaks the numbers (date sentence still mangled by the voice itself) |
+| I-059 | Open | UI | The application has no dark theme; only the read-along block follows the system setting |
+| I-060 | Open | TTS voices | Piper `mls` (converted locally) is weak by a recogniser proxy (74 of 125 speakers at 90 % word error rate or worse) and cannot be installed from the app |
+| I-061 | Open | TTS normaliser | Known limits: acronyms, gender of "un", Roman numerals, ambiguous "10.30" and "5 100", English untested by ear |
+| I-062 | Open | TTS read-along | Sentence segmentation is a heuristic (line breaks inside a wrapped paragraph split it, short abbreviation list) |
 | I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
@@ -301,3 +307,27 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-056 — Synthesis is not deterministic
 - The same text regenerated gives slightly different audio (sampling noise in the voice model) and therefore different recognised words (for example the same drug name heard four different ways across two generations). Any measurement that depends on the exact audio (recogniser round trips) needs repetitions; the speed figures are unaffected in kind but vary between runs (I-042, I-048).
+
+### I-057 — Audible hiss on the Kokoro voices
+- Reported by the owner in a blind listening (2026-10-08): "sifflement ou grésillement" on all three Kokoro voices (French `ff_siwis`, English `af_heart` and `am_adam`), absent on every Piper and Coqui voice. No measurement of mine detected it. Candidate causes, none verified: int8 quantisation of the package used, the 24 kHz output, the vocoder. Not tried: the fp32 Kokoro package (about 330 MB download, needs the owner's approval). Status: open, low priority since Kokoro is deprioritised (D-041).
+
+### I-055 update (2026-10-08)
+- The owner confirmed by ear that the Coqui voice does not speak the digits (12, 14 and 30) and that "Rendez-vous" is mispronounced. Decision D-041: build the normaliser (numbers, dates, times, units, abbreviations) for character-based voices. Status: accepted for implementation.
+
+### I-055 update (2026-10-08, M6d) — mitigated
+- The normaliser is built (D-042, `normalise.rs`, 15 unit tests, French and English) and on by default for the Coqui voice through the manifest flag `normalizeText`. Rough check with the speech recogniser (Parakeet, six French sentences with numbers, dates, times, units, a fraction and a phone number, three repetitions, two complete runs): key numbers heard 0/36 without it, 28/36 and 30/36 with it. The owner's ear is the judge (listening session 2). Remaining defects are listed in I-058 and I-061. Status: mitigated; close after the owner's listening.
+
+### I-058 — The Coqui voice stays weak even when it speaks the numbers
+- With the normaliser on, the recogniser still mangled the date sentence ("Rendez-vous le 12 mars à 9h00" heard as "J'ai voulu doucement à 9 heures" and "Rendez-je vous les douze morts à 9 heures"), the spoken text being correct: the voice's own articulation of some French words is poor (the owner already scored clarity 3 and accent 2, and heard "Rendez-vous" mispronounced). A long phone number came back as "06 1234 56 78". Status: open. Next step: the owner's session 2 compares it with three speakers of the converted `mls` voice; no better freely usable French voice is installed yet.
+
+### I-059 — The application has no dark theme
+- Only the new read-along block follows the system setting (`prefers-color-scheme`, own text and background colours, contrast 12.7 light and 8.5 dark measured). The rest of the page keeps fixed light colours, so in dark mode the block is a dark panel on a light page. Not a defect of the highlight; a full theme is outside this lab's scope unless the owner asks. Status: open, low priority.
+
+### I-060 — `mls` is a weak candidate and cannot be installed from the app
+- The Piper `fr_FR-mls-medium` voice (CC BY 4.0, trained from scratch, 125 speakers) works in sherpa-onnx after a metadata conversion, but by a recogniser proxy 74 of 125 speakers have a word error rate of 90 % or more, only 18 reach 50 % or better and the best three 33 % (references: Coqui 6.7 %, siwis 6.7 %, gilles 20 %). Naturalness is not measured. Because the conversion needs Python, the voice has the packaging kind `local`: the app's Install button refuses it with the script name. A product would need the converted package hosted somewhere or the conversion done at build time. Status: open, waits for the owner's ear (session 2).
+
+### I-061 — Known limits of the text normaliser
+- Acronyms (IRM, ECG, AVC) are not spelled; the feminine "une" is used only after a short list of common nouns; Roman numerals (XIXe) are not converted; "10.30" is a time only after a time word (otherwise a decimal), and "version 2.15" style numbers are decimals; an invoice number after "numéro" is read as an ordinary number (up to 12 digits, no leading zero); numbers separated by single spaces ("5 100") are read as one number; a standalone capital letter followed by a dot is taken as an initial by the splitter; English sentences are normalised by the same unit tests but no character-based English voice exists to hear them; Swiss variants (septante, huitante, nonante) are not produced (the owner's rule asked for soixante-dix and quatre-vingts). Status: open, extend on real texts.
+
+### I-062 — Sentence segmentation is a heuristic
+- A line break inside a hard-wrapped paragraph splits the sentence; a sentence that really ends before a lower-case word ("... Bonjour. merci") is not split; the abbreviation list is short and fixed. Wrong splits only change where pauses and shading fall, never the text spoken. Status: open, low priority.

@@ -39,8 +39,8 @@ turn text into phonemes with espeak-ng (GPL-3.0). A character-based voice does n
 | Piper fr_FR siwis medium | fr | CC BY 4.0 (SIWIS) | **fine-tuned from the English Lessac voice** | not stated separately | espeak-ng | **review** | yes |
 | Piper fr_FR gilles low | fr | CC0 (same corpus as CSS10 French) | **fine-tuned from the English Ryan voice** | not stated separately | espeak-ng | **excluded** | yes (comparison only) |
 | Kokoro multi-lang v1.0 (int8) | fr, en | Apache-2.0 / MIT audio, **synthetic audio from closed TTS services**, SIWIS (CC BY 4.0), Koniwa (CC BY 3.0) | not applicable | Apache-2.0 | espeak-ng | **review** | yes |
-| Piper fr_FR mls medium | fr | CC BY 4.0 (Multilingual LibriSpeech) | **trained from scratch** | not stated separately | espeak-ng | would be `attribution` | no: not in the sherpa-onnx release, needs a conversion step |
-| Piper en_US kristin medium | en | public domain (LibriVox) | trained from scratch | not stated separately | espeak-ng | **clear** | yes (installed 2026-10-08 on the owner's approval; not yet measured or listened to) |
+| Piper fr_FR mls medium | fr | CC BY 4.0 (Multilingual LibriSpeech, OpenSLR 94; 125 speakers) | **trained from scratch** (card read again 2026-10-08) | not stated separately | espeak-ng | **attribution** | yes, converted locally 2026-10-08 with `scripts/convert_piper_voice.py` (owner's approval); weak by a recogniser proxy, I-060 |
+| Piper en_US kristin medium | en | public domain (LibriVox) | trained from scratch | not stated separately | espeak-ng | **clear** | yes (installed 2026-10-08 on the owner's approval; measured 2026-10-08, RTF 0.055 to 0.064, listening session 2 pending) |
 | Piper fr_FR upmc medium | fr | CC BY-SA 4.0 | fine-tuned from Lessac | not stated separately | espeak-ng | review (share-alike plus Lessac) | no |
 | Piper en_US lessac medium | en | Blizzard 2013 **research** licence agreement | from scratch | not stated separately | espeak-ng | review at best (licence granted to a named person or organisation; clauses not read in full) | no |
 | Piper en_US amy, en_GB alan | en | "See URL" (not read) | fine-tuned from Lessac | not stated | espeak-ng | review (unread) | no |
@@ -50,9 +50,9 @@ turn text into phonemes with espeak-ng (GPL-3.0). A character-based voice does n
 | Piper fr_FR miro, tjiho | fr | no readable card | unknown | unknown | espeak-ng | review (unreadable) | no |
 | Kitten TTS nano (en) | en | not read | not read | Apache-2.0 (model card) | espeak-ng (to confirm) | not rated: English only | no |
 | Supertonic | multi | not read | not read | OpenRAIL-M (use-based restrictions) | none known | review | no |
-| Chatterbox (Resemble AI, base and multilingual) | multi incl. fr | not read | not read | MIT (Hugging Face metadata, 2026-10-08) | none read (not a sherpa-onnx model; PyTorch/ONNX/GGUF/MLX; voice cloning from a reference clip) | review: lineage and data unread, CPU speed unknown | no |
-| Chatterbox-TTS-French (community fine-tune, `Thomcles`) | fr | not read | fine-tune of Chatterbox | CC-BY-4.0 (metadata); training data licence unread | as above | review | no |
-| Qwen3-TTS (0.6B and 1.7B) | multi (French to confirm) | not read | not read | Apache-2.0 (metadata) | none read (not a sherpa-onnx model) | review: data unread, CPU speed unknown | no |
+| Chatterbox (Resemble AI, base English-only and multilingual with French) | multi incl. fr | card: "0.5M hours of cleaned data" from "freely available data on the internet", no data licence stated | not stated | MIT (card) | none read (not a sherpa-onnx model; PyTorch, ONNX, GGML port `chatterbox.cpp` under MIT); **every output carries the Perth neural watermark**; voice cloning from a reference clip (only restriction stated: "don't use this model to do bad things") | review (data licence unstated); 0.5B, files about 2.1 GB, the port reports RTF 4.32 on an Apple M4 with 4 threads: slower than real time, not measured here | no |
+| Chatterbox-TTS-French (community fine-tune, `Thomcles`) | fr | card: French part of the Emilia dataset, 1,400 h, "CC BY 4.0"; but Emilia is CC BY-NC-4.0 (only the YODAS subset is CC BY 4.0), audio from videos and podcasts whose copyright stays with their owners; the card does not say which subset | fine-tune of Chatterbox | CC BY 4.0 (card, data) and MIT (base) | as above | review, likely excluded if the non-commercial Emilia was used (NOT VERIFIED which subset) | no |
+| Qwen3-TTS (0.6B and 1.7B) | 10 languages including French (card) | card: "over 5 million hours of speech data", no data licence stated | not stated | Apache-2.0 (card) | none read (not a sherpa-onnx model); voice cloning from a reference clip, no watermark mentioned | review (data licence unstated); 0.9B parameters in BF16 for the 0.6B model, card shows CUDA and flash-attention, community GGUF and ONNX ports exist (`qwentts.cpp`, LunaVox), no CPU real-time factor found (only RTF 0.35 on an RTX 5050 GPU) | no |
 | Pocket TTS | multi | not read | not read | CC-BY-4.0, gated (M0 note, card not readable now) | not read | not rated | no |
 
 Runtime components for context: sherpa-onnx Apache-2.0, ONNX Runtime MIT, espeak-ng GPL-3.0 (inside
@@ -82,16 +82,30 @@ A beta is acceptable only if it needs no paid licence; no legal consultation for
    restriction (I-052).
 3. **Kokoro training audio generated by closed TTS services**: their terms were not read (I-053).
 4. **BSD-3 / CC-BY notices**: where a product shows credits (CC BY 4.0 SIWIS, LibriTTS-R, BSD-3 notice).
-5. The Piper `fr_FR-mls-medium` voice is **not in the sherpa-onnx release** (checked against the release
-   asset list). Using it would need its checkpoint converted for sherpa-onnx (a Python tool and package
-   installation, owner's approval needed first). It is the cleanest French Piper voice found (CC BY 4.0,
-   trained from scratch): worth doing if the Coqui voice disappoints. The English `kristin` voice (public
-   domain, from scratch) IS in the release and can be added with a plain download.
+5. The Piper `fr_FR-mls-medium` voice is **not in the sherpa-onnx release** (the release lists only
+   `vits-coqui-fr-css10` and the non-commercial `vits-mms-fra` for French). It was converted on this machine on
+   the owner's approval (2026-10-08): isolated environment `vendor/py-convert` with the `onnx` package only,
+   source files downloaded from the Piper repository (SHA-256 of the source `.onnx`
+   `0ed223f78466917f2bae05ee90096ce69ab1fdeb251f55590d0e7422d234e162`), `scripts/convert_piper_voice.py convert`
+   (procedure of the sherpa-onnx guide, first verified with `check` on the official kristin and ljspeech
+   packages: identical tokens and metadata). To redo it: create the environment (`python -m venv vendor/py-convert`,
+   `vendor/py-convert/Scripts/python.exe -m pip install onnx`), download `fr_FR-mls-medium.onnx`, `.onnx.json`
+   and `MODEL_CARD` from `huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/mls/medium` into
+   `vendor/piper-mls-source/`, then run the `convert` command with `--espeak-data` pointing at the
+   `espeak-ng-data` folder of any installed Piper package and `--out-dir` at
+   `<models>/vits-piper-fr_FR-mls-medium`. The voice is weak by a recogniser proxy (I-060).
+6. **Chatterbox and Qwen3-TTS** cannot be offered as free voices on what was read: neither card states the
+   licence of its training data, Chatterbox watermarks every output and both clone voices from a reference
+   clip (a consent policy would be needed), the French Chatterbox fine-tune was trained on Emilia (CC BY-NC-4.0
+   unless the YODAS subset was used, not stated), and neither runs faster than real time on a laptop CPU as far as
+   was found (Chatterbox multilingual: reported RTF 4.32 on an Apple M4; Qwen3-TTS: no CPU figure). Not measured
+   here, NOT VERIFIED.
 
 ## Sources read (2026-10-08)
 
 Piper voice cards `MODEL_CARD` in the `rhasspy/piper-voices` repository on Hugging Face (fr_FR siwis
-medium and low, gilles, upmc, tom, mls; en_US libritts_r, lessac, ljspeech, ryan, hfc_female, kristin);
+medium and low, gilles, upmc, tom, mls; en_US libritts_r, lessac, ljspeech, ryan, hfc_female, kristin), the `mls` card and JSON re-read 2026-10-08;
+the Chatterbox, Chatterbox-TTS-French and Qwen3-TTS-12Hz-0.6B-Base model cards, the Emilia dataset card, the `chatterbox.cpp` README and the sherpa-onnx `tts-models` release list (2026-10-08);
 the Blizzard 2013 Lessac licence page (first part); Kokoro-82M `README.md` and `VOICES.md`; the Kokoro
 v1.1-zh card; the CSS10 repository README and licence file; the Coqui model list (`.models.json`) and
 the NeonGecko French VITS model card; the `config.json` shipped in the `vits-coqui-fr-css10` package

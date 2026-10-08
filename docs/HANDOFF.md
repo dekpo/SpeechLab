@@ -42,9 +42,10 @@ the chat, write files in English.
 | M5d timing study (3 repetitions) | done: `20261008-035938-timing-3reps`, 40 short sentences x 9 configurations x 3 repetitions, 0 changing transcripts, within-run spread 1 to 4 % (I-012 partly closed) |
 | M5e long audio, chunking at silences (Silero VAD) | done: D-035; 828/828 short transcripts unchanged with chunking on; helps sherpa Whisper tiny (30 s limit), neutral for Parakeet and whisper.cpp, harmful for Canary (I-041); Whisper loops not fixed |
 | T4 drug names / key terms (D-036) | done: strict post-correction 0 broken words and fixes 2 of 6 drug names for the best engines; whisper.cpp prompt helps small/base but costs speed; Parakeet hotwords need a surrogate vocabulary and over-boost at score 3.0; all OFF by default; upper bound (vocabulary taken from the test sentences) |
-| T5 private accent clips (D-037) | PARTLY done: `bench import` (WAV + typed reference -> private sample, consent rule, rollback on failed validation) is built and tested on synthetic audio; NO clip has been imported and NO accent figure exists, the evaluation waits for the owner's clips, speaker descriptions, consent and typed references |
-| M6 TTS laboratory (D-038, D-039) | built and measured 2026-10-08: provider, 6 voice packages (Piper siwis, gilles, libritts_r, ljspeech; Coqui css10 fr; Kokoro v1.0 int8), UI tab, `tts` CLI, runs `20261008-085403-tts-m6` and `20261008-094413-tts-m6-licence-focus` (8 voices in one run). **Licence-first (owner's rule): every voice has a commercial-use rating, see `docs/TTS_LICENSES.md`**; only `clear`/`attribution` voices may be recommended. Piper and Coqui are 16 to 29 times faster than real time, Kokoro int8 slower than real time (RTF 1.1 to 2.1 depending on the run). **Owner's listening notes are PENDING** (open `benchmark/tts-samples/index.html`); reading-highlight proposal D-040 awaits the owner's choice |
-| M7 Windows/macOS packaging validation | not started (prompt `docs/prompts/06-packaging-validation.md`; no Mac available: macOS stays NOT VERIFIED, document the steps) |
+| T5 private accent clips (D-037) | DEFERRED (the owner has no clips, 2026-10-08). Tool part done: `bench import` (WAV + typed reference -> private sample, consent rule, rollback on failed validation) is built and tested on synthetic audio; NO clip has been imported and NO accent figure exists, the evaluation waits for the owner's clips, speaker descriptions, consent and typed references |
+| M6 TTS laboratory (D-038, D-039) | built and measured 2026-10-08: provider, 6 voice packages (Piper siwis, gilles, libritts_r, ljspeech; Coqui css10 fr; Kokoro v1.0 int8), UI tab, `tts` CLI, runs `20261008-085403-tts-m6` and `20261008-094413-tts-m6-licence-focus` (8 voices in one run). **Licence-first (owner's rule): every voice has a commercial-use rating, see `docs/TTS_LICENSES.md`**; only `clear`/`attribution` voices may be recommended. Piper and Coqui are 16 to 29 times faster than real time, Kokoro int8 slower than real time (RTF 1.1 to 2.1 depending on the run). **Owner's blind listening DONE** (`docs/TTS_LISTENING_NOTES.md`): chose Piper siwis, gilles, ljspeech, libritts_r; English clean voices are excellent, the free French voice (Coqui) is weak and does not speak digits, Kokoro has an audible hiss (I-057). Owner's decisions: D-040 accepted (sentence highlight + auto-scroll, no click-to-jump yet), D-041 (beta only with `clear`/`attribution` voices, no paid licence, public domain preferred). `kristin` (public domain) installed. NEXT: `docs/prompts/06b-tts-readalong-and-normaliser.md` |
+| M6d TTS read-along, sentence splitter, text normaliser (D-042) | built and tested 2026-10-08: sentence-by-sentence synthesis joined into one WAV with measured segments (250 ms / 600 ms pauses), grey sentence highlight driven by the player's clock with auto-scroll, "Follow reading" and manual-scroll pause, digits-to-words normaliser (French and English) on by default for the Coqui voice through the manifest flag `normalizeText`, preview of the text sent to the voice. 163 Rust tests, 16 vitest, 33/33 UI checks over DevTools (`scripts/ui_test_readalong.mjs`). Overhead of per-sentence synthesis a few percent (run `20261008-141002-tts-m6d-overhead`); `kristin` measured (RTF 0.055 to 0.064); normaliser: key numbers heard 0/36 off, 28/36 and 30/36 on (rough recogniser check). Piper `mls` French voice converted locally (`packaging: local`, I-060) and weak by a recogniser proxy. **Owner's listening session 2 is PENDING** (`benchmark/tts-samples/session2/index.html`, steps in `docs/TTS_LISTENING_NOTES.md`). Chatterbox and Qwen3-TTS read: not recommended (data licences unstated, slow on CPU). NEXT: M7 |
+| M7 Windows/macOS packaging validation | not started (prompt `docs/prompts/06-packaging-validation.md`, updated for M6d; no Mac available: macOS stays NOT VERIFIED, document the steps) |
 | M8 final report, licensing table, recommendation | not started |
 
 Check `git log --oneline -5` and `git status` (read-only) to see what the owner has committed.
@@ -58,6 +59,7 @@ Timing study: inside one run the same sample varies by 1 to 4 % (median) and nev
 Long audio (M5e, 3 reference dictations + 2 private clips, little statistical power): only Parakeet and whisper.cpp had no failure; sherpa Whisper tiny cannot take more than 30 s and loops; Canary drops endings and degrades on 24 s pieces. Speed figures differ by 1 to 48 % between runs (I-042): compare inside one run only.
 Drug names (T4, D-036): every engine misspells them (best: 4 of 6 found). Strict dictionary post-correction fixed 2 more with no word broken; vocabulary biasing inside the engine is riskier (loose correction and high hotword score are regressions). One speaker, 6 drug occurrences, vocabulary taken from the test sentences: an upper bound.
 TTS (M6, D-038/D-039): Piper and Coqui voices are interactive on this CPU (RTF 0.03 to 0.08, 210 to 260 MB), Kokoro int8 is not (RTF 1.1 to 2.1 depending on the run, 430 to 460 MB); speed control works on both but differently; the voices are RATED for commercial use (cleanest found: English Piper ljspeech `clear`; French Coqui css10 `attribution`, needs no phonemizer but does not speak digits, I-055); Piper siwis/Kokoro need a legal reading, gilles is excluded (I-052, I-053); any build that synthesises speech links the GPL espeak-ng code (I-051, I-054). Quality of the voices is the owner's to judge.
+TTS read-along (M6d, D-042): per-sentence synthesis costs a few percent (within the run-to-run spread), the pauses make the audio 7 to 9 % longer; the Coqui voice speaks numbers once the normaliser rewrites them (0/36 to 28-30/36 key numbers heard by a recogniser) but remains weak otherwise (I-058); the converted Piper `mls` voice is a weak candidate by the same proxy (I-060); Chatterbox and Qwen3-TTS are not usable as free voices on what was read (docs/TTS_LICENSES.md).
 Provisional shortlist: D-032 (not final).
 
 ## 4. Repository map
@@ -75,13 +77,14 @@ src-tauri/src/speech/        Rust: provider traits, sherpa.rs, whisper_cpp.rs, m
                              dataset.rs, metrics.rs, numbers.rs, critical.rs, probe.rs, benchmark.rs,
                              chunking.rs + vad.rs (long audio cut at silences),
                              postcorrect.rs (dictionary correction, OFF), termstudy.rs (key-term study),
-                             tts.rs (sherpa-onnx text-to-speech provider, voices from the manifest)
+                             tts.rs (sherpa-onnx text-to-speech provider, voices from the manifest; per-sentence synthesis, segments),
+                             sentences.rs (sentence splitter, UTF-16 spans), normalise.rs (digits and units to words, fr/en)
 src-tauri/examples/          CLI tools: transcribe.rs (one file), bench.rs (benchmark; `bench import` adds private clips), hotwords_probe.rs (T4 experiment)
 benchmark/vocab/             fr.txt, en.txt: vocabulary files for the drug-name study (committed)
-benchmark/tts/               sentences for the TTS measurement and listening texts (committed); benchmark/tts-samples/ = generated listening files (git-ignored)
+benchmark/tts/               sentences and 5/10-sentence paragraphs for the TTS measurement, listening texts (committed); benchmark/tts-samples/ (and session2/) = generated listening files (git-ignored)
 src-tauri/models-manifest.json   model inventory (data, no code change to add a model)
-scripts/                     PowerShell/Python helpers (env check, library/CLI builds, comparison, bootstrap CI)
-vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's private audio)
+scripts/                     PowerShell/Python helpers (env check, library/CLI builds, comparison, bootstrap CI); TTS: tts_listening.py (--session 1|2), tts_overhead.py, tts_normaliser_check.py, tts_speaker_scan.py, convert_piper_voice.py; UI test: ui_test_readalong.mjs + cdp.mjs
+vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's private audio; vendor/py-convert = isolated Python environment with `onnx` only, vendor/piper-mls-source = source files of the converted mls voice)
 ```
 
 ## 5. Environment facts and traps (Windows 11, Intel Core 7 150U, 23.6 GB, CPU only)
@@ -98,6 +101,8 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 - **GitHub once returned HTTP 500** when creating a new branch from the M4 commit (I-031); creating the branch from `main` in the web UI worked, then a normal push.
 - **Shell quoting**: very long inline shell/Python scripts containing apostrophes were rejected by the agent shell several times. Write script files and run them, or use small edits. In Python strings avoid backslash escapes such as `\b`.
 - **Read generated test code** before running it, and validate any scoring rule on real engine output before trusting a number (five scoring defects were found this way, see PROJECT_LOG and D-030).
+- **Read-along UI test**: `node scripts/ui_test_readalong.mjs [screenshot-dir]` against the app started with the remote-debugging switch (port 9222, page on 1430); it reloads the page, mutes the audio, never plays by itself, deletes only the WAV files it created. It needs the Piper ljspeech voice, and the Coqui and siwis voices for the last checks. Give the TTS buttons ids when adding another panel with a button of the same name (the speech-to-text panel also has a "Stop"). Stopping a `pnpm tauri dev` background task does not stop its children (`speechlab.exe`, `cargo`, `pnpm`, Vite `node`): find them by command line and stop only the ones from this repository.
+- **Voice conversion**: Piper voices that sherpa-onnx does not ship are converted with `scripts/convert_piper_voice.py` (`check` first on an official package); packaging kind `local` means the voice cannot be downloaded (docs/TTS_LICENSES.md open point 5).
 - UI testing without a human: run the app with `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222` and drive the page over the DevTools protocol (select the target whose url contains `localhost:1430`; the microphone permission prompt is a separate target; grant it with `Browser.grantPermissions`). Clean up any sample or clip created by tests.
 
 ## 6. How to run things
@@ -105,7 +110,7 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 ```bash
 pnpm install
 pnpm typecheck && pnpm test && pnpm build          # frontend checks
-cd src-tauri && cargo test --lib                    # Rust unit tests (132; one uses the real Piper voice if installed)
+cd src-tauri && cargo test --lib                    # Rust unit tests (163; two use the real Piper siwis voice if installed)
 pnpm tauri dev                                      # the app (port 1430)
 powershell -ExecutionPolicy Bypass -File scripts/check-env.ps1     # machine and tool check
 
@@ -135,8 +140,12 @@ python ../scripts/chunking_study.py runs|same|clips ...      # whole versus chun
 
 cargo build --release --example tts
 ./target/release/examples/tts.exe voices                                  # installed voices (id = <package>:<speaker>)
-./target/release/examples/tts.exe say <voice-id> <fr|en> "<text>"|@file.txt [--speed 1.0] [--repeat N] [--out-dir DIR]
-./target/release/examples/tts.exe measure --sentences ../benchmark/tts/sentences-fr.txt --lang fr --voices a,b --reps 3 --out-dir ../benchmark/results/<run> --label x
+./target/release/examples/tts.exe say <voice-id> <fr|en> "<text>"|@file.txt [--speed 1.0] [--repeat N] [--out-dir DIR] [--normalise on|off] [--whole 1] [--show-text 1] [--show-segments 1]   # every option takes a value
+./target/release/examples/tts.exe measure --sentences ../benchmark/tts/sentences-fr.txt --lang fr --voices a,b --reps 3 --out-dir ../benchmark/results/<run> --label x [--compare 1]   # --compare: per-sentence and whole-text modes interleaved
+python -I -X utf8 ../scripts/tts_overhead.py ../benchmark/results/<run>     # per-sentence overhead table from a --compare run
+python -I -X utf8 ../scripts/tts_normaliser_check.py <stt model id> 3         # does the normaliser make Coqui speak numbers? (recogniser round trip)
+python -I -X utf8 ../scripts/tts_listening.py --session 2                    # blind listening page of session 2
+node ../scripts/ui_test_readalong.mjs                                         # read-along UI test (app started with the DevTools switch)
 python ../scripts/tts_summary.py ../benchmark/results/<run>    # table from the jsonl files
 python -I -X utf8 ../scripts/tts_roundtrip.py ../benchmark/tts-samples <stt model id>   # machine intelligibility check (not naturalness)
 ```
@@ -150,10 +159,11 @@ python -I -X utf8 ../scripts/tts_roundtrip.py ../benchmark/tts-samples <stt mode
 | 3 | ~~Timing study, 3 repetitions~~ DONE 2026-10-08 (I-012 partly closed; between-run offset unexplained) | | next-tasks.md T2 (kept for reference) |
 | 4 | ~~Long audio, VAD chunking~~ DONE 2026-10-08 (D-035; open follow-ups: per-engine segment limit and output guard, I-041, I-035) | | `docs/prompts/02-long-audio-vad-chunking.md` (kept for reference) |
 | 5 | ~~Drug-name handling~~ DONE 2026-10-08 (D-036, I-043, I-044, I-045; open: real SentencePiece vocabulary, free-text false-correction rate, owner's choice of technique) | | `docs/prompts/03-drug-name-handling.md` (kept for reference) |
-| 6 | **Waiting for the owner:** private accent clips (Swiss-Romande, Maghreb). Import tool DONE (D-037); remaining: the owner's clips, speaker descriptions, consent and typed references, then the runs and aggregate-only report (resume at step 2 of the prompt) | accents are in the plan | `docs/prompts/04-private-accent-clips.md` |
+| 6 | **Deferred, the owner has no clips:** private accent clips (Swiss-Romande, Maghreb). Import tool DONE (D-037); remaining: the owner's clips, speaker descriptions, consent and typed references, then the runs and aggregate-only report (resume at step 2 of the prompt) | accents are in the plan | `docs/prompts/04-private-accent-clips.md` |
 | 7 | Detector false alarms for times ("10.30", "9h00"), sherpa-onnx thread usage | I-034, I-036 | small fixes |
-| 8 | ~~M6 TTS laboratory~~ BUILT AND MEASURED 2026-10-08 (D-038, D-039, I-048 to I-056); open: owner's listening notes (`benchmark/tts-samples/index.html`), reading-highlight granularity (D-040), French number normaliser (I-055), `kristin` English voice, legal reading of the `review` voices, French male voice | | `docs/prompts/05-tts-laboratory.md` (kept for reference); a prompt for the highlight and the normaliser is written once the owner chooses |
-| 9 | **Next without waiting:** M7 packaging validation | plan section 9 | `docs/prompts/06-packaging-validation.md` (next-tasks.md T7) |
+| 8 | ~~M6 TTS laboratory~~ BUILT AND MEASURED 2026-10-08 (D-038 to D-041, I-048 to I-057); open: read-along highlight and French number normaliser (prompt 06b), measure and listen to `kristin`, a better free French voice (Piper `mls` conversion needs approval), legal reading of the `review` voices (postponed), French male voice | | `docs/prompts/05-tts-laboratory.md` (kept for reference); a prompt for the highlight and the normaliser is written once the owner chooses |
+| 8b | ~~TTS read-along highlight, normaliser, `kristin`, French voice research~~ BUILT AND MEASURED 2026-10-08 (D-042, I-058 to I-062); open: **the owner's listening session 2** (`benchmark/tts-samples/session2/index.html`) decides the French voice for the beta (Coqui with the normaliser, a converted `mls` speaker, or none) and the default English voice; click-to-jump later if wanted | D-040, D-041, D-042 | `docs/prompts/06b-tts-readalong-and-normaliser.md` (kept for reference) |
+| 9 | **Next:** M7 packaging validation (record the owner's session 2 notes first if pasted) | plan section 9 | `docs/prompts/06-packaging-validation.md` (next-tasks.md T7) |
 | 10 | M8 final report and licensing table | main deliverable | next-tasks.md T8 |
 
 ## 8. Session protocol

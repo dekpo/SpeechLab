@@ -1,7 +1,7 @@
 # Prompt 06 — M7: packaging validation (Windows build, macOS steps)
 
-Paste everything below the line into a new chat session. Prerequisites: the M6 work (D-038) is
-committed and no benchmark is running. This task needs no clip and no listening. It builds an installer
+Paste everything below the line into a new chat session. Prerequisites: the M6 and M6d work (D-038 to
+D-042) is committed and no benchmark is running. This task needs no clip and no listening. It builds an installer
 on this machine (long compile, large output in `target/`, git-ignored): ask the owner before running
 `pnpm tauri build` for the first time and say how long and how big it is. No Mac is available: macOS
 can only be prepared on paper and stays NOT VERIFIED.
@@ -18,11 +18,27 @@ English. Work autonomously, but follow the project rules to the letter.
    the repository; document everything in English in `docs/`; do not install software or change the
    system without the owner's approval).
 2. `docs/HANDOFF.md` (state of the project, traps, commands).
-3. The last entries of `docs/PROJECT_LOG.md` (M6, M6b, T5 part 1), `docs/DECISIONS.md` D-004, D-012, D-017,
-   D-034, D-038, D-039, `docs/TTS_LICENSES.md`, `docs/ISSUES.md` (I-009, I-010, I-024, I-026, I-051), `Plan.md` (packaging and
-   compatibility sections) and `docs/prompts/next-tasks.md` section T7.
+3. The last entries of `docs/PROJECT_LOG.md` (M6, M6c, M6d), `docs/DECISIONS.md` D-004, D-012, D-017,
+   D-034, D-038, D-039, D-041, D-042, `docs/TTS_LICENSES.md`, `docs/TTS_LISTENING_NOTES.md`, `docs/ISSUES.md` (I-009, I-010, I-024, I-026,
+   I-051, I-059, I-060), `Plan.md` (packaging and compatibility sections) and `docs/prompts/next-tasks.md` section T7.
+
+## Step 0 — the owner's listening session 2 (only if the owner pastes notes)
+The owner may paste the notes of the blind listening session 2 (`benchmark/tts-samples/session2/index.html`: Piper
+`kristin`, `ljspeech`, `libritts_r`; Coqui css10 with the text normaliser ON and OFF; three speakers of the converted
+Piper `mls` voice). Before anything else, record them VERBATIM in `docs/TTS_LISTENING_NOTES.md` (replace the "PENDING"
+paragraph of session 2 by a scores table in the format of session 1, the owner's comments in French with an English
+gloss, and a short analysis kept apart from the opinion), resolve the codes A to H with the page's own text, then update
+D-041/D-042 consequences, I-055, I-058 and I-060, `docs/HANDOFF.md` section 3 and the beta voice list (which French and
+English voice is the default). If the notes are not pasted, say in French that session 2 is still pending and go on: the
+packaging does not depend on them. Do not ask the owner to repeat the listening.
 
 ## Context
+New since the M6 work (D-042): the TTS tab shows a read-along view (sentence highlight, auto-scroll), a text
+normaliser rewrites numbers for character-based voices, and one voice (Piper `mls`) is converted locally with
+`scripts/convert_piper_voice.py` (packaging kind `local`: it cannot be installed from the app, so a packaged build
+must not offer it as a default; document how a product would obtain such a voice). The UI test
+`node scripts/ui_test_readalong.mjs` (33 checks) can be pointed at the packaged app through the remote-debugging switch.
+
 Everything so far was run from `pnpm tauri dev` and from `cargo` examples. Nothing has been packaged:
 `src-tauri/tauri.conf.json` has `"bundle": { "active": false }`. Facts to check, not to assume:
 - sherpa-onnx is linked statically (`sherpa-onnx-v1.13.8-win-x64-static-MT-Release-lib`), so no extra
@@ -59,7 +75,7 @@ Everything so far was run from `pnpm tauri dev` and from `cargo` examples. Nothi
    shows; an installed STT model transcribes a short clip; whisper.cpp engine works through the sidecar;
    the microphone permission prompt appears in the RELEASE origin and the choice persists after a restart
    (closes or documents I-024); a TTS voice generates a WAV (this checks that the `espeak-ng-data`
-   folder is found from the packaged app); Cancel works. Drive the UI through the DevTools protocol as in
+   folder is found from the packaged app, that the read-along view shades the sentences while a muted playback runs, and that the Coqui voice speaks numbers: `scripts/ui_test_readalong.mjs` covers most of it); Cancel works. Drive the UI through the DevTools protocol as in
    `docs/HANDOFF.md` section 5 (the remote-debugging switch also works for a release build) and never touch
    port 1420 or the owner's other processes. Clean up anything the tests create.
 5. **Offline proof** (the plan requires it): with the owner's agreement to switch the network off (or

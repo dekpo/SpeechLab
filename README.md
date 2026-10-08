@@ -16,7 +16,9 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - T4 drug names and key terms (D-036): vocabulary biasing (whisper.cpp initial prompt, Parakeet hotwords) and dictionary post-correction, all OFF by default. Strict post-correction fixed more drug names with no word broken; loose settings and a high hotword score are regressions. One speaker, a vocabulary taken from the test sentences: an upper bound.
 - T5 private clips: `bench import` adds a clip with its typed reference as a private sample (D-037); the accent evaluation itself waits for the owner's clips.
 - M6 text-to-speech laboratory (D-038): a TTS tab (language, voice, speed, generate, then play/stop/save WAV; nothing plays automatically) over sherpa-onnx with Piper and Kokoro voices installed from the app, plus the `tts` command line tool. Every voice is rated for commercial use (`docs/TTS_LICENSES.md`, D-039); Piper and Coqui voices run 16 to 29 times faster than real time on this CPU, Kokoro int8 slower than real time; naturalness awaits the owner's listening notes (`python -I -X utf8 scripts/tts_listening.py` builds the listening page). The phonemizer inside these voices is espeak-ng (GPL-3.0), a licensing point for any product use.
-- Next: owner listens to the TTS samples and checks one suspect sample (I-033), accent clips when available, then M7 packaging.
+- M6c: the owner's blind listening is recorded in `docs/TTS_LISTENING_NOTES.md`; decisions D-040 (sentence highlight with auto-scroll) and D-041 (beta only with freely usable voices) taken; the accent evaluation is deferred (no clips).
+- M6d (D-042): the TTS tab splits the text into sentences, synthesises them one by one into a single WAV with measured sentence times, and after Generate shows the text with the sentence being read shaded in grey (light and dark, automatic scrolling, "Follow reading", nothing plays by itself); a text normaliser (numbers, dates, times, units, abbreviations, French and English) makes the character-based French voice speak digits and can be switched per voice, with a preview of the text sent to the voice; Piper `kristin` measured; Piper `mls` French voice converted locally (`scripts/convert_piper_voice.py`); Chatterbox and Qwen3-TTS read and not retained. Blind listening session 2: `python -I -X utf8 scripts/tts_listening.py --session 2`.
+- Next: the owner's listening session 2, then M7 packaging; owner checks one suspect sample (I-033).
 
 ## Read first
 
@@ -99,6 +101,10 @@ cargo run --release --example bench -- postcorrect --dir ../benchmark/results/<f
 cargo run --release --example bench -- termstudy --dir ../benchmark/results/<baseline> --against ../benchmark/results/<variant>   # key terms found, fixed versus broken words
 cargo run --release --example tts -- voices                                   # text-to-speech: installed voices
 cargo run --release --example tts -- say <voice-id> fr "Bonjour." --speed 1.0   # writes a WAV, never plays it
+cargo run --release --example tts -- say <voice-id> fr "@file.txt" --show-text 1 --show-segments 1   # sentences, text sent to the voice, segment times (--normalise on|off, --whole 1)
+cargo run --release --example tts -- measure --sentences ../benchmark/tts/paragraphs-fr.txt --lang fr --voices <id> --reps 5 --compare 1 --out-dir ../benchmark/results/<run> --label x   # per-sentence overhead
+python -I -X utf8 ../scripts/tts_listening.py --session 2   # blind listening page (benchmark/tts-samples/session2/index.html)
+node ../scripts/ui_test_readalong.mjs   # read-along UI test; start the app first with WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222 pnpm tauri dev
 cargo run --release --example bench -- import --wav <file.wav> --id <id> --reference-file <ref.txt> --speaker <id> --accent <text> --private --consent yes   # add a private clip (git-ignored); then: run --include-private --category fr-accent-private
 python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
 python ../scripts/chunking_study.py runs ../benchmark/results/<whole> ../benchmark/results/<chunked>   # whole clip versus chunked

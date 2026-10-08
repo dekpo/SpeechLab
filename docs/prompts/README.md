@@ -18,7 +18,8 @@ How to continue the project in a fresh chat tab without losing context:
 | `03-drug-name-handling.md` | done (kept for reference): drug names and key terms (hotwords, prompts, dictionary correction) |
 | `04-private-accent-clips.md` | private accent clips; the import tool is built (D-037), the evaluation waits for the owner's clips, consent and typed references: resume at step 2 |
 | `05-tts-laboratory.md` | done (kept for reference): M6 text-to-speech laboratory |
-| `06-packaging-validation.md` | the next task that needs nothing from the owner: M7 packaging validation (Windows build, macOS steps) |
+| `06b-tts-readalong-and-normaliser.md` | done (kept for reference): sentence highlight with auto-scroll, digits-to-words normaliser, `kristin` measurement and listening, search for a better free French voice (D-040, D-041, D-042) |
+| `06-packaging-validation.md` | the next task: M7 packaging validation (Windows build, macOS steps); starts by recording the owner's listening session 2 notes if they are pasted |
 | `next-tasks.md` | accents, TTS, packaging, final report (the timing study T2, the re-run and the chunking T3 are done; T4 drug names is done; T5 import tool done) |
 
 Two sessions must never work on the same files at the same time, and never two benchmarks at once:
