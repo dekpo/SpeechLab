@@ -1,5 +1,8 @@
 # Prompt 05 — M6: text-to-speech laboratory
 
+STATUS (2026-10-08): DONE except the owner's listening notes (D-038, project log entry "M6"). Kept for
+reference; to record the notes, open a short session with the log entry as context.
+
 Paste everything below the line into a new chat session. Prerequisites: the T5 import-tool work
 (D-037) is committed, and no benchmark is running. This task does NOT need the owner's accent clips
 (backlog item 6 stays open and can be done before or after). It needs the owner's approval before any

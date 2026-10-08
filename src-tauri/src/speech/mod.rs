@@ -20,6 +20,7 @@ pub mod provider;
 pub mod registry;
 pub mod sherpa;
 pub mod termstudy;
+pub mod tts;
 pub mod types;
 pub mod vad;
 pub mod wav;

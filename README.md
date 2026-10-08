@@ -14,7 +14,9 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M5c reproducible benchmark runner, first full benchmark of 9 configurations on 95 recorded sentences: done (results in `benchmark/results/`, analysis in [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md)). A clean re-run (`20261007-215116-full-owner-reps1-clean`, about 20 % background CPU) reproduced all 855 transcripts identically and replaced the speed figures of the first, disturbed run; a 3-repetition timing study (`20261008-035938-timing-3reps`, M5d) then showed that the speed of the same sample varies by only 1 to 4 % within a run and that no transcript changes between repetitions.
 - M5e long audio: engine-independent chunking at silences with the Silero VAD (`bench run --chunking vad`, default off). Short audio is provably unchanged; chunking helps only sherpa-onnx Whisper tiny (its 30 s limit) and hurts Canary; Whisper loops remain (D-035, project log).
 - T4 drug names and key terms (D-036): vocabulary biasing (whisper.cpp initial prompt, Parakeet hotwords) and dictionary post-correction, all OFF by default. Strict post-correction fixed more drug names with no word broken; loose settings and a high hotword score are regressions. One speaker, a vocabulary taken from the test sentences: an upper bound.
-- Next: owner checks one suspect sample (I-033), then accent clips.
+- T5 private clips: `bench import` adds a clip with its typed reference as a private sample (D-037); the accent evaluation itself waits for the owner's clips.
+- M6 text-to-speech laboratory (D-038): a TTS tab (language, voice, speed, generate, then play/stop/save WAV; nothing plays automatically) over sherpa-onnx with Piper and Kokoro voices installed from the app, plus the `tts` command line tool. Piper voices run 13 to 29 times faster than real time on this CPU, Kokoro int8 slower than real time; naturalness awaits the owner's listening notes. The phonemizer inside these voices is espeak-ng (GPL-3.0), a licensing point for any product use.
+- Next: owner listens to the TTS samples and checks one suspect sample (I-033), accent clips when available, then M7 packaging.
 
 ## Read first
 
@@ -95,6 +97,8 @@ cargo run --release --example bench -- run --vocab-dir ../benchmark/vocab --mode
 cargo run --release --example bench -- run --vocab-dir ../benchmark/vocab --hotwords-score 1.5 --models sherpa-parakeet-tdt-0.6b-v3-int8 --label hotwords   # Parakeet hotwords
 cargo run --release --example bench -- postcorrect --dir ../benchmark/results/<folder> --vocab-dir ../benchmark/vocab --preset strict --label pc   # dictionary correction of stored transcripts
 cargo run --release --example bench -- termstudy --dir ../benchmark/results/<baseline> --against ../benchmark/results/<variant>   # key terms found, fixed versus broken words
+cargo run --release --example tts -- voices                                   # text-to-speech: installed voices
+cargo run --release --example tts -- say <voice-id> fr "Bonjour." --speed 1.0   # writes a WAV, never plays it
 cargo run --release --example bench -- import --wav <file.wav> --id <id> --reference-file <ref.txt> --speaker <id> --accent <text> --private --consent yes   # add a private clip (git-ignored); then: run --include-private --category fr-accent-private
 python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
 python ../scripts/chunking_study.py runs ../benchmark/results/<whole> ../benchmark/results/<chunked>   # whole clip versus chunked

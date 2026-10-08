@@ -68,7 +68,7 @@ pub struct TranscribeResult {
     pub is_mock: bool,
 }
 
-// --- TTS contract (declared in M1, implemented in M6) ---
+// --- TTS contract (declared in M1, implemented in M6 by `tts.rs`) ---
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -87,8 +87,23 @@ pub struct SynthesizeResult {
     pub provider_id: String,
     pub voice_id: String,
     pub wav_path: String,
+    /// Synthesis time only, excluding model loading.
     pub generation_ms: u64,
     pub audio_ms: u64,
+    /// Time spent loading the voice; 0 when it was already loaded (warm).
+    #[serde(default)]
+    pub load_ms: u64,
+    #[serde(default)]
+    pub cold_start: bool,
+    pub sample_rate: u32,
+    /// Real-time factor = generation_ms / audio_ms (below 1.0 is faster than real time).
+    #[serde(default)]
+    pub rtf: Option<f64>,
+    /// Speed actually requested (1.0 = normal).
+    pub speed: f32,
+    /// Peak resident memory seen while synthesising (sampled, a lower bound), in MB.
+    #[serde(default)]
+    pub peak_memory_mb: Option<f64>,
     pub is_mock: bool,
 }
 
@@ -101,6 +116,15 @@ pub struct VoiceInfo {
     /// "female", "male" or "unknown" - never guessed.
     pub gender: String,
     pub license: String,
+    /// Manifest id of the voice package that provides it.
+    #[serde(default)]
+    pub model_id: String,
+    /// Speaker number inside the package (0 for single-voice packages).
+    #[serde(default)]
+    pub speaker_id: i32,
+    /// Number of speakers the package contains (the list may show only some of them).
+    #[serde(default)]
+    pub speaker_count: i32,
 }
 
 // --- Model inventory ---

@@ -26,6 +26,10 @@ pub enum ModelFamily {
     GgmlWhisper,
     /// Silero voice-activity detector (a support model, run through the sherpa-onnx VAD API).
     SileroVad,
+    /// Piper voice (VITS) run through the sherpa-onnx text-to-speech API.
+    PiperVits,
+    /// Kokoro multi-voice model run through the sherpa-onnx text-to-speech API.
+    Kokoro,
 }
 
 /// What a manifest entry is for. Support models (for example the voice-activity detector) are
@@ -37,6 +41,8 @@ pub enum ModelRole {
     #[default]
     Stt,
     Support,
+    /// Text-to-speech voices (M6): listed by `tts_models()`, never by `list()`.
+    Tts,
 }
 
 /// Manifest id of the voice-activity detector used by the chunker.
@@ -60,16 +66,24 @@ pub struct ModelFiles {
     pub decoder: Option<String>,
     pub joiner: Option<String>,
     pub tokens: Option<String>,
-    /// Single-file models (ggml).
+    /// Single-file models (ggml, VITS and Kokoro text-to-speech).
     pub model: Option<String>,
+    /// Text-to-speech: speaker embeddings file (Kokoro).
+    pub voices: Option<String>,
+    /// Text-to-speech: pronunciation lexicon file(s), comma separated (Kokoro).
+    pub lexicon: Option<String>,
+    /// Text-to-speech: folder of phonemizer data inside the model folder (must exist, not a file).
+    pub data_dir: Option<String>,
 }
 
 impl ModelFiles {
     pub fn required(&self) -> Vec<&str> {
-        [&self.encoder, &self.decoder, &self.joiner, &self.tokens, &self.model]
+        let lexicons: Vec<&str> = self.lexicon.as_deref().map(|l| l.split(',').collect()).unwrap_or_default();
+        [&self.encoder, &self.decoder, &self.joiner, &self.tokens, &self.model, &self.voices]
             .into_iter()
             .flatten()
             .map(String::as_str)
+            .chain(lexicons)
             .collect()
     }
 
@@ -145,6 +159,7 @@ impl ModelManager {
         !required.is_empty()
             && dir.join(MARKER).is_file()
             && required.iter().all(|name| dir.join(name).is_file())
+            && def.files.data_dir.as_ref().map_or(true, |d| dir.join(d).is_dir())
     }
 
     /// Speech-to-text models only; support models are reached through `support_models`.
@@ -164,6 +179,11 @@ impl ModelManager {
             return Err(SpeechError::ModelNotInstalled(def.id.clone()));
         }
         Ok(self.model_dir(def).join(def.files.get(&def.files.model, "model")?))
+    }
+
+    /// Text-to-speech voices (M6).
+    pub fn tts_models(&self) -> Vec<ModelInfo> {
+        self.info_for(ModelRole::Tts)
     }
 
     fn info_for(&self, role: ModelRole) -> Vec<ModelInfo> {
@@ -262,6 +282,11 @@ impl ModelManager {
         };
 
         // Prove the layout matches the manifest before declaring the model installed.
+        if let Some(d) = &def.files.data_dir {
+            if !target.join(d).is_dir() {
+                return Err(SpeechError::Download(format!("expected folder is missing: {}", target.join(d).display())));
+            }
+        }
         for name in def.files.required() {
             if !target.join(name).is_file() {
                 return Err(SpeechError::Download(format!(
@@ -317,6 +342,25 @@ mod tests {
         assert_eq!(def.family, ModelFamily::SileroVad);
         assert!(def.license.starts_with("MIT"));
         assert!(matches!(m.vad_model_path(), Err(SpeechError::ModelNotInstalled(_))));
+    }
+
+    #[test]
+    fn tts_voices_are_kept_out_of_the_speech_to_text_list() {
+        let m = ModelManager::new(std::env::temp_dir().join("speechlab_models_test")).unwrap();
+        let tts = m.tts_models();
+        assert!(tts.len() >= 3, "expected the M6 voices in the manifest");
+        assert!(tts.iter().all(|i| m.list().iter().all(|s| s.id != i.id)));
+        for d in m.defs.iter().filter(|d| d.role == ModelRole::Tts) {
+            assert!(matches!(d.family, ModelFamily::PiperVits | ModelFamily::Kokoro), "{}", d.id);
+            assert!(d.files.data_dir.is_some(), "{} needs the phonemizer data folder", d.id);
+            assert!(!d.license.trim().is_empty());
+        }
+    }
+
+    #[test]
+    fn lexicon_list_counts_as_required_files() {
+        let f = ModelFiles { lexicon: Some("a.txt,b.txt".into()), model: Some("m.onnx".into()), ..Default::default() };
+        assert_eq!(f.required(), vec!["m.onnx", "a.txt", "b.txt"]);
     }
 
     #[test]

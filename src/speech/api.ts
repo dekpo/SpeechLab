@@ -10,6 +10,9 @@ import type {
   DownloadProgress,
   ModelInfo,
   ProviderInfo,
+  SynthesizeRequest,
+  SynthesizeResult,
+  VoiceInfo,
   TextComparison,
   TranscribeRequest,
   TranscribeResult,
@@ -71,3 +74,26 @@ export const deleteSample = (sampleId: string): Promise<void> => invoke<void>("d
 
 export const readSampleAudio = (sampleId: string): Promise<ArrayBuffer> =>
   invoke<ArrayBuffer>("read_sample_audio", { sampleId });
+
+// ---------- Text-to-speech laboratory ----------
+
+export const listTtsProviders = (): Promise<ProviderInfo[]> => invoke<ProviderInfo[]>("list_tts_providers");
+
+/** Voice packages (installed or not). Installing one uses `installModel`. */
+export const listTtsModels = (): Promise<ModelInfo[]> => invoke<ModelInfo[]>("list_tts_models");
+
+export const listTtsVoices = (providerId: string): Promise<VoiceInfo[]> =>
+  invoke<VoiceInfo[]>("list_tts_voices", { providerId });
+
+/** Generates a WAV file. Never plays anything by itself. */
+export const synthesize = (request: SynthesizeRequest): Promise<SynthesizeResult> =>
+  invoke<SynthesizeResult>("synthesize", { request });
+
+export const cancelSynthesis = (): Promise<void> => invoke<void>("cancel_synthesis");
+
+/** WAV bytes of a generated file (for the player and the export). */
+export const readTtsAudio = (path: string): Promise<ArrayBuffer> =>
+  invoke<ArrayBuffer>("read_tts_audio", { path });
+
+/** Deletes the generated audio files; resolves with the number removed. */
+export const clearTtsAudio = (): Promise<number> => invoke<number>("clear_tts_audio");

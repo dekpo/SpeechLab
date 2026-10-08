@@ -2,28 +2,51 @@ use std::sync::Arc;
 
 use super::error::SpeechError;
 use super::models::ModelManager;
-use super::provider::SpeechToTextProvider;
+use super::provider::{SpeechToTextProvider, TextToSpeechProvider};
 use super::sherpa::SherpaOnnxProvider;
+use super::tts::SherpaTtsProvider;
 use super::types::ProviderInfo;
 use super::whisper_cpp::WhisperCppProvider;
 
 /// Holds every registered provider. Adding an engine = implementing the trait and registering it here.
 pub struct ProviderRegistry {
     stt: Vec<Box<dyn SpeechToTextProvider>>,
+    tts: Vec<Box<dyn TextToSpeechProvider>>,
 }
 
 impl ProviderRegistry {
     pub fn new(stt: Vec<Box<dyn SpeechToTextProvider>>) -> Self {
-        Self { stt }
+        Self { stt, tts: Vec::new() }
+    }
+
+    pub fn with_tts(mut self, tts: Vec<Box<dyn TextToSpeechProvider>>) -> Self {
+        self.tts = tts;
+        self
     }
 
     pub fn with_default_providers(models: Arc<ModelManager>) -> Self {
         // Real engines are registered here. The mock provider is intentionally NOT
         // registered: it exists for tests only.
+        // Generated speech goes next to the models folder, in `tts-output`.
+        let tts_dir = crate::speech::tts::output_dir(&models);
+        let tts = SherpaTtsProvider::new(Arc::clone(&models), tts_dir);
         Self::new(vec![
             Box::new(SherpaOnnxProvider::new(Arc::clone(&models))),
             Box::new(WhisperCppProvider::new(models)),
         ])
+        .with_tts(vec![Box::new(tts)])
+    }
+
+    pub fn list_tts(&self) -> Vec<ProviderInfo> {
+        self.tts.iter().map(|p| p.info()).collect()
+    }
+
+    pub fn tts(&self, id: &str) -> Result<&dyn TextToSpeechProvider, SpeechError> {
+        self.tts
+            .iter()
+            .find(|p| p.info().id == id)
+            .map(|p| p.as_ref())
+            .ok_or_else(|| SpeechError::UnknownProvider(id.to_string()))
     }
 
     pub fn list_stt(&self) -> Vec<ProviderInfo> {
@@ -75,6 +98,17 @@ mod tests {
         let ids: Vec<_> = list.iter().map(|p| p.id.as_str()).collect();
         assert_eq!(ids, vec!["sherpa-onnx", "whisper-cpp"]);
         assert!(list.iter().all(|p| !p.is_mock));
+    }
+
+    #[test]
+    fn default_registry_exposes_the_real_tts_provider() {
+        let models =
+            Arc::new(ModelManager::new(std::env::temp_dir().join("speechlab_reg")).unwrap());
+        let reg = ProviderRegistry::with_default_providers(models);
+        let ids: Vec<_> = reg.list_tts().into_iter().map(|p| p.id).collect();
+        assert_eq!(ids, vec!["sherpa-onnx-tts"]);
+        assert!(reg.tts("sherpa-onnx-tts").is_ok());
+        assert!(matches!(reg.tts("nope"), Err(SpeechError::UnknownProvider(_))));
     }
 
     #[test]

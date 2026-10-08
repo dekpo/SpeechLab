@@ -168,3 +168,41 @@ export interface DatasetStatus {
   samples: Sample[];
   issues: ValidationIssue[];
 }
+
+// ---------- Text-to-speech (M6) ----------
+
+export interface VoiceInfo {
+  id: string;
+  displayName: string;
+  language: string;
+  /** "female", "male" or "unknown": only what the voice's documentation states. */
+  gender: string;
+  license: string;
+  modelId: string;
+  speakerId: number;
+  speakerCount: number;
+}
+
+export interface SynthesizeRequest {
+  providerId: string;
+  voiceId: string;
+  language: string;
+  text: string;
+  /** 1.0 = normal speed. */
+  speed: number;
+}
+
+export interface SynthesizeResult {
+  providerId: string;
+  voiceId: string;
+  wavPath: string;
+  generationMs: number;
+  audioMs: number;
+  loadMs: number;
+  coldStart: boolean;
+  sampleRate: number;
+  rtf: number | null;
+  speed: number;
+  peakMemoryMb: number | null;
+  isMock: boolean;
+}

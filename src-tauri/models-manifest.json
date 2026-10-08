@@ -235,5 +235,128 @@
       "macos-x64"
     ],
     "expectedMemoryMb": null
+  },
+  {
+    "id": "tts-vits-piper-fr_FR-siwis-medium",
+    "displayName": "Piper fr_FR siwis (medium)",
+    "provider": "sherpa-onnx",
+    "family": "piper-vits",
+    "role": "tts",
+    "languages": [
+      "fr"
+    ],
+    "architecture": "VITS (Piper), medium quality, 1 speaker",
+    "quantization": "fp32",
+    "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-fr_FR-siwis-medium.tar.bz2",
+    "archiveBytes": 67207459,
+    "sha256": "375909aa30842b3a4efa10b1beb1d761af792960ae6873b4d53889f96c66195b",
+    "dirName": "vits-piper-fr_FR-siwis-medium",
+    "files": {
+      "model": "fr_FR-siwis-medium.onnx",
+      "tokens": "tokens.txt",
+      "dataDir": "espeak-ng-data"
+    },
+    "license": "CC-BY-4.0 (SIWIS dataset); phonemizer: espeak-ng (GPL-3.0), see D-012",
+    "sourceUrl": "https://huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/siwis/medium",
+    "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "tts-vits-piper-fr_FR-gilles-low",
+    "displayName": "Piper fr_FR gilles (low)",
+    "provider": "sherpa-onnx",
+    "family": "piper-vits",
+    "role": "tts",
+    "languages": [
+      "fr"
+    ],
+    "architecture": "VITS (Piper), low quality, 1 speaker",
+    "quantization": "fp32",
+    "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-fr_FR-gilles-low.tar.bz2",
+    "archiveBytes": 67094350,
+    "sha256": "9f4fdd2650f52638e5d890d330b4ee3a30fc6bb91d6ae6f37e639d0f474bc521",
+    "dirName": "vits-piper-fr_FR-gilles-low",
+    "files": {
+      "model": "fr_FR-gilles-low.onnx",
+      "tokens": "tokens.txt",
+      "dataDir": "espeak-ng-data"
+    },
+    "license": "CC0 (dataset); phonemizer: espeak-ng (GPL-3.0), see D-012",
+    "sourceUrl": "https://huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/gilles/low",
+    "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "tts-vits-piper-en_US-libritts_r-medium",
+    "displayName": "Piper en_US libritts_r (medium)",
+    "provider": "sherpa-onnx",
+    "family": "piper-vits",
+    "role": "tts",
+    "languages": [
+      "en"
+    ],
+    "architecture": "VITS (Piper), medium quality, 904 speakers",
+    "quantization": "fp32",
+    "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_US-libritts_r-medium.tar.bz2",
+    "archiveBytes": 82038311,
+    "sha256": "10dc268f3e371696d721486123e2705a9fc1faa113491979fde4d88dba1f1b1c",
+    "dirName": "vits-piper-en_US-libritts_r-medium",
+    "files": {
+      "model": "en_US-libritts_r-medium.onnx",
+      "tokens": "tokens.txt",
+      "dataDir": "espeak-ng-data"
+    },
+    "license": "CC-BY-4.0 (LibriTTS-R dataset); phonemizer: espeak-ng (GPL-3.0), see D-012",
+    "sourceUrl": "https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US/libritts_r/medium",
+    "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
+  },
+  {
+    "id": "tts-kokoro-int8-multi-lang-v1_0",
+    "displayName": "Kokoro multi-lang v1.0 (int8)",
+    "provider": "sherpa-onnx",
+    "family": "kokoro",
+    "role": "tts",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "architecture": "Kokoro-82M (StyleTTS2-based), 54 voices (one French)",
+    "quantization": "int8",
+    "archiveUrl": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-int8-multi-lang-v1_0.tar.bz2",
+    "archiveBytes": 132303094,
+    "sha256": "4c3052abaa60943a341f193888cf6abd68787dae6ab8ae5c925a706caa247e4e",
+    "dirName": "kokoro-int8-multi-lang-v1_0",
+    "files": {
+      "model": "model.int8.onnx",
+      "voices": "voices.bin",
+      "tokens": "tokens.txt",
+      "dataDir": "espeak-ng-data",
+      "lexicon": "lexicon-us-en.txt,lexicon-zh.txt"
+    },
+    "license": "Apache-2.0 (Kokoro-82M weights; licence of each voice and of the training data to verify); phonemizer: espeak-ng (GPL-3.0), see D-012",
+    "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "runtime": "sherpa-onnx TTS (ONNX Runtime, CPU)",
+    "platforms": [
+      "windows-x64",
+      "macos-arm64",
+      "macos-x64"
+    ],
+    "expectedMemoryMb": null
   }
 ]

@@ -108,6 +108,12 @@ bench import --wav clip.wav --id acc-01 --reference-file acc-01.txt --speaker sp
   go to `results/private/`. Those files contain the texts of the clips: never copy them into a document;
   report only counts and error rates and say "this speaker".
 
+## Text-to-speech material (M6)
+
+`tts/sentences-fr.txt`, `tts/sentences-en.txt` (taken from the public scripts above) feed `tts measure`;
+`tts/listening/*.txt` are the texts of the listening samples. Generated audio goes to `tts-samples/`
+(git-ignored, local listening only). `results/<stamp>-tts-m6/` holds timings only, no audio.
+
 ## Recording guidelines
 
 - One sentence per clip, natural pace, quiet room, same microphone distance.

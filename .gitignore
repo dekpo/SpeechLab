@@ -38,3 +38,6 @@ src-tauri/.cargo/
 /benchmark/audio/
 /benchmark/samples-private/
 /benchmark/results/private/
+
+# Generated speech for listening tests (local only)
+/benchmark/tts-samples/

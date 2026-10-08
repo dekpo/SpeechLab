@@ -126,6 +126,12 @@ impl SherpaOnnxProvider {
                     def.id
                 )))
             }
+            ModelFamily::PiperVits | ModelFamily::Kokoro => {
+                return Err(SpeechError::InvalidRequest(format!(
+                    "model {} is a text-to-speech voice, not a speech-to-text model",
+                    def.id
+                )))
+            }
         }
         Ok(config)
     }

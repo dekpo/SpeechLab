@@ -17,7 +17,8 @@ How to continue the project in a fresh chat tab without losing context:
 | `02-long-audio-vad-chunking.md` | done (kept for reference): cut long audio at silences (VAD) and compare with whole-clip decoding |
 | `03-drug-name-handling.md` | done (kept for reference): drug names and key terms (hotwords, prompts, dictionary correction) |
 | `04-private-accent-clips.md` | private accent clips; the import tool is built (D-037), the evaluation waits for the owner's clips, consent and typed references: resume at step 2 |
-| `05-tts-laboratory.md` | the next task that needs nothing from the owner: M6 text-to-speech laboratory |
+| `05-tts-laboratory.md` | done (kept for reference): M6 text-to-speech laboratory |
+| `06-packaging-validation.md` | the next task that needs nothing from the owner: M7 packaging validation (Windows build, macOS steps) |
 | `next-tasks.md` | accents, TTS, packaging, final report (the timing study T2, the re-run and the chunking T3 are done; T4 drug names is done; T5 import tool done) |
 
 Two sessions must never work on the same files at the same time, and never two benchmarks at once:

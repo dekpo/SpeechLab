@@ -1,0 +1,5 @@
+# Sentences for the TTS speed measurement (fr): taken from the public dataset scripts, in this order: short, medium, with numbers, 3-sentence paragraph
+Quel jour sommes-nous aujourd'hui ?
+La facture numéro 2045 est payable sous 30 jours.
+Le dossier est incomplet, il manque le justificatif de revenus.
+Compte rendu de la consultation du jeudi 12 mars. Le patient se présente pour un contrôle de sa tension artérielle. Il ne signale aucune douleur thoracique et n'a pas de fièvre.

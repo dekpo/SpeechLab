@@ -43,8 +43,8 @@ the chat, write files in English.
 | M5e long audio, chunking at silences (Silero VAD) | done: D-035; 828/828 short transcripts unchanged with chunking on; helps sherpa Whisper tiny (30 s limit), neutral for Parakeet and whisper.cpp, harmful for Canary (I-041); Whisper loops not fixed |
 | T4 drug names / key terms (D-036) | done: strict post-correction 0 broken words and fixes 2 of 6 drug names for the best engines; whisper.cpp prompt helps small/base but costs speed; Parakeet hotwords need a surrogate vocabulary and over-boost at score 3.0; all OFF by default; upper bound (vocabulary taken from the test sentences) |
 | T5 private accent clips (D-037) | PARTLY done: `bench import` (WAV + typed reference -> private sample, consent rule, rollback on failed validation) is built and tested on synthetic audio; NO clip has been imported and NO accent figure exists, the evaluation waits for the owner's clips, speaker descriptions, consent and typed references |
-| M6 TTS laboratory | not started (prompt `docs/prompts/05-tts-laboratory.md`; does not depend on T5) |
-| M7 Windows/macOS packaging validation | not started (no Mac available: macOS stays NOT VERIFIED, document the steps) |
+| M6 TTS laboratory (D-038) | built and measured 2026-10-08: provider, 4 voice packages (Piper siwis, gilles, libritts_r; Kokoro v1.0 int8), UI tab, `tts` CLI, run `20261008-085403-tts-m6`. Piper is 13 to 29 times faster than real time, Kokoro int8 is slower than real time (RTF 1.6 to 2.1). **Owner's listening notes are PENDING** (files in `benchmark/tts-samples/`); naturalness is not judged |
+| M7 Windows/macOS packaging validation | not started (prompt `docs/prompts/06-packaging-validation.md`; no Mac available: macOS stays NOT VERIFIED, document the steps) |
 | M8 final report, licensing table, recommendation | not started |
 
 Check `git log --oneline -5` and `git status` (read-only) to see what the owner has committed.
@@ -57,6 +57,7 @@ misspells drug names. Accuracy is load-independent (clean re-run identical to th
 Timing study: inside one run the same sample varies by 1 to 4 % (median) and never changes its transcript; between two runs the fast models differed by up to 20 %, so quote speed with a 10 to 20 % margin. Details and caveats: last M5c and M5d entries of `docs/PROJECT_LOG.md`, results in `benchmark/results/`.
 Long audio (M5e, 3 reference dictations + 2 private clips, little statistical power): only Parakeet and whisper.cpp had no failure; sherpa Whisper tiny cannot take more than 30 s and loops; Canary drops endings and degrades on 24 s pieces. Speed figures differ by 1 to 48 % between runs (I-042): compare inside one run only.
 Drug names (T4, D-036): every engine misspells them (best: 4 of 6 found). Strict dictionary post-correction fixed 2 more with no word broken; vocabulary biasing inside the engine is riskier (loose correction and high hotword score are regressions). One speaker, 6 drug occurrences, vocabulary taken from the test sentences: an upper bound.
+TTS (M6, D-038): Piper voices are interactive on this CPU (RTF 0.03 to 0.08, 210 to 260 MB), Kokoro int8 is not (RTF 1.6 to 2.1, 430 to 460 MB); speed control works on both but differently; any build that synthesises speech links the GPL espeak-ng phonemizer (I-051). Quality of the voices is the owner's to judge.
 Provisional shortlist: D-032 (not final).
 
 ## 4. Repository map
@@ -73,9 +74,11 @@ src/                         React UI (components, audio capture, engine-agnosti
 src-tauri/src/speech/        Rust: provider traits, sherpa.rs, whisper_cpp.rs, models.rs, download.rs, clips.rs,
                              dataset.rs, metrics.rs, numbers.rs, critical.rs, probe.rs, benchmark.rs,
                              chunking.rs + vad.rs (long audio cut at silences),
-                             postcorrect.rs (dictionary correction, OFF), termstudy.rs (key-term study)
+                             postcorrect.rs (dictionary correction, OFF), termstudy.rs (key-term study),
+                             tts.rs (sherpa-onnx text-to-speech provider, voices from the manifest)
 src-tauri/examples/          CLI tools: transcribe.rs (one file), bench.rs (benchmark; `bench import` adds private clips), hotwords_probe.rs (T4 experiment)
 benchmark/vocab/             fr.txt, en.txt: vocabulary files for the drug-name study (committed)
+benchmark/tts/               sentences for the TTS measurement and listening texts (committed); benchmark/tts-samples/ = generated listening files (git-ignored)
 src-tauri/models-manifest.json   model inventory (data, no code change to add a model)
 scripts/                     PowerShell/Python helpers (env check, library/CLI builds, comparison, bootstrap CI)
 vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's private audio)
@@ -101,7 +104,7 @@ vendor/, wav/, models, target/   git-ignored (downloads, builds, the owner's pri
 ```bash
 pnpm install
 pnpm typecheck && pnpm test && pnpm build          # frontend checks
-cd src-tauri && cargo test --lib                    # Rust unit tests (123)
+cd src-tauri && cargo test --lib                    # Rust unit tests (132; one uses the real Piper voice if installed)
 pnpm tauri dev                                      # the app (port 1430)
 powershell -ExecutionPolicy Bypass -File scripts/check-env.ps1     # machine and tool check
 
@@ -128,6 +131,13 @@ python ../scripts/bootstrap_ci.py ../benchmark/results/<run> [--exclude en-it-05
 python ../scripts/compare_runs.py ../benchmark/results/<old> ../benchmark/results/<new>
 python ../scripts/timing_study.py ../benchmark/results/<run with --reps 3>
 python ../scripts/chunking_study.py runs|same|clips ...      # whole versus chunked, identity check, private clips (counts only)
+
+cargo build --release --example tts
+./target/release/examples/tts.exe voices                                  # installed voices (id = <package>:<speaker>)
+./target/release/examples/tts.exe say <voice-id> <fr|en> "<text>"|@file.txt [--speed 1.0] [--repeat N] [--out-dir DIR]
+./target/release/examples/tts.exe measure --sentences ../benchmark/tts/sentences-fr.txt --lang fr --voices a,b --reps 3 --out-dir ../benchmark/results/<run> --label x
+python ../scripts/tts_summary.py ../benchmark/results/<run>    # table from the jsonl files
+python -I -X utf8 ../scripts/tts_roundtrip.py ../benchmark/tts-samples <stt model id>   # machine intelligibility check (not naturalness)
 ```
 
 ## 7. Backlog (priority order; ready-made prompts in `docs/prompts/`)
@@ -141,8 +151,8 @@ python ../scripts/chunking_study.py runs|same|clips ...      # whole versus chun
 | 5 | ~~Drug-name handling~~ DONE 2026-10-08 (D-036, I-043, I-044, I-045; open: real SentencePiece vocabulary, free-text false-correction rate, owner's choice of technique) | | `docs/prompts/03-drug-name-handling.md` (kept for reference) |
 | 6 | **Waiting for the owner:** private accent clips (Swiss-Romande, Maghreb). Import tool DONE (D-037); remaining: the owner's clips, speaker descriptions, consent and typed references, then the runs and aggregate-only report (resume at step 2 of the prompt) | accents are in the plan | `docs/prompts/04-private-accent-clips.md` |
 | 7 | Detector false alarms for times ("10.30", "9h00"), sherpa-onnx thread usage | I-034, I-036 | small fixes |
-| 8 | **Next without waiting:** M6 TTS laboratory | plan section 5C | `docs/prompts/05-tts-laboratory.md` (next-tasks.md T6) |
-| 9 | M7 packaging validation | plan section 9 | next-tasks.md T7 |
+| 8 | ~~M6 TTS laboratory~~ BUILT AND MEASURED 2026-10-08 (D-038, I-048 to I-051); open: owner's listening notes, licences of undecided voices, French male voice, Kokoro speed options | | `docs/prompts/05-tts-laboratory.md` (kept for reference) |
+| 9 | **Next without waiting:** M7 packaging validation | plan section 9 | `docs/prompts/06-packaging-validation.md` (next-tasks.md T7) |
 | 10 | M8 final report and licensing table | main deliverable | next-tasks.md T8 |
 
 ## 8. Session protocol

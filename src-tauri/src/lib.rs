@@ -48,6 +48,13 @@ pub fn run() {
             commands::create_sample,
             commands::delete_sample,
             commands::read_sample_audio,
+            commands::list_tts_providers,
+            commands::list_tts_models,
+            commands::list_tts_voices,
+            commands::synthesize,
+            commands::cancel_synthesis,
+            commands::read_tts_audio,
+            commands::clear_tts_audio,
         ])
         .run(tauri::generate_context!())
         .expect("error while running the SpeechLab application");

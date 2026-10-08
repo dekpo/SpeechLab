@@ -43,6 +43,10 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-045 | Open | scoring / safety | Dictionary post-correction can silently replace a correct rare word; false-correction rate on free text unknown (measured only on 95 sentences) |
 | I-046 | Open | dataset import | `bench import` resamples non-16 kHz clips by linear interpolation, never compared with a better resampler; only PCM WAV input is accepted (m4a/mp3/Ogg must be converted first) |
 | I-047 | Open | privacy | Private runs: `summary.md` prints the reference and best output of the hardest samples and `runs.jsonl` holds every text; the folder is git-ignored but nothing from it may be quoted in a document |
+| I-048 | Open | TTS performance | Kokoro int8 is slower than real time on this CPU (RTF 1.55 to 2.06); Piper is 13 to 29 times faster than real time |
+| I-049 | Open | TTS voices | Voice metadata is thin: Piper speaker gender undocumented, 904-speaker package listed 12 at a time, no commercially usable French male voice identified yet |
+| I-050 | Open | TTS engine | Kokoro French logs unknown-phoneme (hyphen) messages; cause and audible effect not isolated |
+| I-051 | Open | licensing | Any build that synthesises speech links the full sherpa-onnx libraries, which contain the GPL-3.0 phonemizer (extends I-003, I-010, D-012) |
 | I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
@@ -258,3 +262,18 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 - Risk: copying a figure table is fine; copying that section or any line of `runs.jsonl` into a document, a chat or a commit would leak a third party's words. Also, `bench run --include-private` without `--category` mixes private and public samples in one folder.
 - Workaround: always pass `--category <private category>`; report counts and WER only. Possible fix (not done): omit the texts of private samples from `summary.md`, which needs a `private` flag on the run record.
 - Status: open.
+
+### I-048 — Kokoro int8 is slower than real time on this CPU
+- Measured (M6, run `20261008-085403-tts-m6`): RTF 1.55 to 2.06 for French and English voices (3.4 s to generate 1.6 s of speech, 18.3 s for 10.4 s), 4 threads, int8 weights, background load 17 to 33 %. An earlier unmeasured smoke test gave 1.1 to 1.2 (between-run offset, see I-042). Piper is 13 to 29 times faster than real time on the same machine.
+- Impact: Kokoro cannot be used for interactive replies on this class of CPU without a wait; fine for offline generation.
+- Status: open. To try: fp32 weights, other thread counts, a shorter text split with playback starting on the first chunk (streaming), a smaller model.
+
+### I-049 — Voice metadata is thin
+- Piper cards do not document the speakers' gender (shown as "unknown", never guessed); `libritts_r` has 904 speakers and the app lists only the first 12 (any number can be used through the voice id); the Kokoro voice table gives gender but only one French voice exists.
+- Status: open (information). A French male voice of acceptable quality and commercial licence is still not identified (the question of M0 section 5); candidates not examined: `fr_FR-upmc` (CC-BY-SA, 2 speakers), the voices with unknown licence.
+
+### I-050 — Kokoro French logs "Skip unknown phonemes" for a hyphen
+- The library printed `Skip unknown phonemes. Unicode codepoint: U+002D` while synthesising a French sentence that contains no hyphen. Cause not isolated (probably a phoneme produced by the phonemizer); audible effect not judged. Open until the owner has listened to the Kokoro French samples.
+
+### I-051 — TTS needs the libraries that contain the GPL phonemizer
+- Any application build that synthesises speech must link the full sherpa-onnx libraries (espeak-ng, GPL-3.0). The "no-tts" libraries avoid it but cannot synthesise. Extends I-003, I-010 and D-012. Status: open, owner/legal decision before any distribution of TTS (M8).

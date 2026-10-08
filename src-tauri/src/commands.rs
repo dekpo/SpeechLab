@@ -10,7 +10,10 @@ use crate::speech::metrics::{compare_texts as compare, TextComparison};
 use crate::speech::models::ModelManager;
 use crate::speech::provider::CancelToken;
 use crate::speech::registry::ProviderRegistry;
-use crate::speech::types::{ModelInfo, ProviderInfo, TranscribeRequest, TranscribeResult};
+use crate::speech::tts;
+use crate::speech::types::{
+    ModelInfo, ProviderInfo, SynthesizeRequest, SynthesizeResult, TranscribeRequest, TranscribeResult, VoiceInfo,
+};
 
 pub struct AppState {
     registry: Arc<ProviderRegistry>,
@@ -18,6 +21,7 @@ pub struct AppState {
     clips: ClipStore,
     cancel: CancelToken,
     download_cancel: CancelToken,
+    tts_cancel: CancelToken,
 }
 
 impl AppState {
@@ -28,6 +32,7 @@ impl AppState {
             clips,
             cancel: CancelToken::new(),
             download_cancel: CancelToken::new(),
+            tts_cancel: CancelToken::new(),
         }
     }
 }
@@ -203,4 +208,61 @@ pub fn read_sample_audio(sample_id: String) -> Result<tauri::ipc::Response, Stri
     std::fs::read(path)
         .map(tauri::ipc::Response::new)
         .map_err(|e| e.to_string())
+}
+
+// ---------- Text-to-speech laboratory (M6) ----------
+
+#[tauri::command]
+pub fn list_tts_providers(state: State<'_, AppState>) -> Vec<ProviderInfo> {
+    state.registry.list_tts()
+}
+
+/// Voice packages (installed or not), kept apart from the speech-to-text models.
+#[tauri::command]
+pub fn list_tts_models(state: State<'_, AppState>) -> Vec<ModelInfo> {
+    state.models.tts_models()
+}
+
+#[tauri::command]
+pub fn list_tts_voices(state: State<'_, AppState>, provider_id: String) -> Result<Vec<VoiceInfo>, String> {
+    state
+        .registry
+        .tts(&provider_id)
+        .and_then(|p| p.voices())
+        .map_err(|e| e.to_string())
+}
+
+/// Generates a WAV file; it never plays anything. Runs on a blocking worker.
+#[tauri::command]
+pub async fn synthesize(state: State<'_, AppState>, request: SynthesizeRequest) -> Result<SynthesizeResult, String> {
+    let registry = Arc::clone(&state.registry);
+    let cancel = state.tts_cancel.clone();
+    cancel.reset();
+    tauri::async_runtime::spawn_blocking(move || {
+        registry
+            .tts(&request.provider_id)
+            .and_then(|p| p.synthesize(&request, &cancel))
+            .map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| format!("worker failed: {e}"))?
+}
+
+#[tauri::command]
+pub fn cancel_synthesis(state: State<'_, AppState>) {
+    state.tts_cancel.cancel();
+}
+
+/// WAV bytes of a generated file, for playback and export (only files of the TTS output folder).
+#[tauri::command]
+pub fn read_tts_audio(state: State<'_, AppState>, path: String) -> Result<tauri::ipc::Response, String> {
+    tts::read_generated(&tts::output_dir(&state.models), &path)
+        .map(tauri::ipc::Response::new)
+        .map_err(|e| e.to_string())
+}
+
+/// Deletes the generated audio files; returns how many were removed.
+#[tauri::command]
+pub fn clear_tts_audio(state: State<'_, AppState>) -> usize {
+    tts::clear_generated(&tts::output_dir(&state.models))
 }

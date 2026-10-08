@@ -1,0 +1,5 @@
+# Sentences for the TTS speed measurement (en): taken from the public dataset scripts, in this order: short, medium, with numbers, 3-sentence paragraph
+Open port 443 on the firewall.
+Can you open the file for Mrs Johnson?
+The prescription says 500 mg twice a day for 7 days.
+Meeting notes for Thursday. The team reviewed the PostgreSQL migration. The API is stable, but the restore procedure has not been tested.
