@@ -110,8 +110,7 @@ Everything so far was run from `pnpm tauri dev` and from `cargo` examples. Nothi
     git commands for the owner to run (never run them yourself; check `git status` first so no path is
     forgotten; one English sentence per commit message, imperative, about 72 characters, no trailer), and
     prepare the prompt file for the following step: M8, the final report and licensing table
-    (`docs/prompts/07-final-report.md`, from `next-tasks.md` T8), unless the owner has provided the accent
-    clips by then (then `04-private-accent-clips.md` comes first).
+    (`docs/prompts/07-final-report.md`, from `next-tasks.md` T8).
 
 ## Reminders
 - Honest reporting: say what is verified and what is not. No invented numbers.

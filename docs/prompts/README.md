@@ -16,12 +16,11 @@ How to continue the project in a fresh chat tab without losing context:
 | `01-clean-benchmark-rerun.md` | done (kept for reference): re-run the full benchmark on a quiet machine |
 | `02-long-audio-vad-chunking.md` | done (kept for reference): cut long audio at silences (VAD) and compare with whole-clip decoding |
 | `03-drug-name-handling.md` | done (kept for reference): drug names and key terms (hotwords, prompts, dictionary correction) |
-| `04-private-accent-clips.md` | private accent clips; the import tool is built (D-037), the evaluation waits for the owner's clips, consent and typed references: resume at step 2 |
 | `05-tts-laboratory.md` | done (kept for reference): M6 text-to-speech laboratory |
 | `06b-tts-readalong-and-normaliser.md` | done (kept for reference): sentence highlight with auto-scroll, digits-to-words normaliser, `kristin` measurement and listening, search for a better free French voice (D-040, D-041, D-042) |
 | `06-packaging-validation.md` | done (kept for reference): M7 Windows packaging validation (D-044, D-045); the macOS steps are in `docs/MACOS_VALIDATION.md`, NOT VERIFIED |
-| `07-final-report.md` | the next task: M8 final report, licensing table and recommendation (`docs/SPEECH_ENGINE_EVALUATION.md`); the accent clips come first (`04-...`) if the owner has them |
-| `next-tasks.md` | accents, TTS, packaging, final report (the timing study T2, the re-run and the chunking T3 are done; T4 drug names is done; T5 import tool done) |
+| `07-final-report.md` | the next task: M8 final report, licensing table and recommendation (`docs/SPEECH_ENGINE_EVALUATION.md`) |
+| `next-tasks.md` | TTS, packaging, final report (the timing study T2, the re-run and the chunking T3 are done; T4 drug names is done; the accent task T5 was dropped by the owner, D-046) |
 
 Two sessions must never work on the same files at the same time, and never two benchmarks at once:
 tell each session which branch you are on, and finish or commit one task before starting the next.

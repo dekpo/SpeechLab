@@ -86,7 +86,7 @@ Values: language `fr|en`; domain `general|medical|administrative|legal|it`; utte
   local (`samples-private/`).
 - No real patient data, ever.
 
-## Importing an existing recording (private clips, accents)
+## Importing an existing recording (private clips)
 
 `bench import` adds an audio file you already have, with the reference text you typed yourself:
 

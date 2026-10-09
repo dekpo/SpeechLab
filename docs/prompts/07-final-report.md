@@ -2,9 +2,9 @@
 
 Paste everything below the line into a new chat session. Prerequisites: the M7 work (packaging validation,
 `docs/MACOS_VALIDATION.md`, decisions from D-044 on) is committed and no benchmark is running. This task is
-writing and cross-checking, not measuring: it needs no new recording, no new model and no listening. If the
-owner has provided the accent clips by then, run `04-private-accent-clips.md` first and cite its aggregate
-numbers; otherwise the report states that no accent figure exists.
+writing and cross-checking, not measuring: it needs no new recording, no new model and no listening. The accent
+evaluation was dropped by the owner (D-046): the report states that no accent figure exists and that accents
+are out of scope.
 
 ---
 
@@ -36,7 +36,7 @@ evidence:
    of the timing study. State the single-speaker limit.
 3. **French accuracy, English accuracy** — WER, CER, critical errors, bootstrap intervals
    (`scripts/bootstrap_ci.py`), with the confidence caveats. Accents: say plainly that no accent figure exists
-   unless clips were imported.
+   and that the owner dropped that evaluation (D-046).
 4. **Specialised vocabulary** — drug names, key terms, what helped and what regressed (D-036).
 5. **TTS assessment** — voices, languages, speed control, latency (real-time factor), the owner's listening
    results (as the owner's judgement, quoted from `docs/TTS_LISTENING_NOTES.md`), the read-along and the
@@ -54,7 +54,7 @@ evidence:
 10. **Architecture recommendation** — one of the options of Plan.md section 12, or a combination, justified by
     the evidence. **Do not force a winner when the evidence is inconclusive**: say so and list what would settle it.
 11. **Integration roadmap** — a sequence of steps for AssistantCabinetAI, each with its precondition (licence
-    decision, French voice re-training, signing certificate, macOS validation, accent evaluation, larger
+    decision, French voice re-training, signing certificate, macOS validation, larger
     speaker panel).
 12. **Appendix: claims table** — every claim in the report marked VERIFIED (with run folder or log entry) or
     NOT VERIFIED (with the exact steps), as `AGENTS.md` section 3 requires.
@@ -85,7 +85,7 @@ lists no installer, no `target/` output, no `src-tauri/binaries/`, no model or a
 What was done, verified, not verified, limits, the recommendation in five lines, the exact git commands for the
 owner to run (never run them yourself; check `git status` first so no path is forgotten; one English sentence
 per commit message, imperative, about 72 characters, no trailer), and the proposed next step after the report
-(re-training the French voices, the accent clips, a Mac for `docs/MACOS_VALIDATION.md`, code signing).
+(re-training the French voices, a Mac for `docs/MACOS_VALIDATION.md`, code signing).
 
 ## Reminders
 - Honest reporting: say what is verified and what is not. No invented numbers.

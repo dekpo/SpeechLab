@@ -3,9 +3,7 @@
 STATUS (2026-10-08): DONE except the owner's listening notes (D-038, project log entry "M6"). Kept for
 reference; to record the notes, open a short session with the log entry as context.
 
-Paste everything below the line into a new chat session. Prerequisites: the T5 import-tool work
-(D-037) is committed, and no benchmark is running. This task does NOT need the owner's accent clips
-(backlog item 6 stays open and can be done before or after). It needs the owner's approval before any
+Paste everything below the line into a new chat session. Prerequisites: no benchmark is running. It needs the owner's approval before any
 model download, and the owner's ears for the quality judgement.
 
 ---
@@ -90,8 +88,7 @@ opinion, record it as the owner's listening note, never as a measurement.
     git commands for the owner to run (never run them yourself; check `git status` first so no path is
     forgotten; one English sentence per commit message, imperative, about 72 characters, no trailer),
     and prepare the prompt file for the following step from the backlog in `docs/HANDOFF.md`
-    (`docs/prompts/06-...`: M7 Windows/macOS packaging validation, or the private accent clips if the
-    owner has provided them by then).
+    (`docs/prompts/06-...`: M7 Windows/macOS packaging validation).
 
 ## Reminders
 - Honest reporting: say what is verified and what is not. No invented numbers. Naturalness is opinion.

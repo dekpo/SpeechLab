@@ -59,19 +59,6 @@ taken from the dataset's key terms; do not import real clinical content or give 
 Measure WER, critical flags and false corrections (a correct word changed into a wrong one). The
 dictionary approach must be reported with its risk of silently correcting a real mistake.
 
-## T5 — Private accent clips (Swiss-Romande, Maghreb accent)
-
-Goal: add long clips from other speakers as PRIVATE samples and evaluate them honestly.
-Rules: these are voices of third parties; they stay in `benchmark/audio/` and
-`benchmark/samples-private/` (git-ignored), results go to `benchmark/results/private/`, and only
-aggregate numbers (never content, names or addresses) may be written in documents. Ask the owner
-for each clip: who the speaker is in general terms (for example "female, Swiss-Romande"), whether
-the speaker consented, and the source/licence of downloaded material (URL required; without a clear
-licence it stays private). The owner supplies the reference text of each clip (verbatim, typed by
-the owner). Long clips need the chunking of T3 first, or must be cut by the owner into sentences.
-Extend `bench` or add an import command so a sample can be created from an existing WAV and a
-reference text without code changes. One speaker never represents an accent: write "this speaker".
-
 ## T6 — M6: text-to-speech laboratory (plan section 5C)
 
 Goal: evaluate sherpa-onnx TTS for French and English: voice list with metadata (language, gender

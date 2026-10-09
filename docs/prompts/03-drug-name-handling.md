@@ -67,7 +67,7 @@ speaker and CPU only.
 9. **Final message to the owner, in French**: what was done, verified, not verified, limits, the
    exact git commands for the owner to run (never run them yourself; check `git status` first so
    no path is forgotten), and prepare the prompt file for the following step from the backlog in
-   `docs/HANDOFF.md` (private accent clips, T5).
+   `docs/HANDOFF.md`.
 
 ## Reminders
 - Honest reporting: say what is verified and what is not. No invented numbers.

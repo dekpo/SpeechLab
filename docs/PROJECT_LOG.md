@@ -889,3 +889,8 @@ Owner's instruction (after M6 was committed): the voices must be judged first by
 - Owner: remove the firewall rule (`scripts\offline_proof_remove.cmd`), decide on the proposals left open (I-065 fix, I-067 credits view and installer licence page, static whisper.cpp rebuild I-070, the web view's background connection I-066), and run the git commands. Then M8, the final report (`docs/prompts/07-final-report.md`).
 
 **Identity check (end of entry)**: the repository was searched for AI and vendor names; only pre-existing mentions of upstream weights and the Opus codec appear; nothing added by this step. No private content written; `git status` lists no installer, no `target/` output, no `src-tauri/binaries/` file and no model.
+
+### 2026-10-09 — Accent evaluation dropped (owner's decision, D-046)
+- The owner has no accent clips and asked to forget the idea. Removed from the active documents: `docs/prompts/04-private-accent-clips.md` (deleted), task T5 of `docs/prompts/next-tasks.md`, the T5 and backlog rows of `docs/HANDOFF.md`, the status lines and the import example of `README.md`, and the accent chaining in the prompts 03, 05, 06, 06b, 07 and the prompts index. The M8 prompt now says the report states that no accent figure exists and that accents are out of scope.
+- Kept on purpose: this journal and the earlier entries (append-only), and the generic `bench import` command with its tests (D-037 marked as unused). No code was changed, nothing was rebuilt.
+- Not edited: `Plan.md` (the owner's mission text still lists accents as a question); the M8 report will report it as unanswered.

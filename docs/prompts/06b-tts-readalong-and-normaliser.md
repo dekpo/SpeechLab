@@ -32,7 +32,6 @@ English. Work autonomously, but follow the project rules to the letter.
   rated `clear` or `attribution`; never ship or recommend `review` or `excluded` voices (Piper siwis,
   Kokoro, Piper gilles stay installed as quality references). No legal consultation for now.
 - **Kokoro** is deprioritised (hiss heard on every Kokoro voice, slower than real time, rated `review`).
-- The accent clips were not found: do not work on T5.
 
 ## Context
 The TTS tab (`src/components/TtsPanel.tsx`) generates one WAV per request and plays it in a separate player
