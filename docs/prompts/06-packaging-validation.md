@@ -1,5 +1,10 @@
 # Prompt 06 — M7: packaging validation (Windows build, macOS steps)
 
+STATUS (2026-10-08): DONE for Windows (project log entry "M7", D-044, D-045, I-064 to I-070); macOS only as a
+checklist (`docs/MACOS_VALIDATION.md`, NOT VERIFIED). Open from this task: the cancelled-transcription banner
+(I-065), a credits view and installer licence page (I-067), a static whisper.cpp rebuild (I-070), the web view's
+background connection (I-066), the interactive uninstaller and a clean-machine test. Kept for reference.
+
 Paste everything below the line into a new chat session. Prerequisites: the M6 and M6d work (D-038 to
 D-042) is committed and no benchmark is running. This task needs no clip and no listening. It builds an installer
 on this machine (long compile, large output in `target/`, git-ignored): ask the owner before running

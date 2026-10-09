@@ -18,7 +18,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M6 text-to-speech laboratory (D-038): a TTS tab (language, voice, speed, generate, then play/stop/save WAV; nothing plays automatically) over sherpa-onnx with Piper and Kokoro voices installed from the app, plus the `tts` command line tool. Every voice is rated for commercial use (`docs/TTS_LICENSES.md`, D-039); Piper and Coqui voices run 16 to 29 times faster than real time on this CPU, Kokoro int8 slower than real time; naturalness awaits the owner's listening notes (`python -I -X utf8 scripts/tts_listening.py` builds the listening page). The phonemizer inside these voices is espeak-ng (GPL-3.0), a licensing point for any product use.
 - M6c: the owner's blind listening is recorded in `docs/TTS_LISTENING_NOTES.md`; decisions D-040 (sentence highlight with auto-scroll) and D-041 (beta only with freely usable voices) taken; the accent evaluation is deferred (no clips).
 - M6d (D-042): the TTS tab splits the text into sentences, synthesises them one by one into a single WAV with measured sentence times, and after Generate shows the text with the sentence being read shaded in grey (light and dark, automatic scrolling, "Follow reading", nothing plays by itself); a text normaliser (numbers, dates, times, units, abbreviations, French and English) makes the character-based French voice speak digits and can be switched per voice, with a preview of the text sent to the voice; Piper `kristin` measured; Piper `mls` French voice converted locally (`scripts/convert_piper_voice.py`); Chatterbox and Qwen3-TTS read and not retained. Blind listening session 2: `python -I -X utf8 scripts/tts_listening.py --session 2`.
-- Next: the owner's listening session 2, then M7 packaging; owner checks one suspect sample (I-033).
+- M7 Windows packaging (D-044, D-045): per-user NSIS installer (8.45 MiB) with `whisper-cli.exe` as a sidecar plus its four libraries, no model bundled, strict Content Security Policy; installed and tested on this machine (window, model lists, speech-to-text with both engines, speech synthesis, cancel, microphone in the release origin, first start without models, offline proof for the application's own processes). Unsigned; clean-machine behaviour, SmartScreen and macOS are NOT VERIFIED (`docs/MACOS_VALIDATION.md`, issues I-064 to I-070).
+- Next: M8, the final report and licensing table (`docs/prompts/07-final-report.md`); owner checks one suspect sample (I-033).
 
 ## Read first
 
@@ -31,6 +32,7 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 | [docs/ISSUES.md](docs/ISSUES.md) | Open and resolved problems |
 | [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md) | Branches, commits, push commands |
 | [docs/HANDOFF.md](docs/HANDOFF.md) | State of the project, traps, commands and backlog for any new session |
+| [docs/MACOS_VALIDATION.md](docs/MACOS_VALIDATION.md) | macOS checklist (everything NOT VERIFIED: no Mac available) |
 | [docs/prompts/](docs/prompts/README.md) | Ready-made prompts to continue in a new chat session |
 | [docs/M0_FEASIBILITY.md](docs/M0_FEASIBILITY.md) | Feasibility and dependency validation |
 
@@ -58,7 +60,24 @@ To use the whisper.cpp engine, build its CLI once (clones the official repositor
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\build-whisper-cpp.ps1
+powershell -ExecutionPolicy Bypass -File scripts\stage-whisper-sidecar.ps1   # required for every cargo build, test and tauri dev/build (I-064)
 ```
+
+The second command copies `whisper-cli.exe` and its four libraries into the git-ignored `src-tauri/binaries/`, where the Tauri bundler expects the sidecar (D-044). Without it the Rust build of the app stops with "resource path ... doesn't exist".
+
+## Build and install the Windows package
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\fetch-sherpa-libs.ps1    # once, only if the crate download fails (antivirus)
+powershell -ExecutionPolicy Bypass -File scripts\build-whisper-cpp.ps1    # once
+powershell -ExecutionPolicy Bypass -File scripts\stage-whisper-sidecar.ps1
+pnpm install
+pnpm tauri build                                                          # 2 to 3 minutes once the dependencies are compiled
+```
+
+The installer is `src-tauri\target\release\bundle\nsis\SpeechLab_0.1.0_x64-setup.exe` (about 8.5 MiB, git-ignored, unsigned). It installs per user, with no administrator rights (VERIFIED with a silent install to a chosen folder; the default folder, expected to be under `%LOCALAPPDATA%`, was not observed), plus a Desktop and a Start Menu shortcut. **It carries no model**: the first start shows every model as "not installed" with an Install button; models, recordings and generated speech stay in `%APPDATA%\ai.assistantcabinet.speechlab` and survive an uninstall. A silent install to a chosen folder, for tests: `SpeechLab_0.1.0_x64-setup.exe /S /D=<folder>` (the folder must be the last argument).
+
+Tests of the installed app (start it with `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222` and `SPEECHLAB_CDP_MATCH=tauri.localhost`, then `node scripts/ui_test_packaged.mjs --install-dir <folder>` or `node scripts/ui_test_readalong.mjs`). Start it with `SPEECHLAB_MODELS_DIR=<empty folder>` and add `--empty` to test the first start. macOS: `docs/MACOS_VALIDATION.md` (not verified).
 
 ## Models and test audio
 

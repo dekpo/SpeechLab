@@ -85,7 +85,7 @@ large downloads. Do not auto-play audio. Naturalness is subjective: ask the owne
 notes and record them as opinion, not measurement. TTS output can also become synthetic,
 licence-clean test audio for the STT benchmark (record its provenance).
 
-## T7 — M7: packaging validation
+## T7 — M7: packaging validation (DONE 2026-10-08 for Windows, see D-044, D-045 and the project log; macOS NOT VERIFIED)
 
 Goal: build and run a packaged Windows app (`pnpm tauri build`): where native libraries and
 `whisper-cli` go (sidecar), model folder handling, startup time, microphone permission in the

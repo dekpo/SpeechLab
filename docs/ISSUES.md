@@ -59,9 +59,16 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-061 | Open | TTS normaliser | Known limits: acronyms, gender of "un", Roman numerals, ambiguous "10.30" and "5 100", English untested by ear |
 | I-063 | Open, accepted for now (owner, D-043) | TTS licensing and quality | French: the voices judged good (siwis, gilles) have restricted parent checkpoints, every clean French voice is judged unsatisfactory; the owner keeps siwis and gilles for now and will re-train them from the clean base before any commercial release (BLOCKER for commercialisation) |
 | I-062 | Open | TTS read-along | Sentence segmentation is a heuristic (line breaks inside a wrapped paragraph split it, short abbreviation list) |
+| I-064 | Open (workaround) | packaging | `cargo build/test/run` of the app package fails without the staged sidecar files (`scripts/stage-whisper-sidecar.ps1`) |
+| I-065 | Open | UI | A cancelled transcription shows "operation cancelled" in the red error banner (the TTS panel ignores it); fix proposed, not approved |
+| I-066 | Open | privacy | The WebView2 runtime keeps one HTTPS connection to a Microsoft address while the app runs, even with the app's own processes blocked; purpose NOT VERIFIED |
+| I-067 | Open | licensing / UI | No credits view in the app and no licence page in the installer (CC BY 4.0, BSD-3-Clause, GPL-3.0 notices) |
+| I-068 | Open | packaging | Unsigned installer and executables: nothing blocked here; SmartScreen and code-signing requirements NOT VERIFIED |
+| I-069 | Open | packaging | Installer side effects: Desktop and Start Menu shortcuts, a registry key left after a silent uninstall; interactive uninstaller NOT tested |
+| I-070 | Open | packaging | The whisper.cpp sidecar imports the Visual C++ runtime (MSVCP140, VCRUNTIME140, VCOMP140), which the installer does not carry; clean-machine behaviour NOT VERIFIED; static rebuild proposed |
 | I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
-| I-024 | Open | audio input | Microphone: WebView2 permission prompt on first use; persistence across restarts, release-build origin and macOS behaviour unverified |
+| I-024 | Closed for Windows (M7), macOS open | audio input | Microphone: WebView2 permission prompt on first use; release origin and persistence after a restart VERIFIED on Windows (M7); macOS behaviour NOT VERIFIED |
 | I-025 | Open | audio input | Recordings are about 1.5 % (~0.1 s on 6 s) shorter than the time held; cause not isolated |
 | I-026 | Open | audio input | Non-WAV import relies on the platform WebView decoders (Ogg/Opus on macOS unverified) |
 | I-027 | Resolved | privacy | Saved clips became invisible and undeletable after a UI reload (fixed: clips are listed from disk) |
@@ -106,6 +113,7 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-010 — espeak-ng in the STT binary
 - See D-012. Needs legal review; mitigation path = no-tts libs for STT-only builds.
+- M7 note: the packaged `speechlab.exe` (31.4 MB) links the full static sherpa-onnx libraries, so the NSIS installer of this build contains the GPL-3.0 phonemizer code; nothing in the installer states it yet (I-067). Not decided here (D-044).
 
 ### I-011 — No mid-run cancellation for sherpa-onnx
 - Options for later: run inference in a child process and kill it, or accept "cancel = ignore result". Decide in M4 when recordings get long.
@@ -162,6 +170,7 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-024 — Microphone permission
 - Observed: the first `getUserMedia` shows a native WebView2 prompt (Block / Allow). In my tests the permission was pre-granted through the debugging protocol. To check manually: restart the app and see whether it asks again; test the `pnpm tauri build` output (origin `http://tauri.localhost`); if capture is silent or blocked, check Windows Settings, Privacy, Microphone ("let desktop apps access your microphone").
+- **Update M7 (2026-10-08), Windows, installed release build, VERIFIED**: in the release origin `http://tauri.localhost` the permission state starts at `prompt`; the first `getUserMedia` opens the native dialog ("http://tauri.localhost souhaite / Utiliser vos microphones / Bloquer / Autoriser", a separate `edge://permission-request-dialog/` page); after "Autoriser" the capture works (3 s clip, 16 kHz mono 16-bit, stored; with the strict CSP too) and after quitting and restarting the app the state is still `granted` (no new dialog). The "Allow" click was made through the debugging protocol on the dialog's own button, so a real hand on a real mouse was not involved: the owner can repeat it once (reset: the choice is stored in the web view profile `%LOCALAPPDATA%\ai.assistantcabinet.speechlab\EBWebView`). The decision is per origin: the development origin `localhost:1430` has its own. Status: closed for Windows; macOS (WKWebView, `NSMicrophoneUsageDescription`) stays NOT VERIFIED, see `docs/MACOS_VALIDATION.md` section 5.
 
 ### I-025 — Recording shorter than wall time
 - 6.0 s held produced 5.92 s (after the flush fix; 5.72 s before). Likely start/stop edge effects. Acceptable for dictation; re-check in M5 if timing alignment matters.
@@ -339,3 +348,32 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-063 update (2026-10-08) — owner's decision
 - Decision D-043: keep Piper siwis and gilles now; re-train both from the clean base checkpoint later, when the software is to be commercialised. Until then they are for development, evaluation and non-commercial use; their ratings stay `review` and `excluded`. Status: open as a commercial-release blocker; nothing was re-trained, nothing about the legal question was resolved. Still to confirm: whether handing a free beta to other people counts as non-commercial use (a legal question).
+
+### I-064 — Building the package needs the staged sidecar (M7)
+- Symptom: after M7 any `cargo build`, `cargo test` or `cargo run --example` of the `speechlab` package fails with "resource path `binaries\whisper-cli-x86_64-pc-windows-msvc.exe` doesn't exist" when `src-tauri/binaries/` is missing (VERIFIED by moving the folder away and running `cargo check`).
+- Cause: `tauri-build` checks every `externalBin` and `resources` entry of `tauri.conf.json` at build time.
+- Workaround: run `scripts/build-whisper-cpp.ps1` once, then `scripts/stage-whisper-sidecar.ps1`; the staged folder is git-ignored. A fresh clone or a CI machine needs both. Status: open (documented in README and HANDOFF).
+
+### I-065 — A cancelled transcription is shown as an error (M7)
+- Symptom: in the packaged app, pressing Cancel during a whisper.cpp transcription stops the `whisper-cli.exe` process correctly (VERIFIED) but the red banner then reads "operation cancelled". The TTS panel ignores that message (`TtsPanel.tsx`: "A cancellation the user asked for is not an error"), the transcription code in `App.tsx` does not.
+- Status: open, not fixed (the owner approved only the CSP change in M7). Proposed fix: the same filter in `App.tsx`. The packaged-app UI test (`scripts/ui_test_packaged.mjs`) has a check for it, which fails today (23 of 24).
+
+### I-066 — The web view runtime keeps a connection to a Microsoft address while the app runs (M7)
+- Observed (offline proof): with a firewall rule that blocks all outbound traffic of `speechlab.exe` and `whisper-cli.exe`, the app's own processes made no connection (a download attempt from the app failed within 0.2 s with "os error 10013"), but the WebView2 network service process (`msedgewebview2.exe --type=utility --utility-sub-type=network.mojom.NetworkService`, part of the system runtime, not of the application) held one established connection to `2620:1ec:33::11` port 443 (a Microsoft address range). Only that one outside connection was seen in 88 samples over about 40 s, plus the loopback debugging port that the test itself opened.
+- Meaning: "offline" is proven for the application's code (speech engines, model loading), not for the system web view. Purpose of the connection NOT VERIFIED (possibly the runtime's own update, reputation or telemetry service). Not tried: starting the web view with `additionalBrowserArgs` that disable background networking, or blocking the runtime in a firewall (the runtime is shared with other applications, so it was not touched). Status: open; matters for the privacy statement of M8.
+
+### I-067 — No credits view in the app and no licence page in the installer (M7)
+- Observed: the model and voice tables show each item's licence text and each voice's commercial-use rating (VERIFIED in the packaged app), and a warning is shown for `review` and `excluded` voices, but nothing lists the credits that CC BY 4.0 and BSD-3-Clause require, the GPL-3.0 notice for espeak-ng, or the MIT notices; the NSIS installer shows no licence page.
+- Status: open, proposed (an "About and credits" section generated from the manifest, and an installer licence file). The owner did not choose it in M7; the content (what the owner is willing to state) is theirs to validate. Needed before any distribution.
+
+### I-068 — Unsigned installer and executables (M7)
+- Observed here (VERIFIED): the unsigned installer (`Get-AuthenticodeSignature`: NotSigned) installed silently in about 2 s and the unsigned `speechlab.exe` and `whisper-cli.exe` ran; Avast (the active antivirus; Defender's real-time protection is off while Avast is registered) blocked or quarantined nothing, and Defender recorded no detection mentioning the files. Avast's own log was not read.
+- NOT VERIFIED: what SmartScreen shows to a person who downloads the installer with a browser (the installer was started from a script, so the "mark of the web" path was never exercised); how other antivirus products react. Code signing would need a certificate from a certificate authority (an organisation-validation or extended-validation certificate, paid, annual; a cloud signing service is the other route) and the signing step added to the build; SmartScreen reputation builds with downloads even for signed files. Prices and rules NOT VERIFIED (not read from a vendor). Status: open.
+
+### I-069 — Installer side effects (M7)
+- VERIFIED: the installer creates a Desktop shortcut and a Start Menu shortcut by default, and the registry keys `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\SpeechLab` and `HKCU\Software\assistantcabinet\SpeechLab`. The silent uninstaller removed the install folder and the uninstall key, kept the user data (tested with dummy data folders while the real ones were renamed away and restored: 2580 and 742 files before and after) but left the `HKCU\Software\assistantcabinet\SpeechLab` key. The interactive uninstaller, which shows a choice about deleting the application data, was NOT tested; its default and its effect on the models folder are unknown. Status: open, minor.
+
+### I-070 — The whisper.cpp sidecar needs the Visual C++ runtime, which the installer does not carry (M7)
+- Observed (VERIFIED by reading the import tables of the files in `src-tauri/binaries/`): `speechlab.exe` imports only the universal C runtime (`api-ms-win-crt-*`, part of Windows 10 and later; sherpa-onnx is linked with the static MT runtime), but `whisper-cli.exe`, `whisper.dll`, `ggml.dll`, `ggml-base.dll` and `ggml-cpu.dll` import `MSVCP140.dll`, `VCRUNTIME140.dll`, `VCRUNTIME140_1.dll` and (the two ggml libraries) `VCOMP140.dll`. This machine has them (Visual Studio Build Tools).
+- Consequence on a clean Windows without the "Microsoft Visual C++ 2015-2022 Redistributable": the application, the sherpa-onnx engines and the voices should start, but every whisper.cpp transcription would fail because the sidecar cannot start. NOT VERIFIED (no clean machine or virtual machine available; Windows Sandbox or a clean VM would do).
+- Way out, not done: rebuild whisper.cpp with the static runtime and static libraries (`-DBUILD_SHARED_LIBS=OFF` and `-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded` in `scripts/build-whisper-cpp.ps1`): one executable, no four libraries, no redistributable. The alternative is to install the redistributable from the setup program. Status: open; recommended before any distribution.
