@@ -34,6 +34,9 @@ Thumbs.db
 /wav/
 src-tauri/.cargo/
 
+# Sidecar staged from vendor/ by scripts/stage-whisper-sidecar.ps1 (build artefacts, M7)
+src-tauri/binaries/
+
 # Benchmark: voices and private material are never committed
 /benchmark/audio/
 /benchmark/samples-private/
