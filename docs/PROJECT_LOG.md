@@ -972,3 +972,26 @@ Owner's instruction (after M6 was committed): the voices must be judged first by
 **Next**: the owner reads `docs/integration/03-integration-plan.md`, answers the decisions on the sheet that SP-0 produces (at least Q-02, Q-03, Q-04 before SP-1), commits, then drags `docs/prompts/integration/00-MASTER.md` and `SP-0-freeze-and-probe.md` into a new tab named "Speech 0 — Freeze and practice-PC probe".
 
 **Identity check (end of entry)**: searched the repository for AI-assistant and vendor names: none added. Third-party names appear only as products or licensors. No private content: only aggregates and the owner's own words. `git status` lists no audio, model, installer or private file.
+
+---
+
+## 2026-10-09 — Integration put ON HOLD until the Knowledge Base is finished (D-050); re-baseline pass prepared
+
+**Done**
+- Recorded the owner's decision: first finish the Knowledge Base (KB) in AssistantCabinetAI, then relaunch a pass on the integration plan to adapt it. D-050 (qualifies D-049).
+- `docs/integration/STATUS.md`: the single status board, `STATUS: ON HOLD`, why, how the integration resumes, where the hold is announced, history.
+- `docs/integration/KB-PREREQUISITES.md`: contracts speech needs from the KB (P-1 to P-9), the conditions to resume (G-1 to G-7), what KB lots should not break, the commands to re-verify facts, what the owner can note meanwhile.
+- `docs/prompts/integration/SP-R-rebaseline.md`: the launcher of the re-baseline pass (tab "Speech R — Re-baseline the plan"): ask the owner, snapshot AssistantCabinetAI read-only, re-verify F1 to F20 and P-1 to P-9 against code, archive v1, write v2, propose the status change, owner's yes required.
+- `docs/prompts/integration/KB-TAB-NOTE.md`: an informational note to drag into KB lot tabs: speech comes later, keep these contracts, write a "Speech-relevant changes" section in each lot report. It asks the KB agents to build nothing.
+- Gates: a GATE paragraph at the top of the master and of SP-0 to SP-8 (SP-0 may run earlier only if the owner asks), banners in `docs/integration/*`, the prompts README, `HANDOFF.md`, `README.md`, and a new `AGENTS.md` section 7 so that every future session reads it first.
+- The assistant's project memory was updated so that future sessions see the hold.
+
+**Verified**: all edited files re-read for consistency; control-character scan of the documents; no AssistantCabinetAI file touched (`git status` there unchanged: 13 entries, all from the KB tabs).
+
+**Failed or surprises**: none beyond the usual tooling traps (appends made from files).
+
+**Not verified**: that future agents obey the gates (they depend on reading `AGENTS.md` and the launcher header); the first real use of `SP-R` will show gaps: record them here.
+
+**Next**: the owner finishes the KB (optionally drags `KB-TAB-NOTE.md` into the remaining KB lot tabs, and may run SP-0 earlier); when the KB is finished, open the tab "Speech R — Re-baseline the plan" with `00-MASTER.md` and `SP-R-rebaseline.md`.
+
+**Identity check (end of entry)**: no AI-assistant or vendor name added; no private content.

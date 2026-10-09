@@ -1,5 +1,7 @@
 # SP-0 launcher: Speech 0, freeze SpeechLab and probe the practice PC
 
+> **GATE (D-050): ON HOLD.** The speech integration waits for the end of the Knowledge Base and for the re-baseline pass (`SP-R-rebaseline.md`; status in `C:/Users/elise/Documents/CURSOR/SpeechLab/docs/integration/STATUS.md`). **SP-0 is the one exception the owner may choose to run earlier**, because it only touches SpeechLab, is independent of the Knowledge Base, and its results (decision sheet, practice-PC probe, candidate repair pairs) are inputs of the re-baseline. Run it only if the owner asks for it explicitly. This launcher is draft v1 (2026-10-09).
+
 **Tab name: "Speech 0 — Freeze and practice-PC probe".** Working folder of the tab: `C:\Users\elise\Documents\CURSOR\SpeechLab`
 (this is the only speech phase that edits SpeechLab). Branch: `milestone/m9-integration-prep` (from the current branch, owner-run).
 

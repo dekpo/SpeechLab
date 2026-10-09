@@ -1,5 +1,13 @@
 # Speech integration programme: master brief (read first in every Speech tab)
 
+> **GATE (D-050): ON HOLD.** On 2026-10-09 the owner decided to finish the Knowledge Base first and then to relaunch a pass on the
+> integration plan to adapt it. Read `C:\Users\elise\Documents\CURSOR\SpeechLab\docs\integration\STATUS.md` before anything else.
+> **If it does not say `STATUS: RESUMED`, no speech phase may run**: stop and tell the owner, in French, that the integration waits
+> for the end of the Knowledge Base and for the re-baseline pass (`SP-R-rebaseline.md`). The only exceptions: the re-baseline pass
+> itself, and SP-0 when the owner explicitly asks for it. Everything below is **draft v1, valid as of 2026-10-09**: its facts about
+> AssistantCabinetAI will have changed by the time the work resumes. Prerequisites the Knowledge Base must keep:
+> `docs\integration\KB-PREREQUISITES.md`. Note to drag into KB tabs: `KB-TAB-NOTE.md` (this folder).
+
 English, like every developer-facing document of both repositories. The owner speaks French: **answer the owner in French in
 the chat; write every file, comment and commit message in English.**
 

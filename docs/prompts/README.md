@@ -20,7 +20,7 @@ How to continue the project in a fresh chat tab without losing context:
 | `06b-tts-readalong-and-normaliser.md` | done (kept for reference): sentence highlight with auto-scroll, digits-to-words normaliser, `kristin` measurement and listening, search for a better free French voice (D-040, D-041, D-042) |
 | `06-packaging-validation.md` | done (kept for reference): M7 Windows packaging validation (D-044, D-045); the macOS steps are in `docs/MACOS_VALIDATION.md`, NOT VERIFIED |
 | `07-final-report.md` | done (kept for reference): M8 final report, licensing table and recommendation (`docs/SPEECH_ENGINE_EVALUATION.md`, D-047); the next steps are the owner's choices listed in `docs/HANDOFF.md` section 7 (items 11 to 14) |
-| `integration/` | **the next work**: the speech integration into AssistantCabinetAI, phase by phase (`00-MASTER.md`, `SP-0` to `SP-8`, README with tab names and order); written 2026-10-09, not yet run |
+| `integration/` | the speech integration into AssistantCabinetAI, phase by phase (`00-MASTER.md`, `SP-0` to `SP-8`, `SP-R-rebaseline.md`, `KB-TAB-NOTE.md`, README with tab names and order); written 2026-10-09 as draft v1, **ON HOLD (D-050)** until the Knowledge Base is finished and the re-baseline pass has run; status in `../integration/STATUS.md` |
 | `next-tasks.md` | TTS, packaging, final report (the timing study T2, the re-run and the chunking T3 are done; T4 drug names is done; the accent task T5 was dropped by the owner, D-046) |
 
 Two sessions must never work on the same files at the same time, and never two benchmarks at once:

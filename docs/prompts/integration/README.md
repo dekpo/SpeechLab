@@ -1,6 +1,20 @@
 # Speech integration prompts (for AssistantCabinetAI)
 
-Written 2026-10-09. One master brief and one launcher per phase. Plan: `docs/integration/03-integration-plan.md`.
+> **STATUS: ON HOLD (D-050).** The owner will finish the Knowledge Base first, then relaunch a pass on the plan to adapt it.
+> Authoritative status: `docs/integration/STATUS.md`. **Do not run `SP-1` to `SP-8` until it says `STATUS: RESUMED`.** What to
+> run now, if anything: nothing, or `SP-R-rebaseline.md` when the Knowledge Base is finished, or `SP-0` if the owner explicitly wants
+> the practice-PC probe earlier. The launchers below are draft v1 of 2026-10-09 and will be refreshed by the re-baseline pass.
+
+Written 2026-10-09. One master brief and one launcher per phase. Plan: `docs/integration/03-integration-plan.md` (draft v1).
+
+## Extra files in this folder
+
+| File | Use |
+|---|---|
+| `SP-R-rebaseline.md` | **The next launcher once the Knowledge Base is finished**: tab "Speech R — Re-baseline the plan" |
+| `KB-TAB-NOTE.md` | Drag into the Knowledge Base lot tabs (especially lots 2, 3, 8, 9, 11): tells those agents which contracts speech will rely on and to write a "Speech-relevant changes" line in their reports |
+| `../../integration/KB-PREREQUISITES.md` | What speech needs from the KB, the conditions to resume, the facts to re-verify |
+| `../../integration/STATUS.md` | The status board |
 
 ## How to use (one phase at a time)
 

@@ -1,6 +1,11 @@
 # Integration plan: speech-to-text and text-to-speech in AssistantCabinetAI
 
-Status: **PROPOSAL for the owner's review** (2026-10-09). Becomes the plan when the owner accepts it (D-049, proposed).
+> **STATUS: ON HOLD (D-050).** The owner will first finish the Knowledge Base in AssistantCabinetAI and then relaunch a pass on this
+> plan to adapt it (tab "Speech R — Re-baseline the plan"). **Do not execute any phase of this draft v1.** Authoritative status:
+> `STATUS.md`. Expected to change at the re-baseline: the base branch (Q-03: `kb/integration` may have been merged into `main`),
+> SP-5 (the real KB APIs will exist), the order and the sizes, and every fact about AssistantCabinetAI.
+
+Status: **DRAFT v1 PROPOSAL** (2026-10-09). Becomes the plan when the owner accepts the re-baselined version (D-049 proposed, D-050).
 Inputs: `01-owner-draft-and-review.md` (the owner's draft and its review), `02-needs-and-structure-analysis.md` (facts F1 to
 F20, reuse map, architecture, invariants SI1 to SI12), `docs/SPEECH_ENGINE_EVALUATION.md` (evidence), D-048 (SpeechLab frozen,
 macOS on hold).

@@ -1,5 +1,7 @@
 # SP-4 launcher: Speech 4, dictation in the chat
 
+> **GATE (D-050): ON HOLD.** Read `C:/Users/elise/Documents/CURSOR/SpeechLab/docs/integration/STATUS.md` first. If it does not say `STATUS: RESUMED`, **do not run this phase**: stop and tell the owner (in French) that the speech integration waits for the end of the Knowledge Base and for the re-baseline pass (`SP-R-rebaseline.md`). This launcher is draft v1 (2026-10-09); its facts and steps will be refreshed by that pass.
+
 **Tab name: "Speech 4 — Dictation".** Working folder: `C:\Users\elise\Documents\CURSOR\AssistantCabinetAI`.
 Branch: `feat/speech-dictation`, from `kb/integration` (after SP-3, and preferably after KB lot 7 or 8, because `Composer`, `ChatPanel`, `ipc.ts` and the catalogues are shared).
 

@@ -50,3 +50,13 @@ End: update log/decisions/issues and `docs/HANDOFF.md` sections 3 and 7 → give
 - A benchmark needs a quiet machine: run `bench preflight` first; do not compile, test or record while it runs; never publish figures from a forced or disturbed run.
 - A long job (benchmark) keeps running if the session is interrupted. In a new session, check `tasklist` and the job's log before starting anything.
 - Never touch the owner's other processes (their other app on port 1420, Docker, WSL): ask the owner to close them.
+
+## 7. SpeechLab is frozen; the speech integration into AssistantCabinetAI is ON HOLD (D-048, D-050)
+
+Read `docs/integration/STATUS.md` at the start of **every** session. State on 2026-10-09:
+
+- **SpeechLab is finished and frozen** (M0 to M8 delivered, `docs/SPEECH_ENGINE_EVALUATION.md`). No new feature. Reopen it only to measure or for the integration-preparation phase SP-0. **macOS is on hold** until further notice (no Mac).
+- The owner will **first finish the Knowledge Base (KB) in AssistantCabinetAI**, **then relaunch a pass on the integration plan to adapt it** (tab "Speech R — Re-baseline the plan", `docs/prompts/integration/SP-R-rebaseline.md`). Until `docs/integration/STATUS.md` says `STATUS: RESUMED`, **do not run any `SP-*` launcher** (except SP-0 if the owner explicitly asks) and do not treat `docs/integration/01..03` as current facts about AssistantCabinetAI: they are draft v1 of 2026-10-09.
+- Never modify the AssistantCabinetAI repository from here (rule above). Reading it is allowed.
+- Only the owner changes the status line. An agent that runs the re-baseline proposes the change and waits for the owner's explicit yes.
+- If a request from the owner touches speech integration while the status is ON HOLD, say so in French and ask whether to run the re-baseline pass first.

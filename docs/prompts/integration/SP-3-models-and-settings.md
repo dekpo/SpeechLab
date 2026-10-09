@@ -1,5 +1,7 @@
 # SP-3 launcher: Speech 3, models, availability and settings
 
+> **GATE (D-050): ON HOLD.** Read `C:/Users/elise/Documents/CURSOR/SpeechLab/docs/integration/STATUS.md` first. If it does not say `STATUS: RESUMED`, **do not run this phase**: stop and tell the owner (in French) that the speech integration waits for the end of the Knowledge Base and for the re-baseline pass (`SP-R-rebaseline.md`). This launcher is draft v1 (2026-10-09); its facts and steps will be refreshed by that pass.
+
 **Tab name: "Speech 3 — Models and settings".** Working folder: `C:\Users\elise\Documents\CURSOR\AssistantCabinetAI`.
 Branch: `feat/speech-models-settings`, from `kb/integration` (after SP-2 is merged there).
 

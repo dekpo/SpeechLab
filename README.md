@@ -5,6 +5,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 > **2026-10-09: SpeechLab is finished and frozen (D-048); the macOS part is on hold until further notice (no Mac available).**
 > Next: the integration of speech into AssistantCabinetAI, prepared in [docs/integration/](docs/integration/README.md)
 > (analysis, review of the owner's draft, plan) with ready-made prompts in [docs/prompts/integration/](docs/prompts/integration/README.md).
+> **That integration is ON HOLD (D-050): the Knowledge Base in AssistantCabinetAI is finished first, then a re-baseline pass adapts
+> the plan.** Status: [docs/integration/STATUS.md](docs/integration/STATUS.md).
 
 ## Status
 

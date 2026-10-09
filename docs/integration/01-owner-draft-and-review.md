@@ -1,5 +1,9 @@
 # The owner's statements and draft integration plan, with the review
 
+> **STATUS: ON HOLD (D-050), draft v1 of 2026-10-09.** The owner will finish the Knowledge Base first and then relaunch a pass on
+> the plan to adapt it. See `STATUS.md`. The review below reflects AssistantCabinetAI as read on 2026-10-09 and must be re-checked by
+> the re-baseline pass (`docs/prompts/integration/SP-R-rebaseline.md`).
+
 Recorded 2026-10-09. The owner speaks French; the repository is English. The draft is kept **verbatim in French** (it is the
 owner's text, as for the listening notes), followed by an English gloss and the review. The review compares the draft with
 the evidence of SpeechLab (`docs/SPEECH_ENGINE_EVALUATION.md`) and with the state of AssistantCabinetAI read on the same day

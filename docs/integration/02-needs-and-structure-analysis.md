@@ -1,5 +1,9 @@
 # Integration analysis: needs, constraints and structure of the two projects
 
+> **STATUS: ON HOLD (D-050), draft v1 of 2026-10-09.** Facts F1 to F20 describe AssistantCabinetAI as it was read on that day
+> (KB lot 0 merged, lot 1 uncommitted). They are expected to change while the Knowledge Base is finished and **must be re-verified**
+> by the re-baseline pass before anything here is used as a current fact. See `STATUS.md` and `KB-PREREQUISITES.md`.
+
 Written 2026-10-09 by the SpeechLab M8 follow-up session. Audience: the owner, and the agents who will run the speech
 integration phases in AssistantCabinetAI tabs. English, like every developer-facing document of both repositories.
 
