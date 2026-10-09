@@ -14,11 +14,12 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M5c reproducible benchmark runner, first full benchmark of 9 configurations on 95 recorded sentences: done (results in `benchmark/results/`, analysis in [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md)). A clean re-run (`20261007-215116-full-owner-reps1-clean`, about 20 % background CPU) reproduced all 855 transcripts identically and replaced the speed figures of the first, disturbed run; a 3-repetition timing study (`20261008-035938-timing-3reps`, M5d) then showed that the speed of the same sample varies by only 1 to 4 % within a run and that no transcript changes between repetitions.
 - M5e long audio: engine-independent chunking at silences with the Silero VAD (`bench run --chunking vad`, default off). Short audio is provably unchanged; chunking helps only sherpa-onnx Whisper tiny (its 30 s limit) and hurts Canary; Whisper loops remain (D-035, project log).
 - T4 drug names and key terms (D-036): vocabulary biasing (whisper.cpp initial prompt, Parakeet hotwords) and dictionary post-correction, all OFF by default. Strict post-correction fixed more drug names with no word broken; loose settings and a high hotword score are regressions. One speaker, a vocabulary taken from the test sentences: an upper bound.
-- M6 text-to-speech laboratory (D-038): a TTS tab (language, voice, speed, generate, then play/stop/save WAV; nothing plays automatically) over sherpa-onnx with Piper and Kokoro voices installed from the app, plus the `tts` command line tool. Every voice is rated for commercial use (`docs/TTS_LICENSES.md`, D-039); Piper and Coqui voices run 16 to 29 times faster than real time on this CPU, Kokoro int8 slower than real time; naturalness awaits the owner's listening notes (`python -I -X utf8 scripts/tts_listening.py` builds the listening page). The phonemizer inside these voices is espeak-ng (GPL-3.0), a licensing point for any product use.
+- M6 text-to-speech laboratory (D-038): a TTS tab (language, voice, speed, generate, then play/stop/save WAV; nothing plays automatically) over sherpa-onnx with Piper and Kokoro voices installed from the app, plus the `tts` command line tool. Every voice is rated for commercial use (`docs/TTS_LICENSES.md`, D-039); Piper and Coqui voices run 13 to 29 times faster than real time on this CPU, Kokoro int8 slower than real time; naturalness awaits the owner's listening notes (`python -I -X utf8 scripts/tts_listening.py` builds the listening page). The phonemizer inside these voices is espeak-ng (GPL-3.0), a licensing point for any product use.
 - M6c: the owner's blind listening is recorded in `docs/TTS_LISTENING_NOTES.md`; decisions D-040 (sentence highlight with auto-scroll) and D-041 (beta only with freely usable voices) taken.
 - M6d (D-042): the TTS tab splits the text into sentences, synthesises them one by one into a single WAV with measured sentence times, and after Generate shows the text with the sentence being read shaded in grey (light and dark, automatic scrolling, "Follow reading", nothing plays by itself); a text normaliser (numbers, dates, times, units, abbreviations, French and English) makes the character-based French voice speak digits and can be switched per voice, with a preview of the text sent to the voice; Piper `kristin` measured; Piper `mls` French voice converted locally (`scripts/convert_piper_voice.py`); Chatterbox and Qwen3-TTS read and not retained. Blind listening session 2: `python -I -X utf8 scripts/tts_listening.py --session 2`.
 - M7 Windows packaging (D-044, D-045): per-user NSIS installer (8.45 MiB) with `whisper-cli.exe` as a sidecar plus its four libraries, no model bundled, strict Content Security Policy; installed and tested on this machine (window, model lists, speech-to-text with both engines, speech synthesis, cancel, microphone in the release origin, first start without models, offline proof for the application's own processes). Unsigned; clean-machine behaviour, SmartScreen and macOS are NOT VERIFIED (`docs/MACOS_VALIDATION.md`, issues I-064 to I-070).
-- Next: M8, the final report and licensing table (`docs/prompts/07-final-report.md`); owner checks one suspect sample (I-033).
+- M8 final report, licensing table and recommendation: done, see [docs/SPEECH_ENGINE_EVALUATION.md](docs/SPEECH_ENGINE_EVALUATION.md). One speaker, one CPU machine, Windows only: sherpa-onnx Parakeet is the most accurate and the only interactive speech-to-text configuration measured, whisper.cpp small is accurate but slower than real time; English TTS is solved with licence-clean voices, French is blocked by the voice lineage (D-043) and every build that synthesises speech carries the GPL phonemizer espeak-ng. The recommendation is provisional (D-047) and lists what would settle each open point. macOS and a clean Windows machine are NOT VERIFIED.
+- Next (owner's choice): re-train the French voices from the clean base, run `docs/MACOS_VALIDATION.md` on a Mac, code signing, a decision on the GPL phonemizer; the owner checks one suspect sample (I-033).
 
 ## Read first
 
@@ -31,6 +32,7 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 | [docs/ISSUES.md](docs/ISSUES.md) | Open and resolved problems |
 | [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md) | Branches, commits, push commands |
 | [docs/HANDOFF.md](docs/HANDOFF.md) | State of the project, traps, commands and backlog for any new session |
+| [docs/SPEECH_ENGINE_EVALUATION.md](docs/SPEECH_ENGINE_EVALUATION.md) | **Final report (M8)**: engine comparison, accuracy, TTS, performance, compatibility, privacy, licensing table, recommendation, roadmap, claims table |
 | [docs/MACOS_VALIDATION.md](docs/MACOS_VALIDATION.md) | macOS checklist (everything NOT VERIFIED: no Mac available) |
 | [docs/prompts/](docs/prompts/README.md) | Ready-made prompts to continue in a new chat session |
 | [docs/M0_FEASIBILITY.md](docs/M0_FEASIBILITY.md) | Feasibility and dependency validation |
@@ -82,8 +84,7 @@ Tests of the installed app (start it with `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS
 
 Models are not in the repository. In the app, use the **Models** table to install one (official download, checksum verified); after that, transcription runs fully offline. They are stored in `%APPDATA%\ai.assistantcabinet.speechlab\models` (override with `SPEECHLAB_MODELS_DIR`). The inventory is `src-tauri/models-manifest.json`.
 
-In the app you can record from the microphone (Windows asks for permission the first time) or import an audio file (WAV, MP3, M4A, Ogg/Opus). It is converted to 16 kHz mono WAV and stored locally in `%APPDATA%i.assistantcabinet.speechlab
-ecordings`, with a Delete button. You can also keep your own WAV files in `wav/` (git-ignored) and type their path. Headless check without the UI:
+In the app you can record from the microphone (Windows asks for permission the first time) or import an audio file (WAV, MP3, M4A, Ogg/Opus). It is converted to 16 kHz mono WAV and stored locally in `%APPDATA%\ai.assistantcabinet.speechlab\recordings`, with a Delete button. You can also keep your own WAV files in `wav/` (git-ignored) and type their path. Headless check without the UI:
 
 ```bash
 cd src-tauri
@@ -124,6 +125,7 @@ cargo run --release --example tts -- measure --sentences ../benchmark/tts/paragr
 python -I -X utf8 ../scripts/tts_listening.py --session 2   # blind listening page (benchmark/tts-samples/session2/index.html)
 node ../scripts/ui_test_readalong.mjs   # read-along UI test; start the app first with WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222 pnpm tauri dev
 python ../scripts/bootstrap_ci.py ../benchmark/results/<folder>    # confidence intervals
+python -I -X utf8 ../scripts/wer_by_language.py ../benchmark/results/<folder>   # WER per language with intervals, key terms found per kind
 python ../scripts/chunking_study.py runs ../benchmark/results/<whole> ../benchmark/results/<chunked>   # whole clip versus chunked
 ```
 

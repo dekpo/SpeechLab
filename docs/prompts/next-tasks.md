@@ -80,7 +80,7 @@ release origin (I-024), antivirus interaction, installer size. macOS cannot be t
 the exact validation steps for a Mac (Apple Silicon and Intel), mark everything NOT VERIFIED, and
 list the platform differences (Core ML/Metal, WKWebView audio decoding, notarisation).
 
-## T8 — M8: final report and licensing table
+## T8 — (done 2026-10-09, `docs/SPEECH_ENGINE_EVALUATION.md`, D-047) M8: final report and licensing table
 
 Goal: write `docs/SPEECH_ENGINE_EVALUATION.md` with the sections required by `Plan.md` section 12,
 using only measured evidence from `benchmark/results/` (cite the run folders), the licensing table

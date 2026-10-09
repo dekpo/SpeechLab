@@ -322,7 +322,7 @@ M5 is split in three parts. This is part a (data and scoring foundations). Part 
 
 **Dataset check (`bench check`, VERIFIED)**: 95 samples, 0 validation issues, 16 kHz mono; no clipping (0 files with more than 0.1 % of samples at full scale, 0 "hot" files), peaks 0.75 to 0.994 (most files peak at 0.993, i.e. a few isolated peaks, not sustained saturation); one warning: `en-it-05-owner` (slow reading, 1.2 words/s).
 
-**First full benchmark** (`20261007-201137-full-owner-reps1`; Intel Core 7 150U, 12 logical cores, 23.6 GB, Windows 11, CPU only, release build, 4 threads per engine, 95 samples, 1 repetition, all 9 configurations, 0 failures; one speaker, 1 100 reference words, so this is NOT a general claim). Scoring v2. WER micro with a 95 % bootstrap interval over sentences:
+**First full benchmark** (`20261007-201137-full-owner-reps1`; Intel Core 7 150U, 12 logical cores, 23.6 GB, Windows 11, CPU only, release build, 4 threads per engine, 95 samples, 1 repetition, all 9 configurations, 0 failures; one speaker, 1 100 reference words [M8 correction: 1,054 scored reference words, 803 French and 251 English], so this is NOT a general claim). Scoring v2. WER micro with a 95 % bootstrap interval over sentences:
 
 | Configuration | WER | 95 % CI | Critical samples | RTF median | Inference median | Cold load | Peak memory |
 |---|---|---|---|---|---|---|---|
@@ -894,3 +894,49 @@ Owner's instruction (after M6 was committed): the voices must be judged first by
 - The owner has no accent clips and asked to forget the idea. Removed from the active documents: `docs/prompts/04-private-accent-clips.md` (deleted), task T5 of `docs/prompts/next-tasks.md`, the T5 and backlog rows of `docs/HANDOFF.md`, the status lines and the import example of `README.md`, and the accent chaining in the prompts 03, 05, 06, 06b, 07 and the prompts index. The M8 prompt now says the report states that no accent figure exists and that accents are out of scope.
 - Kept on purpose: this journal and the earlier entries (append-only), and the generic `bench import` command with its tests (D-037 marked as unused). No code was changed, nothing was rebuilt.
 - Not edited: `Plan.md` (the owner's mission text still lists accents as a question); the M8 report will report it as unanswered.
+
+---
+
+## 2026-10-09 — M8 — Final report, licensing table, recommendation (D-047)
+
+**Done**
+- Read-only checks first: clean tree on `milestone/m7-packaging` (HEAD `1f9257c`), no `bench.exe`, `whisper-cli.exe`, `tts.exe` or `speechlab.exe` running (the `msedgewebview2.exe` processes seen belong to the owner's other application and were not touched), no `benchmark/results/private/` folder. Read `AGENTS.md`, `docs/HANDOFF.md`, `Plan.md` (sections 4, 9, 12), the whole of this log, `docs/DECISIONS.md`, `docs/ISSUES.md`, `docs/TTS_LICENSES.md`, `docs/TTS_LISTENING_NOTES.md`, `docs/MACOS_VALIDATION.md`, `docs/M0_FEASIBILITY.md`, `benchmark/README.md`, and the result folders (aggregates only).
+- Wrote `docs/SPEECH_ENGINE_EVALUATION.md` with the twelve sections of `Plan.md` section 12 plus a table answering the twelve questions of `Plan.md` section 2, a licensing table (software, runtimes, phonemizer, models, voices, datasets), a list of what a lawyer must read, an integration roadmap with preconditions, a claims table (C-01 to C-53, each VERIFIED with its evidence or NOT VERIFIED with the steps), reproduction commands and the list of corrections made.
+- New script `scripts/wer_by_language.py` (WER per language with bootstrap intervals, critical sample counts and key terms found per kind; aggregates only), because the per-language and per-kind figures of the report had no reproducible source.
+- Recommendation recorded as D-047 (alternatives listed), D-032 marked superseded, a note added to D-042; I-071 to I-074 added; `README.md` and `docs/HANDOFF.md` (sections 3, 4, 6 and 7) updated; the prompt index marks 06 and 07 done.
+
+**Verified (observed in this session)**
+- Cross-check of numbers against their sources: the nine-row table of the clean run equals `summary.md`; `scripts/bootstrap_ci.py` re-run on the clean run, with and without `en-it-05-owner`, equals the intervals in the M5c entry; `scripts/timing_study.py` on `20261008-035938-timing-3reps` equals the M5d table (1,080 runs, 0 failures, preflight 19.9 %); the key-term counts of `wer_by_language.py` equal the `termstudy-vs-clean-run.md` tables for every configuration; the T4 summaries (strict, loose, prompt, hotwords, combinations) equal the T4 entry; the long-audio summaries equal the M5e entry; the TTS ranges equal the TTS `summary.md` files (Kokoro 1.55 to 2.06 and 1.10 to 1.33; Piper and Coqui 0.034 to 0.079); the overhead table equals the M6d entry.
+- New figures computed from stored transcripts (no engine run): French versus English WER with intervals (Parakeet 2.1 % and 2.8 %, whisper.cpp small 5 beams 4.2 % and 2.8 %, tiny 19.2 % and 6.4 %, Canary English 15.1 % with one runaway output).
+- The packaged executable `src-tauri/target/release/speechlab.exe` (31,447,040 bytes) contains **95 occurrences of "espeak"** (byte scan, case-insensitive): the GPL-3.0 phonemizer is inside the shipped binary, which M7 had only inferred from the link line (the 65-match scan of M2 was on the development example). The installer SHA-256 re-computed equals the M7 value (`589EAF70...54B6C37D`).
+- Declared licences of the dependency tree: `cargo metadata --offline --filter-platform x86_64-pc-windows-msvc` from `src-tauri` gives 293 third-party crates, no GPL/LGPL/AGPL in the declared fields, 5 under MPL-2.0, 2 under CDLA-Permissive-2.0; the application package declares no licence; `pnpm licenses list --prod`: react, react-dom, scheduler MIT, `@tauri-apps/api` Apache-2.0 OR MIT. The repository has no `LICENSE` file (I-072).
+
+**Failed or surprises (contradictions found in the documents, all fixed or noted)**
+1. This log (M5c) said "1 100 reference words"; the runs hold 1,054 scored reference words (1,053 whitespace tokens): an inline correction was added to that entry.
+2. `README.md` and `docs/HANDOFF.md` said the Piper and Coqui voices are "16 to 29 times faster than real time"; the first TTS run gives 13 to 29 and the second 16 to 28: both now say 13 to 29.
+3. `docs/HANDOFF.md` said whisper.cpp small has RTF "1.1 to 1.2"; the clean run gives 1.12 and 1.24, the timing study 1.26 and 1.32: now "1.1 to 1.3".
+4. `README.md` contained a bell character and a line break inside the recordings path (an earlier edit had turned two backslash sequences into control codes): repaired and byte-scanned (I-071). I fell into the same trap while repairing it (a script string with doubled backslashes came out with a bell again); the fix used `chr(92)`.
+5. D-042 still said the normaliser flag is true only for the Coqui voice; D-043 changed it to every voice: a note was added to D-042.
+6. While drafting the voice table I first gave one Kokoro range for both languages; the French voice alone is 1.10 to 1.28 in the second run (1.33 belongs to an English voice), and the spread of TTS repetitions reaches 51 % in the second run, not 25 %: corrected before publication.
+7. A long shell heredoc holding this very entry was rejected (apostrophes, the trap of HANDOFF section 5); nothing was written by that attempt and the entry was added from a file.
+- Nothing contradicted a measured result. No benchmark, recording, model download or listening was done: this milestone is writing and cross-checking.
+
+**Not verified**
+- Everything the report marks NOT VERIFIED (claims table: C-15, C-16, C-29, C-30, C-36 to C-42, C-49, C-50, C-52, C-53): other speakers and noise, accents (dropped, D-046), Windows 10, a clean Windows machine, SmartScreen and signing, macOS, the model download from the packaged app, the interactive uninstaller, a whole-machine network-off test, whisper.cpp large-v3-turbo and accelerated builds, streaming recognition, the legal questions, the NVIDIA models' training-data licences.
+- The T8 prompt asked for a real test with the network disabled: only the per-program firewall proof of M7 exists; the steps to finish it are in report section 8. The owner still has to remove the firewall rule created for the M7 proof (`scripts\offline_proof_remove.cmd`) if not already done.
+
+**Next**: the owner reviews the report and D-047, then chooses among: the GPL phonemizer strategy and the licence of the code (I-072), re-training the French voices (D-043), a Mac for `docs/MACOS_VALIDATION.md`, code signing, widening the speech-to-text evidence (I-074).
+
+**Identity check (end of entry)**: the repository was searched for AI-assistant and vendor names (result in the owner message and below); third-party names appear only as sources and licensors (NVIDIA for the CC BY 4.0 models, Silero Team, Chatterbox and Qwen3-TTS as project names in the not-retained rows). No private content: only aggregate numbers, no clip text, no first name. `git status` lists no installer, no `target/` output, no `src-tauri/binaries/` file, no model or audio file.
+
+### M8 milestone summary (the five headings required by AGENTS.md)
+
+**Implemented**: the final report with the twelve required sections, the answers to the twelve plan questions, the licensing table, the recommendation (D-047) and the roadmap; `scripts/wer_by_language.py`; documentation corrections (Appendix C of the report); README and HANDOFF updated.
+
+**Verified**: every table of the report equals its source folder or log entry (cross-check above); the packaged binary contains the GPL phonemizer (95 matches); declared licences of the dependency tree; the installer hash.
+
+**Not verified**: see the list above and Appendix A of the report; in particular macOS, a clean Windows machine, other speakers, noise, accents, turbo and accelerated builds, streaming, the whole-network-off test and every legal question.
+
+**Known limitations**: one speaker, one CPU-only laptop at about 20 % background load, 95 read sentences (25 in English), one repetition for accuracy, whole-clip recognition only; the TTS judgements are one listener's opinion; speed figures carry a 10 to 20 % margin; the recommendation is provisional.
+
+**Next step**: the owner's choice among the licence decisions, the French voice re-training, a Mac validation, code signing and a wider speaker panel (backlog items 11 to 14 in `docs/HANDOFF.md`).
