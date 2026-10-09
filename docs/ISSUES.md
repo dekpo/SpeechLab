@@ -70,6 +70,8 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 | I-072 | Open | licensing | The SpeechLab repository has no `LICENSE` file (the application code has no stated licence); the owner decides |
 | I-073 | Open | licensing | Licence readings still missing: training-data provenance of the NVIDIA models, redistribution terms of the Visual C++ runtime / WebView2 bootstrapper / installer builder, the five MPL-2.0 crates, the Whisper weights' MIT versus Apache-2.0 discrepancy |
 | I-074 | Open | evidence gaps | Never run: whisper.cpp large-v3-turbo, accelerated builds, a second or weaker machine, noisy or conversational speech, other speakers, streaming recognition; the M8 recommendation stays provisional until they are measured |
+| I-075 | Open, on hold | platform | macOS validation waits until further notice (the owner has no Mac); conflicts with AssistantCabinetAI's "both platforms mandatory" rule, a waiver is needed there (D-048) |
+| I-076 | Open | integration | Blockers and conflicts found in AssistantCabinetAI: licence policy (CC BY), 2019 practice PC, source-language guard, CSP, sidecar declaration vs CI, hints on a command line, branch model |
 | I-042 | Open | benchmarking | Median inference time of an unchanged code path differed by 1 to 48 % between two runs (clean full run versus `short-vad`), larger than the timing study suggested |
 | I-030 | Open | scoring | Swiss number words (septante, huitante, nonante) are not folded to digits |
 | I-024 | Closed for Windows (M7), macOS open | audio input | Microphone: WebView2 permission prompt on first use; release origin and persistence after a restart VERIFIED on Windows (M7); macOS behaviour NOT VERIFIED |
@@ -393,3 +395,16 @@ Record every bug, blocker, or surprising behavior. Keep resolved items.
 
 ### I-074 — Evidence gaps behind the provisional recommendation (M8)
 - Never run: whisper.cpp `large-v3-turbo` (in the manifest, 574 MB, not installed), any GPU or accelerated build (Vulkan, Metal, Core ML), a second or weaker machine (Parakeet needs 1.6 to 1.9 GB and 7 to 10 busy cores), speech with noise or conversational style, speaking-speed variations, other speakers and microphones, streaming recognition (the French streaming models' licences are unknown, I-004). The recommendation D-047 names the Parakeet margin over whisper.cpp small as borderline (+1.6 points, interval +0.1 to +3.1) and says what would settle each point (report section 10.3). Status: open.
+
+### I-075 — macOS is on hold (owner, 2026-10-09)
+- The owner has no Mac to implement and test a macOS version. Everything about macOS stays NOT VERIFIED and is not cancelled: `docs/MACOS_VALIDATION.md` remains the checklist; no macOS claim may be made. Conflict to resolve in AssistantCabinetAI: its `AGENTS.md` makes Windows and macOS both mandatory and disqualifies an engine available on one platform only; speech needs a recorded waiver for validation (plan question Q-04) while the code stays `cfg`-free and compiles in the existing macOS CI job. Nothing in either repository has ever been built or run on a Mac. Status: open, on hold; decision D-048.
+
+### I-076 — Integration blockers and conflicts found in AssistantCabinetAI (2026-10-09, read-only analysis)
+- Policy: the KB decision D7 allows speech models under Apache 2.0 or MIT only and CC BY "only by an explicit later decision"; the recommended Parakeet model is CC BY 4.0 (decision Q-01).
+- Hardware: the pilot workstation is a Windows PC installed in 2019, specification unknown; SpeechLab's figures come from a 2024 laptop on which whisper.cpp small is already slower than real time; no engine can be fixed before a probe on that PC.
+- Source guard: AssistantCabinetAI's `sources.test.ts` fails on non-ASCII characters and on French marker words in any `.rs` under `src-tauri/src`; SpeechLab's `normalise.rs`, `sentences.rs`, `postcorrect.rs`, `numbers.rs`, `critical.rs` contain both (111 and 35 lines in `normalise.rs` alone), so the text rules must be re-implemented as data packs.
+- Content Security Policy: no `blob:` anywhere; the AudioWorklet of SpeechLab loads from a blob URL (the problem met in D-045); ship the worklet as a static file.
+- Packaging: `tauri-build` validates every declared sidecar path on every build, so `externalBin` cannot simply be declared while the macOS CI job runs; a Windows-only configuration overlay may solve it (NOT VERIFIED, spike in SP-2).
+- Privacy: `whisper-cli --prompt` is a command-line argument and has no file form (verified with `--help`), so KB names in a hint list would be visible in the process list; repair-first avoids it.
+- Process: the KB programme keeps `main` untouched until its lot 11; speech branches start from `kb/integration`; shared files (`commands.rs`, `ipc.ts`, catalogues, `SettingsDialog.tsx`) are being edited by KB lots 7 to 10.
+- Status: open; carried by `docs/integration/03-integration-plan.md` (decisions Q-01 to Q-09, phases SP-0 to SP-8).

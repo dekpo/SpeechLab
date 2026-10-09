@@ -1,5 +1,7 @@
 # macOS validation checklist (Apple Silicon and Intel)
 
+**ON HOLD until further notice (owner, 2026-10-09, D-048, I-075): the owner has no Mac available to implement and test a macOS version. This checklist is kept, not cancelled; no macOS claim may be made.**
+
 Status: **everything in this file is NOT VERIFIED.** No Mac was available during M7 (2026-10-08). The file
 lists what to check, in order, on a real Mac, with what to record. Items marked *(read)* rest on a file
 that was read in this repository or in a dependency's source; they are still not observed on a Mac.

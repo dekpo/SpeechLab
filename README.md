@@ -2,6 +2,10 @@
 
 Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp, sherpa-onnx) and Text-to-Speech (sherpa-onnx) engines, built as a Tauri 2 + React + TypeScript desktop app. It is a technical proof of concept, **not** a production application, and is independent from the main AssistantCabinetAI repository.
 
+> **2026-10-09: SpeechLab is finished and frozen (D-048); the macOS part is on hold until further notice (no Mac available).**
+> Next: the integration of speech into AssistantCabinetAI, prepared in [docs/integration/](docs/integration/README.md)
+> (analysis, review of the owner's draft, plan) with ready-made prompts in [docs/prompts/integration/](docs/prompts/integration/README.md).
+
 ## Status
 
 - M0 feasibility: done.
@@ -19,7 +23,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 - M6d (D-042): the TTS tab splits the text into sentences, synthesises them one by one into a single WAV with measured sentence times, and after Generate shows the text with the sentence being read shaded in grey (light and dark, automatic scrolling, "Follow reading", nothing plays by itself); a text normaliser (numbers, dates, times, units, abbreviations, French and English) makes the character-based French voice speak digits and can be switched per voice, with a preview of the text sent to the voice; Piper `kristin` measured; Piper `mls` French voice converted locally (`scripts/convert_piper_voice.py`); Chatterbox and Qwen3-TTS read and not retained. Blind listening session 2: `python -I -X utf8 scripts/tts_listening.py --session 2`.
 - M7 Windows packaging (D-044, D-045): per-user NSIS installer (8.45 MiB) with `whisper-cli.exe` as a sidecar plus its four libraries, no model bundled, strict Content Security Policy; installed and tested on this machine (window, model lists, speech-to-text with both engines, speech synthesis, cancel, microphone in the release origin, first start without models, offline proof for the application's own processes). Unsigned; clean-machine behaviour, SmartScreen and macOS are NOT VERIFIED (`docs/MACOS_VALIDATION.md`, issues I-064 to I-070).
 - M8 final report, licensing table and recommendation: done, see [docs/SPEECH_ENGINE_EVALUATION.md](docs/SPEECH_ENGINE_EVALUATION.md). One speaker, one CPU machine, Windows only: sherpa-onnx Parakeet is the most accurate and the only interactive speech-to-text configuration measured, whisper.cpp small is accurate but slower than real time; English TTS is solved with licence-clean voices, French is blocked by the voice lineage (D-043) and every build that synthesises speech carries the GPL phonemizer espeak-ng. The recommendation is provisional (D-047) and lists what would settle each open point. macOS and a clean Windows machine are NOT VERIFIED.
-- Next (owner's choice): re-train the French voices from the clean base, run `docs/MACOS_VALIDATION.md` on a Mac, code signing, a decision on the GPL phonemizer; the owner checks one suspect sample (I-033).
+- Integration preparation (documents only): the owner's draft plan recorded and reviewed, AssistantCabinetAI analysed read-only, a phased plan SP-0 to SP-8 and prompts for other chat tabs (D-049 proposed, I-075, I-076).
+- Next (owner's choice): read the plan and answer the decisions, then submit phase SP-0 (practice-PC probe); later the French voice re-training, code signing and a decision on the GPL phonemizer. macOS stays on hold; the owner may check one suspect sample (I-033).
 
 ## Read first
 
@@ -33,7 +38,8 @@ Experimental, offline evaluation lab for open-source Speech-to-Text (whisper.cpp
 | [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md) | Branches, commits, push commands |
 | [docs/HANDOFF.md](docs/HANDOFF.md) | State of the project, traps, commands and backlog for any new session |
 | [docs/SPEECH_ENGINE_EVALUATION.md](docs/SPEECH_ENGINE_EVALUATION.md) | **Final report (M8)**: engine comparison, accuracy, TTS, performance, compatibility, privacy, licensing table, recommendation, roadmap, claims table |
-| [docs/MACOS_VALIDATION.md](docs/MACOS_VALIDATION.md) | macOS checklist (everything NOT VERIFIED: no Mac available) |
+| [docs/integration/](docs/integration/README.md) | Integration of speech into AssistantCabinetAI: owner's draft and review, analysis, step-by-step plan |
+| [docs/MACOS_VALIDATION.md](docs/MACOS_VALIDATION.md) | macOS checklist (everything NOT VERIFIED; ON HOLD: no Mac available) |
 | [docs/prompts/](docs/prompts/README.md) | Ready-made prompts to continue in a new chat session |
 | [docs/M0_FEASIBILITY.md](docs/M0_FEASIBILITY.md) | Feasibility and dependency validation |
 

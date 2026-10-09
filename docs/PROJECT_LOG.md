@@ -940,3 +940,35 @@ Owner's instruction (after M6 was committed): the voices must be judged first by
 **Known limitations**: one speaker, one CPU-only laptop at about 20 % background load, 95 read sentences (25 in English), one repetition for accuracy, whole-clip recognition only; the TTS judgements are one listener's opinion; speed figures carry a 10 to 20 % margin; the recommendation is provisional.
 
 **Next step**: the owner's choice among the licence decisions, the French voice re-training, a Mac validation, code signing and a wider speaker panel (backlog items 11 to 14 in `docs/HANDOFF.md`).
+
+---
+
+## 2026-10-09 — Freeze, macOS hold and integration preparation (documents only; D-048, D-049 proposed)
+
+**Done**
+- Recorded the owner's statements of 2026-10-09: no Mac is available so the macOS part waits until further notice; SpeechLab is considered finished; the next work is the integration of STT and TTS into AssistantCabinetAI, where a Knowledge Base (KB) is being built so that speech can use the user's entities (names, organisations, medicines). D-048 (freeze, macOS hold), I-075; banners in `README.md`, `docs/HANDOFF.md`, `docs/MACOS_VALIDATION.md`, and notes in sections 7 and 11 and claim C-39 of the report.
+- Read AssistantCabinetAI **read-only** (local clone and `git ls-remote`): `AGENTS.md`, rules, `docs/DECISIONS.md`, `CHAT-UX-ASSESSMENT.md`, `ROADMAP.md`, `HARDWARE.md`, the KB master plan, workflow, status and lots 1, 2 and 9, `Cargo.toml`, `tauri.conf.json`, capabilities, `ocr/mod.rs`, `cancellation.rs`, `settings.rs`, `Composer.tsx`, `ci.yml`. Nothing was modified there (the local clone holds another tab's uncommitted KB lot 1 work, left untouched).
+- Wrote `docs/integration/` : `01-owner-draft-and-review.md` (the owner's draft verbatim and a point-by-point review), `02-needs-and-structure-analysis.md` (facts F1 to F20, reuse map, target structure, performance and TTS questions, KB interplay, invariants SI1 to SI12, tests, risks), `03-integration-plan.md` (decisions Q-01 to Q-09, engine decision tree, budgets, phases SP-0 to SP-8, timing against the KB lots), `README.md`.
+- Wrote `docs/prompts/integration/` : `00-MASTER.md`, `SP-0` to `SP-8` launchers and a README with tab names and order, for use in other chat tabs. The work itself was **not** started in this session, as the owner asked.
+- D-049 (proposed), I-076; HANDOFF sections 3 and 7, prompts index updated.
+
+**Verified (observed in this session)**
+- Remote of AssistantCabinetAI: `main` = `f27505f`, `kb/integration` = `d215939`, `feat/kb-measure-and-unfreeze` = `ef149d5` (`git ls-remote --heads`); local branch `feat/kb-store` with uncommitted lot 1 files; KB lot 0 merged, lot 1 code done, lots 2 to 11 todo (local status file).
+- AssistantCabinetAI constraints (each read in a file): Windows and macOS both mandatory; voice rules (cloud speech forbidden, audio never retained, voice never triggers apply, `/v1/audio/*` reserved and answering 501); KB decisions D7 and D8; Whisper first and free licences only; the language contract and the source guard that scans every `.rs`; the CSP without `blob:`; the Tesseract sidecar not declared in `tauri.conf.json`; CI on `windows-latest` and `macos-latest`; the pilot workstation is a Windows PC installed in 2019.
+- SpeechLab's `normalise.rs`, `sentences.rs`, `postcorrect.rs`, `numbers.rs`, `critical.rs` would trip that guard (counts of non-ASCII and marker-word lines measured with grep).
+- `whisper-cli --help` (the SpeechLab build): `--prompt PROMPT` exists, no prompt-file option, so a hint list would sit on the command line.
+
+**Failed or surprises**
+- The owner's draft step 5 (automatic conversation mode) contradicts its own step 3 (explicit send) and the project rules; the plan makes it a separate optional last phase.
+- The owner's draft says to examine `main`; `main` is deliberately untouched until the KB release gate (base branch is `kb/integration`, decision Q-03).
+- My own M8 recommendation (Parakeet as the default speech-to-text) collides with AssistantCabinetAI's licence policy (CC BY only by explicit decision) and a 2019 PC: the integration order starts with whisper.cpp; D-047's evidence is unchanged (D-049).
+- A first `Write` call put a placeholder into `01-owner-draft-and-review.md` because the parameter was named wrongly; rewritten at once, nothing was published.
+- A long shell heredoc with apostrophes is still unreliable; the appends were made from files.
+
+**Not verified**
+- The idea that a Tauri 2 platform overlay (`tauri.windows.conf.json`) is merged on Windows only (spike in SP-2); the speed and memory of any engine on the 2019 practice PC (probe in SP-0); the quality of the Windows local French voices against Piper (spike in SP-6); that KB lots 2, 3, 6 and 9 will offer the contracts exactly as written in the plan (re-check at SP-5); everything about macOS.
+- No decision Q-01 to Q-09 was taken; they are the owner's.
+
+**Next**: the owner reads `docs/integration/03-integration-plan.md`, answers the decisions on the sheet that SP-0 produces (at least Q-02, Q-03, Q-04 before SP-1), commits, then drags `docs/prompts/integration/00-MASTER.md` and `SP-0-freeze-and-probe.md` into a new tab named "Speech 0 — Freeze and practice-PC probe".
+
+**Identity check (end of entry)**: searched the repository for AI-assistant and vendor names: none added. Third-party names appear only as products or licensors. No private content: only aggregates and the owner's own words. `git status` lists no audio, model, installer or private file.

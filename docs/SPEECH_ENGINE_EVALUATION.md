@@ -361,6 +361,10 @@ been tried [C-32, C-33, C-52].
 
 ## 7. Windows and macOS compatibility
 
+**Update 2026-10-09 (D-048, I-075): the macOS work is on hold until further notice, the owner having no Mac to implement and test a
+macOS version.** Every macOS cell below stays NOT VERIFIED; nothing here may be read as macOS support. SpeechLab is frozen and the
+integration into AssistantCabinetAI is planned in `docs/integration/`.
+
 | Capability | Windows 11 x64 | macOS (Apple Silicon, Intel) |
 |---|---|---|
 | Build from source | VERIFIED (Tauri 2.12.1, sherpa-onnx 1.13.8 static libs, whisper.cpp v1.9.4 with CMake and NMake) | NOT VERIFIED |
@@ -549,6 +553,10 @@ sherpa-onnx release asset list (`docs/TTS_LICENSES.md`).
 
 Each step lists what must be true first. Nothing here touches the main repository from this project.
 
+**Update 2026-10-09: this section is superseded in detail by `docs/integration/03-integration-plan.md`** (phases SP-0 to SP-8,
+decisions Q-01 to Q-09, analysis of both projects, review of the owner's draft). SpeechLab is frozen (D-048); macOS is on hold.
+The table below is kept as the roadmap as it stood at the end of M8.
+
 | # | Step | Precondition |
 |---|---|---|
 | 1 | Settle the licence position: decide the GPL phonemizer strategy, choose the licence of the SpeechLab code, decide how credits are shown | a lawyer's reading, or the owner's written decision (section 9.6); budget if needed (D-041) |
@@ -558,7 +566,7 @@ Each step lists what must be true first. Nothing here touches the main repositor
 | 5 | **English TTS** with `clear`/`attribution` voices, normaliser and read-along | step 1 (espeak-ng) decided; credits (step 2) |
 | 6 | **French TTS**: re-train siwis and gilles from `_base_model`, blind listening, update ratings; or a licensed on-device voice SDK | a GPU outside this machine (8 GB video memory is the reported minimum), the owner's decision on cost (`docs/TTS_LICENSES.md` has prices read, not confirmed) |
 | 7 | **Windows distribution**: code-signing certificate, SmartScreen check, clean-machine test (no Visual C++ runtime, no WebView2), interactive uninstaller check, Windows 10 test | certificate purchase; a clean virtual machine or Windows Sandbox |
-| 8 | **macOS**: run `docs/MACOS_VALIDATION.md` on Apple Silicon and Intel, Metal build of whisper.cpp, Info.plist and entitlements, Developer ID signing and notarisation, Ogg/Opus import alternative | a Mac; an Apple developer membership (price not checked) |
+| 8 | **macOS (ON HOLD since 2026-10-09, no Mac available, D-048)**: run `docs/MACOS_VALIDATION.md` on Apple Silicon and Intel, Metal build of whisper.cpp, Info.plist and entitlements, Developer ID signing and notarisation, Ogg/Opus import alternative | a Mac; an Apple developer membership (price not checked) |
 | 9 | Optional product features measured before use: drug-name post-correction on free text (false-correction rate), chunking per engine, streaming | more speakers and real texts; owner's decision on clinical content maintenance |
 
 ---
@@ -620,7 +628,7 @@ given. "Log" = `docs/PROJECT_LOG.md` entry.
 | C-36 | Windows 10 | NOT VERIFIED | install on a Windows 10 machine and run the packaged-app test |
 | C-37 | Clean machine without the Visual C++ runtime | NOT VERIFIED | install in Windows Sandbox or a clean VM, run a whisper.cpp transcription |
 | C-38 | SmartScreen behaviour, signing requirements and prices | NOT VERIFIED | download the installer in a browser on a clean machine; read the certificate vendors' pages |
-| C-39 | macOS build, run, microphone, signing | NOT VERIFIED | `docs/MACOS_VALIDATION.md` |
+| C-39 | macOS build, run, microphone, signing | NOT VERIFIED, **on hold until further notice (no Mac, D-048)** | `docs/MACOS_VALIDATION.md` |
 | C-40 | Model download from the packaged app over TLS | NOT VERIFIED (only the blocked failure observed) | install a model from the installed app on a network without interception |
 | C-41 | Interactive uninstaller and its effect on the models folder | NOT VERIFIED | run it with the real data folders moved away |
 | C-42 | Whole-machine network-off test | NOT DONE | section 8 steps |
