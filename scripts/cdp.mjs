@@ -1,7 +1,12 @@
 // Minimal DevTools-protocol client for the UI test (Node 24: built-in fetch and WebSocket).
 import fs from "node:fs";
 
-export async function connect(port = 9222, match = "localhost:1430") {
+// `match` selects the page by URL. Development: localhost:1430. Packaged app on Windows: tauri.localhost
+// (set SPEECHLAB_CDP_MATCH=tauri.localhost; SPEECHLAB_CDP_PORT overrides 9222).
+export async function connect(
+  port = Number(process.env.SPEECHLAB_CDP_PORT || 9222),
+  match = process.env.SPEECHLAB_CDP_MATCH || "localhost:1430",
+) {
   const list = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
   const target = list.find((t) => t.type === "page" && t.url.includes(match));
   if (!target) throw new Error("no page with " + match + ": " + JSON.stringify(list.map((t) => t.url)));
